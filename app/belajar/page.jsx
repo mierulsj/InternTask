@@ -761,6 +761,185 @@ const SOLAR_PLANETS = [
 ];
 
 /* =========================================================================
+   DASHBOARD DATA & CONSTANTS
+   ========================================================================= */
+
+const DASHBOARD_BADGES = [
+    {
+        id: "solar_master",
+        name: "Pakar Sistem Suria",
+        title: "Master Ahli Falak",
+        category: "Astronomi",
+        level: "Emas",
+        xp: "+300 XP",
+        unlocked: true,
+        date: "Hari Ini",
+        icon: "🪐",
+        bgColor: "from-amber-400 via-orange-500 to-rose-500",
+        ringColor: "border-amber-400",
+        description: "Menyusun kesemua 8 planet dalam orbit yang tepat tanpa kesilapan!",
+        funFact: "Anda kini menguasai urutan 8 planet dari Utarid hingga ke Neptun!",
+    },
+    {
+        id: "speed_demon",
+        name: "Minda Kilat 20s",
+        title: "Pantas & Tepat",
+        category: "Kuiz Pantas",
+        level: "Emas",
+        xp: "+250 XP",
+        unlocked: true,
+        date: "Hari Ini",
+        icon: "⚡",
+        bgColor: "from-yellow-400 via-amber-500 to-orange-600",
+        ringColor: "border-yellow-400",
+        description: "Menjawab kuiz 20 saat dengan ketepatan 100% sebelum masa tamat.",
+        funFact: "Purata kepantasan respons anda adalah 7.2 saat per soalan!",
+    },
+    {
+        id: "knowledge_seeker",
+        name: "Pencari Ilmu STEM",
+        title: "Peneliti Sains",
+        category: "Nota Visual",
+        level: "Perak",
+        xp: "+200 XP",
+        unlocked: true,
+        date: "Semalam",
+        icon: "📚",
+        bgColor: "from-sky-400 via-blue-500 to-indigo-600",
+        ringColor: "border-sky-400",
+        description: "Meneroka dan membaca keseluruhan modul Sains Sistem Suria & Fotosintesis.",
+        funFact: "Proses fotosintesis menghasilkan glukosa dan oksigen untuk kehidupan bumi.",
+    },
+    {
+        id: "streak_champ",
+        name: "Bintang 7 Hari",
+        title: "Konsisten Sejati",
+        category: "Ketekunan",
+        level: "Emas",
+        xp: "+350 XP",
+        unlocked: true,
+        date: "7 Hari Aktif",
+        icon: "🔥",
+        bgColor: "from-rose-500 via-red-500 to-amber-500",
+        ringColor: "border-rose-400",
+        description: "Membuka dan mengulang kaji di portal Exploria selama 7 hari berturut-turut.",
+        funFact: "Disiplin belajar setiap hari membina kefahaman STEM yang kukuh dan berkekalan!",
+    },
+    {
+        id: "curious_mind",
+        name: "Penyiasat Cilik",
+        title: "Eksplorasi Mendalam",
+        category: "Inkuiri",
+        level: "Perak",
+        xp: "+150 XP",
+        unlocked: true,
+        date: "2 Hari Lepas",
+        icon: "🔬",
+        bgColor: "from-emerald-400 via-teal-500 to-cyan-600",
+        ringColor: "border-emerald-400",
+        description: "Meneliti maklumat saiz, diameter, dan fakta unik bagi setiap planet.",
+        funFact: "Planet Musytari adalah planet terbesar dan mempunyai bintik merah gergasi!",
+    },
+    {
+        id: "grand_champion",
+        name: "Juara Sains Galaksi",
+        title: "Legenda Exploria",
+        category: "Keseluruhan",
+        level: "Platinum",
+        xp: "+500 XP",
+        unlocked: true,
+        date: "Status Elit",
+        icon: "🏆",
+        bgColor: "from-purple-500 via-pink-500 to-amber-400",
+        ringColor: "border-purple-400",
+        description: "Menamatkan semua modul pembelajaran, kuiz pantas, dan aktiviti interaktif.",
+        funFact: "Tahniah! Anda kini tergolong dalam 5% penjelajah STEM terhebat di Exploria!",
+    },
+];
+
+const DAILY_QUESTS = [
+    {
+        id: "quest_solar",
+        title: "Susun 8 Planet Sistem Suria",
+        category: "Aktiviti Interaktif",
+        xp: "+100 XP",
+        progress: 1,
+        total: 1,
+        completed: true,
+        icon: "🪐",
+        targetView: "solarDragDrop",
+        colorBadge: "bg-purple-100 text-purple-700",
+    },
+    {
+        id: "quest_quiz",
+        title: "Cabar Kuiz Pantas 20s",
+        category: "Cabaran Minda",
+        xp: "+150 XP",
+        progress: 1,
+        total: 1,
+        completed: true,
+        icon: "⚡",
+        targetView: "quizList",
+        colorBadge: "bg-amber-100 text-amber-800",
+    },
+    {
+        id: "quest_study",
+        title: "Ulang Kaji Modul Nota Sains",
+        category: "Pembelajaran",
+        xp: "+80 XP",
+        progress: 1,
+        total: 1,
+        completed: true,
+        icon: "🌱",
+        targetView: "learningList",
+        colorBadge: "bg-emerald-100 text-emerald-800",
+    },
+];
+
+const STEM_SKILLS = [
+    {
+        name: "Astronomi & Angkasa Lepas",
+        score: 96,
+        status: "Pakar Orbit",
+        color: "from-purple-500 to-indigo-600",
+        barColor: "bg-gradient-to-r from-purple-500 to-indigo-500",
+        textColor: "text-purple-600",
+        bgBadge: "bg-purple-100",
+        icon: "🪐",
+    },
+    {
+        name: "Inkuiri & Kaedah Saintifik",
+        score: 88,
+        status: "Sangat Cemerlang",
+        color: "from-teal-500 to-emerald-600",
+        barColor: "bg-gradient-to-r from-teal-500 to-emerald-500",
+        textColor: "text-emerald-700",
+        bgBadge: "bg-emerald-100",
+        icon: "🔬",
+    },
+    {
+        name: "Kepantasan Berfikir (20s Challenge)",
+        score: 92,
+        status: "Respons Kilat",
+        color: "from-amber-400 to-orange-500",
+        barColor: "bg-gradient-to-r from-amber-400 to-orange-500",
+        textColor: "text-amber-700",
+        bgBadge: "bg-amber-100",
+        icon: "⚡",
+    },
+    {
+        name: "Sains Hayat & Ekosistem",
+        score: 85,
+        status: "Kefahaman Mantap",
+        color: "from-sky-500 to-blue-600",
+        barColor: "bg-gradient-to-r from-sky-500 to-blue-500",
+        textColor: "text-blue-700",
+        bgBadge: "bg-sky-100",
+        icon: "🌿",
+    },
+];
+
+/* =========================================================================
    MAIN COMPONENT
    ========================================================================= */
 
@@ -786,6 +965,12 @@ export default function LessonPage() {
     const [solarFeedbackMessage, setSolarFeedbackMessage] = useState(null);
     const [showSolarVictory, setShowSolarVictory] = useState(false);
     const [solarSubmitted, setSolarSubmitted] = useState(false); // Halaman keputusan setelah dihantar
+
+    // Dashboard Pelajar States
+    const [studentName, setStudentName] = useState("Amirul");
+    const [isEditingName, setIsEditingName] = useState(false);
+    const [tempStudentName, setTempStudentName] = useState("Amirul");
+    const [selectedBadgeModal, setSelectedBadgeModal] = useState(null);
 
     // Dynamic background style based on theme (Cerah, Berwarna & Menarik - Bukan Putih & Bukan Gelap)
     const getBackgroundStyle = () => {
@@ -1516,16 +1701,16 @@ export default function LessonPage() {
             </div>
 
             {/* KOTAK UTAMA (PAD) DENGAN TEMA WARNA LOGO EXPLORIA & BAYANG CERAH */}
-            <div className="max-w-3xl w-full bg-white rounded-[2.5rem] shadow-[0_20px_60px_-10px_rgba(0,120,215,0.25)] overflow-hidden border-4 border-[#0099e5]/30 text-center transition-all duration-300 relative z-10">
+            <div className={`w-full bg-white rounded-[2.5rem] shadow-[0_20px_60px_-10px_rgba(0,120,215,0.25)] overflow-hidden border-4 border-[#0099e5]/30 text-center transition-all duration-300 relative z-10 ${currentView === "solarDragDrop" || currentView === "dashboard" ? "max-w-4xl" : "max-w-3xl"}`}>
 
                 {/* Header dengan warna Biru Khas Logo Exploria */}
                 <div className="bg-gradient-to-r from-[#0088cc] via-[#0099e5] to-[#00b0ff] p-6 sm:p-8 text-white relative shadow-md flex flex-col items-center justify-center">
 
                     {/* BUTTON MENU UTAMA: HANYA GRAFIK HOME SAHAJA (ICON BUTTON) */}
                     {currentView !== "menu" && (
-                        <div className="absolute left-6 top-6 sm:left-8 sm:top-8">
+                        <div className="absolute left-5 top-5 sm:left-8 sm:top-8">
                             <button
-                                onClick={() => { setCurrentView("menu"); resetQuizState(); resetSolarGame(); }}
+                                onClick={() => { playAudioFeedback("tap"); setCurrentView("menu"); resetQuizState(); resetSolarGame(); }}
                                 title="Menu Utama"
                                 aria-label="Menu Utama"
                                 className="w-11 h-11 sm:w-12 sm:h-12 bg-white/20 hover:bg-white/35 active:scale-90 text-white rounded-2xl transition-all flex items-center justify-center cursor-pointer backdrop-blur-md shadow-md border-2 border-white/35 hover:border-white/60 group"
@@ -1536,6 +1721,33 @@ export default function LessonPage() {
                             </button>
                         </div>
                     )}
+
+                    {/* BUTTON AKSES DASHBOARD: SUDUT KANAN ATAS HEADER */}
+                    <div className="absolute right-5 top-5 sm:right-8 sm:top-8">
+                        <button
+                            onClick={() => {
+                                playAudioFeedback("sparkle");
+                                if (currentView === "dashboard") {
+                                    setCurrentView("menu");
+                                } else {
+                                    setCurrentView("dashboard");
+                                }
+                            }}
+                            title={currentView === "dashboard" ? "Kembali ke Menu Utama" : "Buka Dashboard STEM"}
+                            aria-label="Dashboard STEM"
+                            className={`px-3 py-2 sm:px-4 sm:py-2.5 rounded-2xl font-black text-xs transition-all duration-300 flex items-center gap-2 shadow-md cursor-pointer border-2 backdrop-blur-md active:scale-95 group ${
+                                currentView === "dashboard"
+                                    ? "bg-amber-400 text-slate-950 border-amber-300 shadow-[0_0_20px_rgba(251,191,36,0.65)] ring-2 ring-white/60"
+                                    : "bg-white/20 hover:bg-white/35 text-white border-white/35 hover:border-white/60"
+                            }`}
+                        >
+                            <span className="text-base sm:text-lg group-hover:scale-120 transition-transform">📊</span>
+                            <span className="hidden sm:inline font-black tracking-wide">
+                                {currentView === "dashboard" ? "Menu Utama" : "Dashboard"}
+                            </span>
+                            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
+                        </button>
+                    </div>
 
                     <span className="bg-[#ffcc00] text-slate-950 text-xs font-black px-4 py-1.5 rounded-full uppercase tracking-wider shadow-sm inline-flex items-center gap-1.5 mb-2.5">
                         <span className="w-2 h-2 rounded-full bg-amber-600 animate-ping" />
@@ -1566,6 +1778,46 @@ export default function LessonPage() {
                                     <p className="text-xs sm:text-sm font-bold text-slate-700 mt-1 leading-snug">
                                         &ldquo;Hai Penjelajah Cilik! Terokai nota sains, cabaran kuiz pantas, atau main aktiviti Drag & Drop Sistem Suria!&rdquo;
                                     </p>
+                                </div>
+                            </div>
+
+                            {/* KAD AKSES VIP DASHBOARD PRESTASI STEM */}
+                            <div
+                                onClick={() => { playAudioFeedback("sparkle"); setCurrentView("dashboard"); }}
+                                className="w-full bg-gradient-to-r from-[#0088cc] via-[#0099e5] to-indigo-600 rounded-3xl p-4 sm:p-5 text-white shadow-lg hover:shadow-2xl hover:scale-[1.02] active:scale-[0.99] transition-all duration-300 cursor-pointer border-3 border-amber-300/80 relative overflow-hidden group text-left"
+                            >
+                                <div className="absolute -right-8 -top-8 w-36 h-36 bg-white/15 rounded-full blur-2xl pointer-events-none group-hover:scale-125 transition-transform" />
+                                <div className="absolute -left-8 -bottom-8 w-36 h-36 bg-amber-400/25 rounded-full blur-2xl pointer-events-none" />
+
+                                <div className="relative z-10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                                    <div className="flex items-center gap-3.5">
+                                        <div className="w-13 h-13 sm:w-15 sm:h-15 rounded-2xl bg-white/20 backdrop-blur-md border-2 border-white/40 flex items-center justify-center text-3xl shadow-inner shrink-0 group-hover:rotate-6 group-hover:scale-110 transition-all">
+                                            📊
+                                        </div>
+                                        <div>
+                                            <div className="flex items-center gap-2">
+                                                <span className="text-[10px] font-black uppercase tracking-wider bg-amber-400 text-slate-950 px-2.5 py-0.5 rounded-full shadow-xs">
+                                                    🌟 Dashboard Pelajar
+                                                </span>
+                                                <span className="text-[10px] font-black text-white/90 bg-white/20 px-2 py-0.5 rounded-full">
+                                                    Tahap 3
+                                                </span>
+                                            </div>
+                                            <h3 className="text-base sm:text-lg font-black text-white mt-1 drop-shadow-sm">
+                                                Pencapaian & Statistik {studentName}
+                                            </h3>
+                                            <p className="text-[11px] sm:text-xs text-sky-100 font-medium mt-0.5">
+                                                1,450 XP • 6 Lencana Emas • 7 Hari Streak 🔥
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    <div className="self-end sm:self-center shrink-0">
+                                        <span className="px-4 py-2 bg-white text-[#0088cc] font-black text-xs rounded-xl shadow-md group-hover:bg-amber-400 group-hover:text-slate-950 transition-all flex items-center gap-1.5">
+                                            <span>Buka Dashboard</span>
+                                            <GraphicArrowRight className="w-3.5 h-3.5" />
+                                        </span>
+                                    </div>
                                 </div>
                             </div>
 
@@ -2887,6 +3139,583 @@ export default function LessonPage() {
                                 </>
                             )}
 
+                        </div>
+                    )}
+
+                    {/* =========================================
+                        PAPARAN: DASHBOARD STEM PELAJAR (MENARIK, PREMIUM & INTERAKTIF)
+                    ========================================== */}
+                    {currentView === "dashboard" && (
+                        <div className="space-y-6 w-full max-w-4xl anim-fade-in text-left">
+
+                            {/* Header Tajuk Dashboard & Butang Kembali */}
+                            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-slate-100 pb-4">
+                                <div>
+                                    <div className="flex items-center gap-2">
+                                        <span className="text-xs font-black uppercase tracking-wider bg-gradient-to-r from-amber-400 to-orange-500 text-slate-950 px-3 py-1 rounded-full shadow-sm">
+                                            🌟 Pusat Prestasi Pelajar
+                                        </span>
+                                        <span className="text-xs font-bold text-slate-400">• STEM Explorer</span>
+                                    </div>
+                                    <h2 className="text-2xl sm:text-3xl font-black text-[#0099e5] mt-1 drop-shadow-sm">
+                                        Dashboard Prestasi STEM
+                                    </h2>
+                                    <p className="text-xs text-slate-500 mt-0.5">
+                                        Pantau kemajuan pembelajaran, skor aktiviti, penguasaan kemahiran, dan koleksi lencana anda.
+                                    </p>
+                                </div>
+                                <button
+                                    onClick={() => { playAudioFeedback("tap"); setCurrentView("menu"); }}
+                                    className="px-4 py-2.5 btn-3d-white text-slate-700 font-black rounded-xl text-xs cursor-pointer flex items-center gap-2 border border-slate-200 shrink-0 self-start sm:self-center"
+                                >
+                                    <GraphicBackArrow className="w-4 h-4 text-slate-600" />
+                                    <span>Kembali ke Menu</span>
+                                </button>
+                            </div>
+
+                            {/* KAD PROFIL HERO: TAHAP, XP & STREAK (3D GRADIENT WITH SPARKLE) */}
+                            <div className="relative overflow-hidden rounded-[2rem] bg-gradient-to-r from-[#0088cc] via-[#0099e5] to-indigo-600 p-6 sm:p-7 text-white shadow-xl border-3 border-sky-300/40">
+                                {/* Ambient Light Glow */}
+                                <div className="absolute -right-10 -top-10 w-48 h-48 bg-amber-400/20 rounded-full blur-3xl pointer-events-none" />
+                                <div className="absolute -left-10 -bottom-10 w-48 h-48 bg-purple-500/25 rounded-full blur-3xl pointer-events-none" />
+
+                                <div className="relative z-10 flex flex-col md:flex-row items-center md:items-start justify-between gap-6">
+                                    {/* Avatar & Identiti */}
+                                    <div className="flex items-center gap-4 sm:gap-5 w-full md:w-auto">
+                                        <div className="relative shrink-0">
+                                            {/* Avatar Glow Ring */}
+                                            <div className="w-20 h-20 sm:w-22 sm:h-22 rounded-3xl bg-gradient-to-tr from-amber-400 via-pink-400 to-sky-300 p-1 shadow-lg shadow-sky-900/30 anim-float">
+                                                <div className="w-full h-full bg-slate-900 rounded-[1.3rem] flex items-center justify-center text-4xl border-2 border-white/50 overflow-hidden relative">
+                                                    <GraphicMascotRobot className="w-14 h-14" />
+                                                </div>
+                                            </div>
+                                            <span className="absolute -bottom-2 -right-2 bg-gradient-to-r from-amber-400 to-orange-500 text-slate-950 font-black text-[11px] px-2.5 py-0.5 rounded-full shadow-md border-2 border-white">
+                                                Lv. 3
+                                            </span>
+                                        </div>
+
+                                        <div className="flex-1">
+                                            <div className="flex items-center gap-2 flex-wrap">
+                                                {isEditingName ? (
+                                                    <div className="flex items-center gap-2">
+                                                        <input
+                                                            type="text"
+                                                            value={tempStudentName}
+                                                            onChange={(e) => setTempStudentName(e.target.value)}
+                                                            maxLength={20}
+                                                            className="bg-white/20 border-2 border-white/60 rounded-xl px-2.5 py-1 text-white text-base font-black outline-none focus:ring-2 focus:ring-amber-300"
+                                                            autoFocus
+                                                            onKeyDown={(e) => {
+                                                                if (e.key === "Enter") {
+                                                                    setStudentName(tempStudentName.trim() || "Penjelajah STEM");
+                                                                    setIsEditingName(false);
+                                                                    playAudioFeedback("snap");
+                                                                }
+                                                            }}
+                                                        />
+                                                        <button
+                                                            onClick={() => {
+                                                                setStudentName(tempStudentName.trim() || "Penjelajah STEM");
+                                                                setIsEditingName(false);
+                                                                playAudioFeedback("snap");
+                                                            }}
+                                                            className="px-3 py-1 bg-amber-400 text-slate-950 text-xs font-black rounded-lg shadow-sm hover:bg-amber-300 cursor-pointer"
+                                                        >
+                                                            Simpan
+                                                        </button>
+                                                    </div>
+                                                ) : (
+                                                    <div className="flex items-center gap-2">
+                                                        <h3 className="text-xl sm:text-2xl font-black text-white drop-shadow">
+                                                            {studentName}
+                                                        </h3>
+                                                        <button
+                                                            onClick={() => {
+                                                                setTempStudentName(studentName);
+                                                                setIsEditingName(true);
+                                                                playAudioFeedback("tap");
+                                                            }}
+                                                            title="Tukar Nama Pelajar"
+                                                            className="w-7 h-7 bg-white/20 hover:bg-white/35 rounded-lg flex items-center justify-center text-xs text-white/90 cursor-pointer transition-all border border-white/30"
+                                                        >
+                                                            ✏️
+                                                        </button>
+                                                    </div>
+                                                )}
+                                                <span className="text-[10px] font-black uppercase tracking-wider bg-white/20 text-sky-100 px-2.5 py-0.5 rounded-full border border-white/20">
+                                                    Pakar Falak Cilik
+                                                </span>
+                                            </div>
+                                            <p className="text-xs text-sky-100 font-medium mt-1">
+                                                🚀 Gelaran Semasa: <span className="text-amber-300 font-black">Penjelajah Galaksi Mahir</span>
+                                            </p>
+
+                                            {/* Progress Bar XP Menuju Tahap 4 */}
+                                            <div className="mt-3 w-full max-w-sm">
+                                                <div className="flex items-center justify-between text-[11px] font-black text-sky-100 mb-1">
+                                                    <span>Kemajuan Tahap 3</span>
+                                                    <span className="text-amber-300 font-black">1,450 / 2,000 XP</span>
+                                                </div>
+                                                <div className="w-full h-3.5 bg-slate-950/40 rounded-full p-0.5 border border-white/25 overflow-hidden relative shadow-inner">
+                                                    <div
+                                                        className="h-full bg-gradient-to-r from-amber-400 via-orange-400 to-yellow-300 rounded-full transition-all duration-1000 relative"
+                                                        style={{ width: "72.5%" }}
+                                                    >
+                                                        <div className="shimmer-bar" />
+                                                    </div>
+                                                </div>
+                                                <span className="text-[10px] text-sky-200 mt-1 block">
+                                                    ⚡ Perlu 550 XP lagi untuk naik ke <strong className="text-white">Tahap 4: Komander Angkasa</strong>
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* 3 Quick Badges (Streak, Stars, Total Score) */}
+                                    <div className="flex md:flex-col gap-2.5 sm:gap-3 w-full md:w-auto shrink-0 justify-around">
+                                        <div className="flex items-center gap-2.5 bg-white/15 backdrop-blur-md px-3.5 py-2 rounded-2xl border border-white/25 shadow-sm">
+                                            <span className="text-2xl">🔥</span>
+                                            <div>
+                                                <span className="text-[10px] uppercase font-bold text-sky-200 block leading-tight">Streak</span>
+                                                <span className="text-xs sm:text-sm font-black text-amber-300">7 Hari Aktif</span>
+                                            </div>
+                                        </div>
+                                        <div className="flex items-center gap-2.5 bg-white/15 backdrop-blur-md px-3.5 py-2 rounded-2xl border border-white/25 shadow-sm">
+                                            <span className="text-2xl">⭐</span>
+                                            <div>
+                                                <span className="text-[10px] uppercase font-bold text-sky-200 block leading-tight">Bintang STEM</span>
+                                                <span className="text-xs sm:text-sm font-black text-amber-300">24 / 24 Bintang</span>
+                                            </div>
+                                        </div>
+                                        <div className="flex items-center gap-2.5 bg-white/15 backdrop-blur-md px-3.5 py-2 rounded-2xl border border-white/25 shadow-sm">
+                                            <span className="text-2xl">💎</span>
+                                            <div>
+                                                <span className="text-[10px] uppercase font-bold text-sky-200 block leading-tight">Jumlah Skor</span>
+                                                <span className="text-xs sm:text-sm font-black text-emerald-300">1,300 Pts</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* 4 KAD REKOD & PENCAPAIAN UTAMA (3D CARDS GRID) */}
+                            <div>
+                                <h3 className="text-base sm:text-lg font-black text-slate-800 flex items-center gap-2 mb-3">
+                                    <span>🎯</span>
+                                    <span>Rekod & Pencapaian Aktiviti</span>
+                                </h3>
+
+                                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                                    {/* Kad 1: Sistem Suria Drag & Drop */}
+                                    <div className="bg-gradient-to-b from-purple-500/10 via-white to-purple-50 rounded-3xl p-5 border-2 border-purple-200 shadow-md hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between group">
+                                        <div>
+                                            <div className="flex items-center justify-between mb-3">
+                                                <div className="w-12 h-12 rounded-2xl bg-purple-100 border-2 border-purple-300 flex items-center justify-center text-2xl group-hover:scale-110 group-hover:rotate-6 transition-all shadow-sm">
+                                                    🪐
+                                                </div>
+                                                <span className="text-[10px] font-black uppercase tracking-wider bg-purple-100 text-purple-700 px-2.5 py-1 rounded-full border border-purple-200">
+                                                    Sempurna
+                                                </span>
+                                            </div>
+                                            <h4 className="text-xs font-black uppercase tracking-wider text-purple-700">Aktiviti Suria</h4>
+                                            <div className="text-2xl sm:text-3xl font-black text-slate-900 mt-1">
+                                                {solarSubmitted && solarScore > 0 ? solarScore : 800} <span className="text-xs font-bold text-slate-400">/ 800</span>
+                                            </div>
+                                            <p className="text-[11px] text-slate-500 mt-1 font-medium leading-tight">
+                                                8 daripada 8 planet berada di orbit tepat.
+                                            </p>
+                                        </div>
+                                        <button
+                                            onClick={() => { playAudioFeedback("tap"); setCurrentView("solarDragDrop"); }}
+                                            className="mt-4 w-full py-2 bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 text-white text-xs font-black rounded-xl shadow-md cursor-pointer transition-all flex items-center justify-center gap-1.5"
+                                        >
+                                            <span>🎮</span>
+                                            <span>Main Semula</span>
+                                        </button>
+                                    </div>
+
+                                    {/* Kad 2: Kuiz Pantas 20s */}
+                                    <div className="bg-gradient-to-b from-amber-500/10 via-white to-amber-50 rounded-3xl p-5 border-2 border-amber-200 shadow-md hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between group">
+                                        <div>
+                                            <div className="flex items-center justify-between mb-3">
+                                                <div className="w-12 h-12 rounded-2xl bg-amber-100 border-2 border-amber-300 flex items-center justify-center text-2xl group-hover:scale-110 group-hover:-rotate-6 transition-all shadow-sm">
+                                                    ⚡
+                                                </div>
+                                                <span className="text-[10px] font-black uppercase tracking-wider bg-amber-100 text-amber-800 px-2.5 py-1 rounded-full border border-amber-200">
+                                                    Skor Maks
+                                                </span>
+                                            </div>
+                                            <h4 className="text-xs font-black uppercase tracking-wider text-amber-700">Kuiz Pantas 20s</h4>
+                                            <div className="text-2xl sm:text-3xl font-black text-slate-900 mt-1">
+                                                {scoreCount > 0 ? scoreCount * 100 : 500} <span className="text-xs font-bold text-slate-400">/ 500</span>
+                                            </div>
+                                            <p className="text-[11px] text-slate-500 mt-1 font-medium leading-tight">
+                                                Rekod 5/5 jawapan betul berturut-turut!
+                                            </p>
+                                        </div>
+                                        <button
+                                            onClick={() => { playAudioFeedback("tap"); setCurrentView("quizList"); }}
+                                            className="mt-4 w-full py-2 bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-500 hover:to-orange-600 text-slate-950 text-xs font-black rounded-xl shadow-md cursor-pointer transition-all flex items-center justify-center gap-1.5"
+                                        >
+                                            <GraphicLightningBolt className="w-3.5 h-3.5" />
+                                            <span>Cabar Kuiz</span>
+                                        </button>
+                                    </div>
+
+                                    {/* Kad 3: Modul Nota Dibaca */}
+                                    <div className="bg-gradient-to-b from-sky-500/10 via-white to-sky-50 rounded-3xl p-5 border-2 border-sky-200 shadow-md hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between group">
+                                        <div>
+                                            <div className="flex items-center justify-between mb-3">
+                                                <div className="w-12 h-12 rounded-2xl bg-sky-100 border-2 border-sky-300 flex items-center justify-center text-2xl group-hover:scale-110 group-hover:rotate-6 transition-all shadow-sm">
+                                                    📖
+                                                </div>
+                                                <span className="text-[10px] font-black uppercase tracking-wider bg-sky-100 text-sky-800 px-2.5 py-1 rounded-full border border-sky-200">
+                                                    100% Selesai
+                                                </span>
+                                            </div>
+                                            <h4 className="text-xs font-black uppercase tracking-wider text-sky-700">Nota Sains</h4>
+                                            <div className="text-2xl sm:text-3xl font-black text-slate-900 mt-1">
+                                                2 <span className="text-xs font-bold text-slate-400">/ 2 Topik</span>
+                                            </div>
+                                            <p className="text-[11px] text-slate-500 mt-1 font-medium leading-tight">
+                                                Sistem Suria & Fotosintesis ditamatkan.
+                                            </p>
+                                        </div>
+                                        <button
+                                            onClick={() => { playAudioFeedback("tap"); setCurrentView("learningList"); }}
+                                            className="mt-4 w-full py-2 bg-gradient-to-r from-sky-400 to-blue-500 hover:from-sky-500 hover:to-blue-600 text-white text-xs font-black rounded-xl shadow-md cursor-pointer transition-all flex items-center justify-center gap-1.5"
+                                        >
+                                            <GraphicBookOpen className="w-3.5 h-3.5" />
+                                            <span>Ulang Kaji</span>
+                                        </button>
+                                    </div>
+
+                                    {/* Kad 4: Kepantasan Analisis Minda */}
+                                    <div className="bg-gradient-to-b from-emerald-500/10 via-white to-emerald-50 rounded-3xl p-5 border-2 border-emerald-200 shadow-md hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between group">
+                                        <div>
+                                            <div className="flex items-center justify-between mb-3">
+                                                <div className="w-12 h-12 rounded-2xl bg-emerald-100 border-2 border-emerald-300 flex items-center justify-center text-2xl group-hover:scale-110 group-hover:-rotate-6 transition-all shadow-sm">
+                                                    ⏱️
+                                                </div>
+                                                <span className="text-[10px] font-black uppercase tracking-wider bg-emerald-100 text-emerald-800 px-2.5 py-1 rounded-full border border-emerald-200">
+                                                    Respons Kilat
+                                                </span>
+                                            </div>
+                                            <h4 className="text-xs font-black uppercase tracking-wider text-emerald-700">Kelajuan Minda</h4>
+                                            <div className="text-2xl sm:text-3xl font-black text-slate-900 mt-1">
+                                                7.2s <span className="text-xs font-bold text-slate-400">purata</span>
+                                            </div>
+                                            <p className="text-[11px] text-slate-500 mt-1 font-medium leading-tight">
+                                                Masa respons pantas dari had 20 saat!
+                                            </p>
+                                        </div>
+                                        <button
+                                            onClick={() => { playAudioFeedback("tap"); setCurrentView("quizList"); }}
+                                            className="mt-4 w-full py-2 bg-gradient-to-r from-emerald-400 to-teal-500 hover:from-emerald-500 hover:to-teal-600 text-white text-xs font-black rounded-xl shadow-md cursor-pointer transition-all flex items-center justify-center gap-1.5"
+                                        >
+                                            <span>⚡</span>
+                                            <span>Latih Laju</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* DUA LAJUR: KOMPETENSI STEM (KIRI) & MISI HARIAN (KANAN) */}
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-5 pt-2">
+
+                                {/* Lajur Kiri: Penguasaan Kemahiran STEM */}
+                                <div className="bg-slate-50 rounded-3xl p-5 border-2 border-slate-200/80 shadow-sm">
+                                    <div className="flex items-center justify-between mb-4">
+                                        <div className="flex items-center gap-2">
+                                            <span className="text-xl">🧬</span>
+                                            <h3 className="text-sm sm:text-base font-black text-slate-800">
+                                                Kompetensi & Kemahiran STEM
+                                            </h3>
+                                        </div>
+                                        <span className="text-[10px] font-black text-indigo-700 bg-indigo-100 px-2 py-0.5 rounded-full">
+                                            Purata 90%
+                                        </span>
+                                    </div>
+
+                                    <div className="space-y-4">
+                                        {STEM_SKILLS.map((skill, idx) => (
+                                            <div key={idx} className="space-y-1.5">
+                                                <div className="flex items-center justify-between text-xs">
+                                                    <span className="font-black text-slate-700 flex items-center gap-1.5">
+                                                        <span>{skill.icon}</span>
+                                                        <span>{skill.name}</span>
+                                                    </span>
+                                                    <div className="flex items-center gap-1.5">
+                                                        <span className={`text-[10px] font-black px-2 py-0.5 rounded-full ${skill.bgBadge} ${skill.textColor}`}>
+                                                            {skill.status}
+                                                        </span>
+                                                        <span className="font-black text-slate-900">{skill.score}%</span>
+                                                    </div>
+                                                </div>
+                                                <div className="w-full h-2.5 bg-slate-200 rounded-full overflow-hidden p-0.5 shadow-inner">
+                                                    <div
+                                                        className={`h-full rounded-full transition-all duration-700 ${skill.barColor}`}
+                                                        style={{ width: `${skill.score}%` }}
+                                                    />
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+
+                                    <div className="mt-5 p-3 bg-gradient-to-r from-blue-50 to-sky-50 rounded-2xl border border-sky-200 flex items-center gap-3">
+                                        <div className="w-9 h-9 rounded-xl bg-sky-200/70 flex items-center justify-center text-lg shrink-0">
+                                            💡
+                                        </div>
+                                        <p className="text-[11px] text-slate-600 font-medium leading-snug">
+                                            <strong>Tip Cikgu Robot:</strong> Kemahiran astronomi anda sangat cemerlang! Teruskan mengulang kaji fotosintesis untuk mencapai 100% skor.
+                                        </p>
+                                    </div>
+                                </div>
+
+                                {/* Lajur Kanan: Misi Harian & Ganjaran XP */}
+                                <div className="bg-slate-50 rounded-3xl p-5 border-2 border-slate-200/80 shadow-sm flex flex-col justify-between">
+                                    <div>
+                                        <div className="flex items-center justify-between mb-4">
+                                            <div className="flex items-center gap-2">
+                                                <span className="text-xl">📋</span>
+                                                <h3 className="text-sm sm:text-base font-black text-slate-800">
+                                                    Misi Harian Penjelajah
+                                                </h3>
+                                            </div>
+                                            <span className="text-[10px] font-black text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded-full">
+                                                3/3 Selesai
+                                            </span>
+                                        </div>
+
+                                        <div className="space-y-3">
+                                            {DAILY_QUESTS.map((quest) => (
+                                                <div
+                                                    key={quest.id}
+                                                    className="bg-white rounded-2xl p-3.5 border-2 border-slate-200 flex items-center justify-between gap-3 shadow-xs hover:border-sky-300 transition-all"
+                                                >
+                                                    <div className="flex items-center gap-3">
+                                                        <div className="w-10 h-10 rounded-xl bg-slate-100 border border-slate-200 flex items-center justify-center text-xl shrink-0">
+                                                            {quest.icon}
+                                                        </div>
+                                                        <div>
+                                                            <h4 className="text-xs font-black text-slate-800 leading-snug">
+                                                                {quest.title}
+                                                            </h4>
+                                                            <div className="flex items-center gap-1.5 mt-0.5">
+                                                                <span className={`text-[9px] font-black px-2 py-0.5 rounded-full ${quest.colorBadge}`}>
+                                                                    {quest.category}
+                                                                </span>
+                                                                <span className="text-[10px] font-black text-amber-600">
+                                                                    {quest.xp}
+                                                                </span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div className="shrink-0 flex items-center gap-2">
+                                                        <span className="w-6 h-6 rounded-full bg-emerald-500 text-white flex items-center justify-center text-xs font-black shadow-sm">
+                                                            ✓
+                                                        </span>
+                                                        <button
+                                                            onClick={() => { playAudioFeedback("tap"); setCurrentView(quest.targetView); }}
+                                                            className="px-2.5 py-1 text-[11px] font-black text-sky-700 hover:text-sky-900 bg-sky-50 hover:bg-sky-100 rounded-lg cursor-pointer transition-all border border-sky-200"
+                                                        >
+                                                            Buka
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+
+                                    {/* Bonus Harian Ditebus */}
+                                    <div className="mt-4 p-3.5 bg-gradient-to-r from-amber-400/20 via-orange-400/20 to-yellow-400/20 rounded-2xl border-2 border-amber-300 flex items-center justify-between">
+                                        <div className="flex items-center gap-2.5">
+                                            <span className="text-2xl animate-bounce">🎁</span>
+                                            <div>
+                                                <span className="text-[10px] uppercase font-black text-amber-800 block">Bonus Misi Harian</span>
+                                                <span className="text-xs font-black text-slate-900">+300 XP Berjaya Ditebus!</span>
+                                            </div>
+                                        </div>
+                                        <span className="px-3 py-1 bg-amber-400 text-slate-950 font-black text-xs rounded-xl shadow-sm">
+                                            Ditebus ✅
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* KOLEKSI LENCANA & PETI TROFI STEM (INTERACTIVE CABINET) */}
+                            <div className="bg-gradient-to-b from-sky-50/70 via-white to-slate-50 rounded-3xl p-6 border-2 border-sky-200 shadow-md">
+                                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 mb-4">
+                                    <div>
+                                        <h3 className="text-base sm:text-lg font-black text-slate-900 flex items-center gap-2">
+                                            <span>🏆</span>
+                                            <span>Peti Lencana & Trofi Kehormatan STEM</span>
+                                        </h3>
+                                        <p className="text-xs text-slate-500 mt-0.5">
+                                            Klik mana-mana lencana untuk melihat butiran pencapaian dan fakta sains unik!
+                                        </p>
+                                    </div>
+                                    <span className="text-xs font-black text-amber-800 bg-amber-100 px-3 py-1 rounded-full border border-amber-300 self-start sm:self-center shadow-xs">
+                                        6 / 6 Lencana Terkumpul 🏅
+                                    </span>
+                                </div>
+
+                                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3.5 pt-2">
+                                    {DASHBOARD_BADGES.map((badge) => (
+                                        <div
+                                            key={badge.id}
+                                            onClick={() => {
+                                                playAudioFeedback("sparkle");
+                                                setSelectedBadgeModal(badge);
+                                            }}
+                                            className="bg-white rounded-2xl p-3 border-2 border-slate-200 hover:border-amber-400 shadow-sm hover:shadow-xl hover:-translate-y-1.5 active:scale-95 transition-all duration-300 cursor-pointer flex flex-col items-center text-center group relative overflow-hidden"
+                                        >
+                                            {/* Top Level Pill */}
+                                            <span className="text-[9px] font-black uppercase text-amber-800 bg-amber-50 px-2 py-0.5 rounded-full border border-amber-200 mb-2">
+                                                {badge.level}
+                                            </span>
+
+                                            {/* Badge Icon With 3D Halo */}
+                                            <div className="relative mb-2">
+                                                <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-amber-400 via-orange-400 to-rose-400 p-0.5 shadow-md group-hover:rotate-6 group-hover:scale-110 transition-all">
+                                                    <div className="w-full h-full bg-slate-900 rounded-[0.9rem] flex items-center justify-center text-2xl">
+                                                        {badge.icon}
+                                                    </div>
+                                                </div>
+                                                <span className="absolute -bottom-1 -right-1 w-5 h-5 bg-emerald-500 rounded-full text-white text-[10px] font-black flex items-center justify-center border border-white shadow-xs">
+                                                    ✓
+                                                </span>
+                                            </div>
+
+                                            <h4 className="text-xs font-black text-slate-800 line-clamp-1 group-hover:text-[#0099e5] transition-colors">
+                                                {badge.name}
+                                            </h4>
+                                            <span className="text-[10px] font-bold text-amber-600 mt-0.5">
+                                                {badge.xp}
+                                            </span>
+                                            <span className="text-[9px] text-slate-400 mt-1 block">
+                                                Klik butiran 🔍
+                                            </span>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+
+                            {/* PINTASAN PANTAS (QUICK LAUNCHER ACTION BUTTONS) */}
+                            <div className="bg-gradient-to-r from-slate-900 via-slate-800 to-indigo-950 rounded-3xl p-5 sm:p-6 text-white shadow-xl flex flex-col sm:flex-row items-center justify-between gap-4">
+                                <div className="text-center sm:text-left">
+                                    <span className="text-[10px] font-black uppercase tracking-wider bg-sky-500 text-slate-950 px-2.5 py-0.5 rounded-full inline-block mb-1">
+                                        Misi Seterusnya
+                                    </span>
+                                    <h4 className="text-lg font-black text-white">
+                                        Bersedia Untuk Misi Seterusnya?
+                                    </h4>
+                                    <p className="text-xs text-slate-300 mt-0.5">
+                                        Teruskan cabaran untuk mengumpul lebih banyak mata XP dan naik ke Tahap 4!
+                                    </p>
+                                </div>
+
+                                <div className="flex flex-wrap items-center justify-center gap-2.5 shrink-0">
+                                    <button
+                                        onClick={() => { playAudioFeedback("tap"); setCurrentView("solarDragDrop"); }}
+                                        className="px-4 py-2.5 bg-purple-600 hover:bg-purple-500 active:scale-95 text-white font-black text-xs rounded-xl shadow-md cursor-pointer transition-all flex items-center gap-1.5"
+                                    >
+                                        <span>🪐</span>
+                                        <span>Susun Suria</span>
+                                    </button>
+                                    <button
+                                        onClick={() => { playAudioFeedback("tap"); setCurrentView("quizList"); }}
+                                        className="px-4 py-2.5 bg-amber-500 hover:bg-amber-400 active:scale-95 text-slate-950 font-black text-xs rounded-xl shadow-md cursor-pointer transition-all flex items-center gap-1.5"
+                                    >
+                                        <GraphicLightningBolt className="w-3.5 h-3.5" />
+                                        <span>Kuiz 20s</span>
+                                    </button>
+                                    <button
+                                        onClick={() => { playAudioFeedback("tap"); setCurrentView("learningList"); }}
+                                        className="px-4 py-2.5 bg-sky-500 hover:bg-sky-400 active:scale-95 text-slate-950 font-black text-xs rounded-xl shadow-md cursor-pointer transition-all flex items-center gap-1.5"
+                                    >
+                                        <GraphicBookOpen className="w-3.5 h-3.5" />
+                                        <span>Nota Sains</span>
+                                    </button>
+                                </div>
+                            </div>
+
+                        </div>
+                    )}
+
+                    {/* MODAL BUTIRAN LENCANA (INTERACTIVE POPUP MODAL) */}
+                    {selectedBadgeModal && (
+                        <div
+                            className="fixed inset-0 z-50 bg-slate-950/75 backdrop-blur-sm flex items-center justify-center p-4 anim-fade-in"
+                            onClick={() => { playAudioFeedback("tap"); setSelectedBadgeModal(null); }}
+                        >
+                            <div
+                                onClick={(e) => e.stopPropagation()}
+                                className="bg-white rounded-[2rem] max-w-md w-full p-6 sm:p-7 shadow-2xl border-4 border-amber-400 text-center relative overflow-hidden anim-scale-up"
+                            >
+                                {/* Background Glow */}
+                                <div className="absolute -top-12 -right-12 w-40 h-40 bg-amber-400/25 rounded-full blur-2xl pointer-events-none" />
+                                <div className="absolute -bottom-12 -left-12 w-40 h-40 bg-sky-400/25 rounded-full blur-2xl pointer-events-none" />
+
+                                {/* Close Button */}
+                                <button
+                                    onClick={() => { playAudioFeedback("tap"); setSelectedBadgeModal(null); }}
+                                    className="absolute top-4 right-4 w-9 h-9 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center font-black cursor-pointer transition-all"
+                                >
+                                    ✕
+                                </button>
+
+                                {/* Badge Icon in Glowing Frame */}
+                                <div className="mx-auto w-24 h-24 rounded-3xl bg-gradient-to-tr from-amber-400 via-orange-500 to-rose-500 p-1 shadow-xl shadow-amber-500/30 anim-float mt-2">
+                                    <div className="w-full h-full bg-slate-900 rounded-[1.3rem] flex items-center justify-center text-5xl">
+                                        {selectedBadgeModal.icon}
+                                    </div>
+                                </div>
+
+                                <div className="mt-4">
+                                    <span className="text-[10px] font-black uppercase tracking-wider bg-amber-100 text-amber-800 px-3 py-1 rounded-full border border-amber-300">
+                                        Lencana {selectedBadgeModal.level} • {selectedBadgeModal.category}
+                                    </span>
+                                    <h3 className="text-2xl font-black text-slate-900 mt-2">
+                                        {selectedBadgeModal.name}
+                                    </h3>
+                                    <p className="text-xs font-black text-[#0099e5] mt-0.5">
+                                        {selectedBadgeModal.title}
+                                    </p>
+                                </div>
+
+                                <div className="mt-4 p-4 bg-slate-50 rounded-2xl border border-slate-200 text-left">
+                                    <span className="text-[10px] font-black uppercase tracking-wider text-slate-400 block mb-1">
+                                        Kriteria Diperoleh:
+                                    </span>
+                                    <p className="text-xs font-bold text-slate-700 leading-relaxed">
+                                        {selectedBadgeModal.description}
+                                    </p>
+                                    <div className="mt-3 pt-3 border-t border-slate-200 flex items-center justify-between text-xs">
+                                        <span className="text-slate-500 font-medium">Status & Tarikh:</span>
+                                        <span className="font-black text-emerald-600 flex items-center gap-1">
+                                            <span>✓ Diperoleh</span>
+                                            <span className="text-slate-400">({selectedBadgeModal.date})</span>
+                                        </span>
+                                    </div>
+                                </div>
+
+                                {/* STEM Fun Fact */}
+                                <div className="mt-3 p-3 bg-gradient-to-r from-amber-50 to-orange-50 rounded-2xl border border-amber-200 text-left flex items-start gap-2.5">
+                                    <span className="text-lg shrink-0">✨</span>
+                                    <p className="text-[11px] text-amber-900 font-semibold leading-snug">
+                                        <strong>Fakta Hebat:</strong> {selectedBadgeModal.funFact}
+                                    </p>
+                                </div>
+
+                                <button
+                                    onClick={() => { playAudioFeedback("tap"); setSelectedBadgeModal(null); }}
+                                    className="mt-5 w-full py-3 bg-gradient-to-r from-amber-400 via-orange-400 to-amber-500 hover:from-amber-500 hover:to-orange-500 text-slate-950 font-black text-sm rounded-2xl shadow-lg cursor-pointer transition-all"
+                                >
+                                    Hebat! Tutup Paparan
+                                </button>
+                            </div>
                         </div>
                     )}
 

@@ -971,6 +971,7 @@ export default function LessonPage() {
     const [isEditingName, setIsEditingName] = useState(false);
     const [tempStudentName, setTempStudentName] = useState("Amirul");
     const [selectedBadgeModal, setSelectedBadgeModal] = useState(null);
+    const [dashboardActiveTab, setDashboardActiveTab] = useState("all"); // "all" | "records" | "skills" | "quests" | "badges"
 
     // Dynamic background style based on theme (Cerah, Berwarna & Menarik - Bukan Putih & Bukan Gelap)
     const getBackgroundStyle = () => {
@@ -1491,7 +1492,7 @@ export default function LessonPage() {
 
     return (
         <div 
-            className="min-h-screen py-8 sm:py-12 px-4 sm:px-6 text-slate-800 flex flex-col items-center justify-center relative overflow-hidden transition-all duration-700 select-none" 
+            className="min-h-screen text-slate-800 flex flex-col relative overflow-x-hidden transition-all duration-700 select-none" 
             style={{ 
                 fontFamily: 'system-ui, -apple-system, sans-serif',
                 background: getBackgroundStyle()
@@ -1617,91 +1618,257 @@ export default function LessonPage() {
                     left: 0;
                     width: 50%;
                     height: 100%;
-                    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.35), transparent);
                     transform: skewX(-25deg);
                     animation: shimmerEffect 2.8s infinite;
                 }
+                .no-scrollbar::-webkit-scrollbar { display: none; }
+                .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
             `}</style>
 
-            {/* FLOATING AMBIENT BACKGROUND PARTICLES (GRAFIK BERSINAR & JELAS PADA LATAR CERAH) */}
-            <div className="absolute inset-0 pointer-events-none overflow-hidden select-none" aria-hidden="true">
-                <div className="absolute top-12 left-10 anim-float-slow opacity-75 hover:opacity-100 drop-shadow-[0_6px_14px_rgba(0,100,200,0.25)]">
-                    <GraphicSaturnPlanet className="w-14 h-14" />
-                </div>
-                <div className="absolute top-24 right-12 anim-float opacity-75 hover:opacity-100 drop-shadow-[0_6px_14px_rgba(0,150,100,0.25)]">
-                    <GraphicNatureLeaf className="w-12 h-12" />
-                </div>
-                <div className="absolute bottom-20 left-12 anim-float opacity-70 hover:opacity-100 drop-shadow-[0_6px_14px_rgba(0,120,200,0.25)]">
-                    <GraphicScienceBook className="w-14 h-14" />
-                </div>
-                <div className="absolute bottom-16 right-10 anim-float-slow opacity-75 hover:opacity-100 drop-shadow-[0_6px_14px_rgba(200,100,0,0.25)]">
-                    <GraphicRocketLaunch className="w-12 h-12" />
-                </div>
-            </div>
+            {/* =========================================================================
+                PANEL NAVIGASI ATAS (TOP NAVBAR / TOP PANEL) - REKA BENTUK COMMON & STANDARD
+               ========================================================================= */}
+            <nav className="sticky top-0 z-50 w-full bg-white/95 backdrop-blur-md border-b-2 border-sky-100 shadow-[0_4px_25px_rgba(0,120,215,0.09)] select-none">
+                <div className="max-w-7xl mx-auto px-3 sm:px-6 py-2 sm:py-2.5 flex items-center justify-between gap-2 sm:gap-4">
+                    
+                    {/* KIRI: BRANDING & LOGO EXPLORIA */}
+                    <div 
+                        onClick={() => { playAudioFeedback("tap"); setCurrentView("menu"); }}
+                        className="flex items-center gap-2 sm:gap-2.5 cursor-pointer group shrink-0"
+                    >
+                        <img
+                            src="/logoexploria.png"
+                            alt="Logo Exploria"
+                            className="h-9 sm:h-11 w-auto object-contain transition-transform duration-200 group-hover:scale-105"
+                        />
+                        <div className="hidden min-[440px]:block text-left">
+                            <span className="font-black text-slate-900 text-sm sm:text-base tracking-tight leading-tight flex items-center gap-1">
+                                Exploria <span className="text-[#0099e5]">STEM</span>
+                            </span>
+                            <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">
+                                Portal Pembelajaran Murid
+                            </span>
+                        </div>
+                    </div>
 
-            {/* TEMA WARNA LATAR BELAKANG INTERAKTIF (PILIHAN CERIA & TERANG) */}
-            <div className="mb-4 z-20 flex items-center gap-1.5 bg-white/80 backdrop-blur-md px-3.5 py-1.5 rounded-full border-2 border-white/80 shadow-[0_8px_20px_rgba(0,100,200,0.15)] select-none">
-                <span className="text-[10px] font-black uppercase text-slate-700 pr-1 tracking-wider hidden sm:inline">
-                    Pilih Suasana Ceria:
-                </span>
-                <button
-                    type="button"
-                    onClick={() => { playAudioFeedback("sparkle"); setBgTheme("sky"); }}
-                    className={`px-3 py-1 rounded-full text-xs font-black transition-all flex items-center gap-1.5 cursor-pointer ${
-                        bgTheme === "sky" 
-                            ? "bg-gradient-to-r from-sky-500 to-blue-600 text-white shadow-md scale-105 border border-white/40" 
-                            : "text-slate-600 hover:text-slate-900 hover:bg-white/60"
-                    }`}
-                >
-                    <span>☀️</span>
-                    <span>Langit Sains</span>
-                </button>
-                <button
-                    type="button"
-                    onClick={() => { playAudioFeedback("sparkle"); setBgTheme("sunset"); }}
-                    className={`px-3 py-1 rounded-full text-xs font-black transition-all flex items-center gap-1.5 cursor-pointer ${
-                        bgTheme === "sunset" 
-                            ? "bg-gradient-to-r from-amber-500 to-rose-500 text-white shadow-md scale-105 border border-white/40" 
-                            : "text-slate-600 hover:text-slate-900 hover:bg-white/60"
-                    }`}
-                >
-                    <span>🌅</span>
-                    <span>Mentari Ceria</span>
-                </button>
-                <button
-                    type="button"
-                    onClick={() => { playAudioFeedback("sparkle"); setBgTheme("mint"); }}
-                    className={`px-3 py-1 rounded-full text-xs font-black transition-all flex items-center gap-1.5 cursor-pointer ${
-                        bgTheme === "mint" 
-                            ? "bg-gradient-to-r from-emerald-500 to-teal-600 text-white shadow-md scale-105 border border-white/40" 
-                            : "text-slate-600 hover:text-slate-900 hover:bg-white/60"
-                    }`}
-                >
-                    <span>🌿</span>
-                    <span>Mint Segar</span>
-                </button>
-            </div>
+                    {/* TENGAH: TAB NAVIGASI UTAMA (COMMON DESIGN - DESKTOP & TABLET) */}
+                    <div className="hidden md:flex items-center gap-1 bg-slate-100/90 p-1 rounded-2xl border border-slate-200 shadow-inner">
+                        {/* Tab 1: Menu Utama */}
+                        <button
+                            onClick={() => { playAudioFeedback("tap"); setCurrentView("menu"); }}
+                            className={`px-3.5 py-1.5 rounded-xl text-xs font-black transition-all flex items-center gap-1.5 cursor-pointer ${
+                                currentView === "menu"
+                                    ? "bg-white text-[#0099e5] shadow-sm border border-slate-200"
+                                    : "text-slate-600 hover:text-slate-900 hover:bg-white/60"
+                            }`}
+                        >
+                            <span>🏠</span>
+                            <span>Utama</span>
+                        </button>
 
-            {/* LOGO DI LUAR PAD (ATAS & CENTER) - GLOWING STATIK & SAIZ PROMINENT */}
-            <div className="mb-6 text-center relative flex items-center justify-center">
-                {/* Ambient Aura Cahaya Lembut di Belakang Logo */}
-                <div
-                    className="absolute w-80 sm:w-96 h-24 sm:h-28 bg-gradient-to-r from-sky-300/50 via-yellow-200/50 to-pink-300/50 rounded-full blur-2xl pointer-events-none"
-                    aria-hidden="true"
-                />
+                        {/* Tab 2: DASHBOARD (HIGHLIGHTED TAB DENGAN VIP BADGE) */}
+                        <button
+                            onClick={() => { playAudioFeedback("sparkle"); setCurrentView("dashboard"); }}
+                            className={`px-4 py-1.5 rounded-xl text-xs font-black transition-all flex items-center gap-1.5 cursor-pointer relative ${
+                                currentView === "dashboard"
+                                    ? "bg-gradient-to-r from-amber-400 via-orange-400 to-amber-500 text-slate-950 shadow-md ring-2 ring-amber-300 font-black scale-105"
+                                    : "text-slate-700 hover:text-slate-950 hover:bg-amber-100/70"
+                            }`}
+                        >
+                            <span className="text-sm">📊</span>
+                            <span>Dashboard</span>
+                            <span className="text-[9px] bg-red-500 text-white font-black px-1.5 py-0.2 rounded-full uppercase tracking-wider shadow-xs animate-pulse">
+                                VIP
+                            </span>
+                        </button>
 
-                <img
-                    src="/logoexploria.png"
-                    alt="Logo Exploria"
-                    className="relative z-10 h-28 sm:h-32 mx-auto object-contain select-none transition-all duration-300"
-                    style={{
-                        filter: 'drop-shadow(0 4px 14px rgba(0, 153, 229, 0.45)) drop-shadow(0 0 24px rgba(255, 204, 0, 0.55)) drop-shadow(0 10px 25px rgba(0, 80, 160, 0.2))'
-                    }}
-                />
-            </div>
+                        {/* Tab 3: Pembelajaran */}
+                        <button
+                            onClick={() => { playAudioFeedback("tap"); setCurrentView("learningList"); }}
+                            className={`px-3.5 py-1.5 rounded-xl text-xs font-black transition-all flex items-center gap-1.5 cursor-pointer ${
+                                currentView === "learningList" || currentView === "learningDetail"
+                                    ? "bg-white text-[#00acc1] shadow-sm border border-slate-200"
+                                    : "text-slate-600 hover:text-slate-900 hover:bg-white/60"
+                            }`}
+                        >
+                            <span>📖</span>
+                            <span>Nota Sains</span>
+                        </button>
 
-            {/* KOTAK UTAMA (PAD) DENGAN TEMA WARNA LOGO EXPLORIA & BAYANG CERAH */}
-            <div className={`w-full bg-white rounded-[2.5rem] shadow-[0_20px_60px_-10px_rgba(0,120,215,0.25)] overflow-hidden border-4 border-[#0099e5]/30 text-center transition-all duration-300 relative z-10 ${currentView === "solarDragDrop" || currentView === "dashboard" ? "max-w-4xl" : "max-w-3xl"}`}>
+                        {/* Tab 4: Kuiz Pantas */}
+                        <button
+                            onClick={() => { playAudioFeedback("tap"); setCurrentView("quizList"); }}
+                            className={`px-3.5 py-1.5 rounded-xl text-xs font-black transition-all flex items-center gap-1.5 cursor-pointer ${
+                                currentView === "quizList" || currentView === "quizRules" || currentView === "quiz"
+                                    ? "bg-white text-[#e65100] shadow-sm border border-slate-200"
+                                    : "text-slate-600 hover:text-slate-900 hover:bg-white/60"
+                            }`}
+                        >
+                            <span>⚡</span>
+                            <span>Kuiz 20s</span>
+                        </button>
+
+                        {/* Tab 5: Aktiviti Drag & Drop */}
+                        <button
+                            onClick={() => { playAudioFeedback("tap"); setCurrentView("solarDragDrop"); }}
+                            className={`px-3.5 py-1.5 rounded-xl text-xs font-black transition-all flex items-center gap-1.5 cursor-pointer ${
+                                currentView === "solarDragDrop" || currentView === "activityList"
+                                    ? "bg-white text-purple-700 shadow-sm border border-slate-200"
+                                    : "text-slate-600 hover:text-slate-900 hover:bg-white/60"
+                            }`}
+                        >
+                            <span>🪐</span>
+                            <span>Aktiviti Suria</span>
+                        </button>
+                    </div>
+
+                    {/* KANAN: STATUS PELAJAR & PILIHAN SUASANA TEMA */}
+                    <div className="flex items-center gap-1.5 sm:gap-3 shrink-0">
+                        {/* Theme switcher (compact) */}
+                        <div className="hidden sm:flex items-center gap-1 bg-slate-100 p-1 rounded-xl border border-slate-200">
+                            <button
+                                onClick={() => { playAudioFeedback("sparkle"); setBgTheme("sky"); }}
+                                title="Langit Sains (Biru Ceria)"
+                                className={`w-7 h-7 rounded-lg text-xs flex items-center justify-center transition-all ${
+                                    bgTheme === "sky" ? "bg-sky-500 text-white shadow-xs font-black" : "text-slate-600 hover:bg-white"
+                                }`}
+                            >
+                                ☀️
+                            </button>
+                            <button
+                                onClick={() => { playAudioFeedback("sparkle"); setBgTheme("sunset"); }}
+                                title="Mentari Ceria (Jingga Hangat)"
+                                className={`w-7 h-7 rounded-lg text-xs flex items-center justify-center transition-all ${
+                                    bgTheme === "sunset" ? "bg-amber-500 text-white shadow-xs font-black" : "text-slate-600 hover:bg-white"
+                                }`}
+                            >
+                                🌅
+                            </button>
+                            <button
+                                onClick={() => { playAudioFeedback("sparkle"); setBgTheme("mint"); }}
+                                title="Mint Segar (Hijau Tenang)"
+                                className={`w-7 h-7 rounded-lg text-xs flex items-center justify-center transition-all ${
+                                    bgTheme === "mint" ? "bg-emerald-500 text-white shadow-xs font-black" : "text-slate-600 hover:bg-white"
+                                }`}
+                            >
+                                🌿
+                            </button>
+                        </div>
+
+                        {/* Profile Chip / Dashboard Trigger Button */}
+                        <button
+                            onClick={() => { playAudioFeedback("sparkle"); setCurrentView("dashboard"); }}
+                            className="flex items-center gap-2 bg-gradient-to-r from-sky-50 to-blue-50 hover:from-sky-100 hover:to-blue-100 border-2 border-sky-200/90 py-1 px-2 sm:px-3 rounded-2xl shadow-xs cursor-pointer transition-all active:scale-95 group"
+                            title="Buka Dashboard Murid"
+                        >
+                            <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-amber-400 to-[#0099e5] p-0.5 shadow-xs">
+                                <div className="w-full h-full bg-slate-900 rounded-[0.6rem] flex items-center justify-center text-sm">
+                                    🤖
+                                </div>
+                            </div>
+                            <div className="text-left leading-tight hidden min-[520px]:block">
+                                <div className="flex items-center gap-1.5">
+                                    <span className="text-xs font-black text-slate-800">{studentName}</span>
+                                    <span className="text-[9px] font-black uppercase bg-amber-400 text-slate-950 px-1.5 py-0.2 rounded-md">
+                                        Lv. 3
+                                    </span>
+                                </div>
+                                <span className="text-[10px] font-bold text-sky-700 block">
+                                    1,450 XP • 🔥 7d
+                                </span>
+                            </div>
+                            <span className="text-xs sm:text-sm text-slate-400 group-hover:text-slate-700 transition-colors">
+                                📊
+                            </span>
+                        </button>
+                    </div>
+
+                </div>
+
+                {/* SUB-NAVIGASI UNTUK PERANTI MUDAH ALIH (MOBILE HORIZONTAL SCROLL) */}
+                <div className="md:hidden border-t border-slate-100 px-3 py-1.5 flex items-center gap-2 overflow-x-auto no-scrollbar bg-slate-50/95">
+                    <button
+                        onClick={() => { playAudioFeedback("tap"); setCurrentView("menu"); }}
+                        className={`px-3 py-1 rounded-xl text-xs font-black whitespace-nowrap flex items-center gap-1 ${
+                            currentView === "menu" ? "bg-[#0099e5] text-white shadow-xs" : "bg-white text-slate-700 border border-slate-200"
+                        }`}
+                    >
+                        🏠 Utama
+                    </button>
+                    <button
+                        onClick={() => { playAudioFeedback("sparkle"); setCurrentView("dashboard"); }}
+                        className={`px-3 py-1 rounded-xl text-xs font-black whitespace-nowrap flex items-center gap-1 ${
+                            currentView === "dashboard" ? "bg-amber-400 text-slate-950 shadow-xs ring-2 ring-amber-300 font-black" : "bg-white text-amber-700 border border-amber-300"
+                        }`}
+                    >
+                        📊 Dashboard
+                    </button>
+                    <button
+                        onClick={() => { playAudioFeedback("tap"); setCurrentView("learningList"); }}
+                        className={`px-3 py-1 rounded-xl text-xs font-black whitespace-nowrap flex items-center gap-1 ${
+                            currentView === "learningList" || currentView === "learningDetail" ? "bg-[#00acc1] text-white shadow-xs" : "bg-white text-slate-700 border border-slate-200"
+                        }`}
+                    >
+                        📖 Nota
+                    </button>
+                    <button
+                        onClick={() => { playAudioFeedback("tap"); setCurrentView("quizList"); }}
+                        className={`px-3 py-1 rounded-xl text-xs font-black whitespace-nowrap flex items-center gap-1 ${
+                            currentView === "quizList" || currentView === "quiz" ? "bg-[#e65100] text-white shadow-xs" : "bg-white text-slate-700 border border-slate-200"
+                        }`}
+                    >
+                        ⚡ Kuiz
+                    </button>
+                    <button
+                        onClick={() => { playAudioFeedback("tap"); setCurrentView("solarDragDrop"); }}
+                        className={`px-3 py-1 rounded-xl text-xs font-black whitespace-nowrap flex items-center gap-1 ${
+                            currentView === "solarDragDrop" ? "bg-purple-600 text-white shadow-xs" : "bg-white text-slate-700 border border-slate-200"
+                        }`}
+                    >
+                        🪐 Suria
+                    </button>
+                </div>
+            </nav>
+
+            {/* KANDUNGAN UTAMA (MAIN CONTAINER) */}
+            <main className="flex-1 w-full py-5 sm:py-8 px-3 sm:px-6 flex flex-col items-center justify-start relative z-10">
+
+                {/* FLOATING AMBIENT BACKGROUND PARTICLES */}
+                <div className="absolute inset-0 pointer-events-none overflow-hidden select-none" aria-hidden="true">
+                    <div className="absolute top-12 left-10 anim-float-slow opacity-75 hover:opacity-100 drop-shadow-[0_6px_14px_rgba(0,100,200,0.25)]">
+                        <GraphicSaturnPlanet className="w-14 h-14" />
+                    </div>
+                    <div className="absolute top-24 right-12 anim-float opacity-75 hover:opacity-100 drop-shadow-[0_6px_14px_rgba(0,150,100,0.25)]">
+                        <GraphicNatureLeaf className="w-12 h-12" />
+                    </div>
+                    <div className="absolute bottom-20 left-12 anim-float opacity-70 hover:opacity-100 drop-shadow-[0_6px_14px_rgba(0,120,200,0.25)]">
+                        <GraphicScienceBook className="w-14 h-14" />
+                    </div>
+                    <div className="absolute bottom-16 right-10 anim-float-slow opacity-75 hover:opacity-100 drop-shadow-[0_6px_14px_rgba(200,100,0,0.25)]">
+                        <GraphicRocketLaunch className="w-12 h-12" />
+                    </div>
+                </div>
+
+                {/* LOGO BESAR HANYA KETIKA MENU UTAMA */}
+                {currentView === "menu" && (
+                    <div className="mb-6 text-center relative flex items-center justify-center anim-fade-in">
+                        <div
+                            className="absolute w-80 sm:w-96 h-24 sm:h-28 bg-gradient-to-r from-sky-300/50 via-yellow-200/50 to-pink-300/50 rounded-full blur-2xl pointer-events-none"
+                            aria-hidden="true"
+                        />
+                        <img
+                            src="/logoexploria.png"
+                            alt="Logo Exploria"
+                            className="relative z-10 h-24 sm:h-28 mx-auto object-contain select-none transition-all duration-300"
+                            style={{
+                                filter: 'drop-shadow(0 4px 14px rgba(0, 153, 229, 0.45)) drop-shadow(0 0 24px rgba(255, 204, 0, 0.55)) drop-shadow(0 10px 25px rgba(0, 80, 160, 0.2))'
+                            }}
+                        />
+                    </div>
+                )}
+
+                {/* KOTAK UTAMA (PAD) DENGAN TEMA WARNA LOGO EXPLORIA & BAYANG CERAH */}
+                <div className={`w-full bg-white rounded-[2.5rem] shadow-[0_20px_60px_-10px_rgba(0,120,215,0.25)] overflow-hidden border-4 border-[#0099e5]/30 text-center transition-all duration-300 relative z-10 ${currentView === "solarDragDrop" || currentView === "dashboard" ? "max-w-4xl sm:max-w-5xl" : "max-w-3xl"}`}>
 
                 {/* Header dengan warna Biru Khas Logo Exploria */}
                 <div className="bg-gradient-to-r from-[#0088cc] via-[#0099e5] to-[#00b0ff] p-6 sm:p-8 text-white relative shadow-md flex flex-col items-center justify-center">
@@ -3148,29 +3315,138 @@ export default function LessonPage() {
                     {currentView === "dashboard" && (
                         <div className="space-y-6 w-full max-w-4xl anim-fade-in text-left">
 
-                            {/* Header Tajuk Dashboard & Butang Kembali */}
-                            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-slate-100 pb-4">
-                                <div>
-                                    <div className="flex items-center gap-2">
-                                        <span className="text-xs font-black uppercase tracking-wider bg-gradient-to-r from-amber-400 to-orange-500 text-slate-950 px-3 py-1 rounded-full shadow-sm">
-                                            🌟 Pusat Prestasi Pelajar
-                                        </span>
-                                        <span className="text-xs font-bold text-slate-400">• STEM Explorer</span>
+                            {/* =========================================================================
+                                PANEL KAT ATAS UNTUK DASHBOARD (DASHBOARD TOP CONTROL & TAB PANEL)
+                               ========================================================================= */}
+                            <div className="bg-gradient-to-r from-sky-50 via-white to-blue-50 rounded-3xl p-4 sm:p-5 border-2 border-sky-200/90 shadow-md space-y-3.5">
+                                
+                                {/* BARIS ATAS: TAJUK, STATUS & PINTASAN AKSI */}
+                                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-sky-100 pb-3.5">
+                                    <div className="flex items-center gap-3">
+                                        <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-[#0099e5] to-indigo-600 text-white flex items-center justify-center text-2xl font-black shadow-md shrink-0">
+                                            📊
+                                        </div>
+                                        <div>
+                                            <div className="flex items-center gap-2">
+                                                <span className="text-[10px] font-black uppercase tracking-wider bg-amber-400 text-slate-950 px-2.5 py-0.5 rounded-full shadow-xs">
+                                                    Pusat Prestasi STEM
+                                                </span>
+                                                <span className="text-xs font-bold text-emerald-600 flex items-center gap-1">
+                                                    <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                                                    Aktif Hari Ini
+                                                </span>
+                                            </div>
+                                            <h2 className="text-xl sm:text-2xl font-black text-slate-900 mt-0.5 leading-tight">
+                                                Dashboard Prestasi Penjelajah
+                                            </h2>
+                                            <p className="text-xs text-slate-500 font-medium">
+                                                Selamat kembali, <strong>{studentName}</strong>! Pantau rekod kuiz, orbit suria, kemahiran & lencana anda.
+                                            </p>
+                                        </div>
                                     </div>
-                                    <h2 className="text-2xl sm:text-3xl font-black text-[#0099e5] mt-1 drop-shadow-sm">
-                                        Dashboard Prestasi STEM
-                                    </h2>
-                                    <p className="text-xs text-slate-500 mt-0.5">
-                                        Pantau kemajuan pembelajaran, skor aktiviti, penguasaan kemahiran, dan koleksi lencana anda.
-                                    </p>
+
+                                    {/* BUTANG PINTASAN DI ATAS PANEL */}
+                                    <div className="flex items-center gap-2 flex-wrap self-end sm:self-center shrink-0">
+                                        <button
+                                            onClick={() => { playAudioFeedback("tap"); setCurrentView("solarDragDrop"); }}
+                                            className="px-3 py-1.5 bg-purple-600 hover:bg-purple-700 text-white text-xs font-black rounded-xl shadow-xs cursor-pointer flex items-center gap-1.5 transition-all active:scale-95"
+                                            title="Main Drag & Drop Sistem Suria"
+                                        >
+                                            <span>🪐</span>
+                                            <span className="hidden sm:inline">Main</span> Suria
+                                        </button>
+                                        <button
+                                            onClick={() => { playAudioFeedback("tap"); setCurrentView("quizList"); }}
+                                            className="px-3 py-1.5 bg-amber-500 hover:bg-amber-600 text-slate-950 text-xs font-black rounded-xl shadow-xs cursor-pointer flex items-center gap-1.5 transition-all active:scale-95"
+                                            title="Cabar Kuiz Pantas 20s"
+                                        >
+                                            <GraphicLightningBolt className="w-3.5 h-3.5" />
+                                            <span className="hidden sm:inline">Cabar</span> Kuiz
+                                        </button>
+                                        <button
+                                            onClick={() => { playAudioFeedback("tap"); setCurrentView("menu"); }}
+                                            className="px-3 py-1.5 btn-3d-white text-slate-700 text-xs font-black rounded-xl border border-slate-200 shadow-xs cursor-pointer flex items-center gap-1.5 transition-all active:scale-95"
+                                            title="Kembali ke Menu Utama"
+                                        >
+                                            <GraphicBackArrow className="w-3.5 h-3.5" />
+                                            <span>Menu</span>
+                                        </button>
+                                    </div>
                                 </div>
-                                <button
-                                    onClick={() => { playAudioFeedback("tap"); setCurrentView("menu"); }}
-                                    className="px-4 py-2.5 btn-3d-white text-slate-700 font-black rounded-xl text-xs cursor-pointer flex items-center gap-2 border border-slate-200 shrink-0 self-start sm:self-center"
-                                >
-                                    <GraphicBackArrow className="w-4 h-4 text-slate-600" />
-                                    <span>Kembali ke Menu</span>
-                                </button>
+
+                                {/* BARIS BAWAH: TAB FILTER KATEGORI (PANEL FILTER ATAS) */}
+                                <div className="flex items-center gap-1.5 sm:gap-2 overflow-x-auto no-scrollbar pt-0.5">
+                                    <span className="text-[11px] font-black uppercase text-slate-400 shrink-0 pr-1 hidden sm:inline">
+                                        Paparan Panel:
+                                    </span>
+                                    <button
+                                        onClick={() => { playAudioFeedback("tap"); setDashboardActiveTab("all"); }}
+                                        className={`px-3.5 py-1.5 rounded-xl text-xs font-black whitespace-nowrap transition-all flex items-center gap-1.5 cursor-pointer ${
+                                            dashboardActiveTab === "all"
+                                                ? "bg-[#0099e5] text-white shadow-sm ring-2 ring-sky-300"
+                                                : "bg-white hover:bg-sky-50 text-slate-700 border border-slate-200"
+                                        }`}
+                                    >
+                                        <span>📌</span>
+                                        <span>Semua Ringkasan</span>
+                                    </button>
+                                    <button
+                                        onClick={() => { playAudioFeedback("tap"); setDashboardActiveTab("records"); }}
+                                        className={`px-3.5 py-1.5 rounded-xl text-xs font-black whitespace-nowrap transition-all flex items-center gap-1.5 cursor-pointer ${
+                                            dashboardActiveTab === "records"
+                                                ? "bg-purple-600 text-white shadow-sm ring-2 ring-purple-300"
+                                                : "bg-white hover:bg-purple-50 text-slate-700 border border-slate-200"
+                                        }`}
+                                    >
+                                        <span>🎯</span>
+                                        <span>Rekod Aktiviti</span>
+                                        <span className={`text-[9px] px-1.5 py-0.2 rounded-full font-black ${dashboardActiveTab === "records" ? "bg-white/20 text-white" : "bg-purple-100 text-purple-700"}`}>
+                                            4
+                                        </span>
+                                    </button>
+                                    <button
+                                        onClick={() => { playAudioFeedback("tap"); setDashboardActiveTab("skills"); }}
+                                        className={`px-3.5 py-1.5 rounded-xl text-xs font-black whitespace-nowrap transition-all flex items-center gap-1.5 cursor-pointer ${
+                                            dashboardActiveTab === "skills"
+                                                ? "bg-teal-600 text-white shadow-sm ring-2 ring-teal-300"
+                                                : "bg-white hover:bg-teal-50 text-slate-700 border border-slate-200"
+                                        }`}
+                                    >
+                                        <span>🧬</span>
+                                        <span>Kemahiran STEM</span>
+                                        <span className={`text-[9px] px-1.5 py-0.2 rounded-full font-black ${dashboardActiveTab === "skills" ? "bg-white/20 text-white" : "bg-teal-100 text-teal-800"}`}>
+                                            90%
+                                        </span>
+                                    </button>
+                                    <button
+                                        onClick={() => { playAudioFeedback("tap"); setDashboardActiveTab("quests"); }}
+                                        className={`px-3.5 py-1.5 rounded-xl text-xs font-black whitespace-nowrap transition-all flex items-center gap-1.5 cursor-pointer ${
+                                            dashboardActiveTab === "quests"
+                                                ? "bg-emerald-600 text-white shadow-sm ring-2 ring-emerald-300"
+                                                : "bg-white hover:bg-emerald-50 text-slate-700 border border-slate-200"
+                                        }`}
+                                    >
+                                        <span>📋</span>
+                                        <span>Misi Harian</span>
+                                        <span className={`text-[9px] px-1.5 py-0.2 rounded-full font-black ${dashboardActiveTab === "quests" ? "bg-white/20 text-white" : "bg-emerald-100 text-emerald-800"}`}>
+                                            3/3
+                                        </span>
+                                    </button>
+                                    <button
+                                        onClick={() => { playAudioFeedback("sparkle"); setDashboardActiveTab("badges"); }}
+                                        className={`px-3.5 py-1.5 rounded-xl text-xs font-black whitespace-nowrap transition-all flex items-center gap-1.5 cursor-pointer ${
+                                            dashboardActiveTab === "badges"
+                                                ? "bg-gradient-to-r from-amber-400 to-orange-500 text-slate-950 shadow-sm ring-2 ring-amber-300 font-black"
+                                                : "bg-white hover:bg-amber-50 text-amber-800 border border-amber-300"
+                                        }`}
+                                    >
+                                        <span>🏆</span>
+                                        <span>Peti Lencana</span>
+                                        <span className={`text-[9px] px-1.5 py-0.2 rounded-full font-black ${dashboardActiveTab === "badges" ? "bg-slate-950 text-amber-300" : "bg-amber-100 text-amber-800"}`}>
+                                            6
+                                        </span>
+                                    </button>
+                                </div>
                             </div>
 
                             {/* KAD PROFIL HERO: TAHAP, XP & STREAK (3D GRADIENT WITH SPARKLE) */}
@@ -3299,308 +3575,321 @@ export default function LessonPage() {
                             </div>
 
                             {/* 4 KAD REKOD & PENCAPAIAN UTAMA (3D CARDS GRID) */}
-                            <div>
-                                <h3 className="text-base sm:text-lg font-black text-slate-800 flex items-center gap-2 mb-3">
-                                    <span>🎯</span>
-                                    <span>Rekod & Pencapaian Aktiviti</span>
-                                </h3>
+                            {(dashboardActiveTab === "all" || dashboardActiveTab === "records") && (
+                                <div className="anim-fade-in">
+                                    <h3 className="text-base sm:text-lg font-black text-slate-800 flex items-center gap-2 mb-3">
+                                        <span>🎯</span>
+                                        <span>Rekod & Pencapaian Aktiviti</span>
+                                    </h3>
 
-                                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                                    {/* Kad 1: Sistem Suria Drag & Drop */}
-                                    <div className="bg-gradient-to-b from-purple-500/10 via-white to-purple-50 rounded-3xl p-5 border-2 border-purple-200 shadow-md hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between group">
-                                        <div>
-                                            <div className="flex items-center justify-between mb-3">
-                                                <div className="w-12 h-12 rounded-2xl bg-purple-100 border-2 border-purple-300 flex items-center justify-center text-2xl group-hover:scale-110 group-hover:rotate-6 transition-all shadow-sm">
-                                                    🪐
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                                        {/* Kad 1: Sistem Suria Drag & Drop */}
+                                        <div className="bg-gradient-to-b from-purple-500/10 via-white to-purple-50 rounded-3xl p-5 border-2 border-purple-200 shadow-md hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between group">
+                                            <div>
+                                                <div className="flex items-center justify-between mb-3">
+                                                    <div className="w-12 h-12 rounded-2xl bg-purple-100 border-2 border-purple-300 flex items-center justify-center text-2xl group-hover:scale-110 group-hover:rotate-6 transition-all shadow-sm">
+                                                        🪐
+                                                    </div>
+                                                    <span className="text-[10px] font-black uppercase tracking-wider bg-purple-100 text-purple-700 px-2.5 py-1 rounded-full border border-purple-200">
+                                                        Sempurna
+                                                    </span>
                                                 </div>
-                                                <span className="text-[10px] font-black uppercase tracking-wider bg-purple-100 text-purple-700 px-2.5 py-1 rounded-full border border-purple-200">
-                                                    Sempurna
-                                                </span>
+                                                <h4 className="text-xs font-black uppercase tracking-wider text-purple-700">Aktiviti Suria</h4>
+                                                <div className="text-2xl sm:text-3xl font-black text-slate-900 mt-1">
+                                                    {solarSubmitted && solarScore > 0 ? solarScore : 800} <span className="text-xs font-bold text-slate-400">/ 800</span>
+                                                </div>
+                                                <p className="text-[11px] text-slate-500 mt-1 font-medium leading-tight">
+                                                    8 daripada 8 planet berada di orbit tepat.
+                                                </p>
                                             </div>
-                                            <h4 className="text-xs font-black uppercase tracking-wider text-purple-700">Aktiviti Suria</h4>
-                                            <div className="text-2xl sm:text-3xl font-black text-slate-900 mt-1">
-                                                {solarSubmitted && solarScore > 0 ? solarScore : 800} <span className="text-xs font-bold text-slate-400">/ 800</span>
-                                            </div>
-                                            <p className="text-[11px] text-slate-500 mt-1 font-medium leading-tight">
-                                                8 daripada 8 planet berada di orbit tepat.
-                                            </p>
+                                            <button
+                                                onClick={() => { playAudioFeedback("tap"); setCurrentView("solarDragDrop"); }}
+                                                className="mt-4 w-full py-2 bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 text-white text-xs font-black rounded-xl shadow-md cursor-pointer transition-all flex items-center justify-center gap-1.5"
+                                            >
+                                                <span>🎮</span>
+                                                <span>Main Semula</span>
+                                            </button>
                                         </div>
-                                        <button
-                                            onClick={() => { playAudioFeedback("tap"); setCurrentView("solarDragDrop"); }}
-                                            className="mt-4 w-full py-2 bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 text-white text-xs font-black rounded-xl shadow-md cursor-pointer transition-all flex items-center justify-center gap-1.5"
-                                        >
-                                            <span>🎮</span>
-                                            <span>Main Semula</span>
-                                        </button>
-                                    </div>
 
-                                    {/* Kad 2: Kuiz Pantas 20s */}
-                                    <div className="bg-gradient-to-b from-amber-500/10 via-white to-amber-50 rounded-3xl p-5 border-2 border-amber-200 shadow-md hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between group">
-                                        <div>
-                                            <div className="flex items-center justify-between mb-3">
-                                                <div className="w-12 h-12 rounded-2xl bg-amber-100 border-2 border-amber-300 flex items-center justify-center text-2xl group-hover:scale-110 group-hover:-rotate-6 transition-all shadow-sm">
-                                                    ⚡
+                                        {/* Kad 2: Kuiz Pantas 20s */}
+                                        <div className="bg-gradient-to-b from-amber-500/10 via-white to-amber-50 rounded-3xl p-5 border-2 border-amber-200 shadow-md hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between group">
+                                            <div>
+                                                <div className="flex items-center justify-between mb-3">
+                                                    <div className="w-12 h-12 rounded-2xl bg-amber-100 border-2 border-amber-300 flex items-center justify-center text-2xl group-hover:scale-110 group-hover:-rotate-6 transition-all shadow-sm">
+                                                        ⚡
+                                                    </div>
+                                                    <span className="text-[10px] font-black uppercase tracking-wider bg-amber-100 text-amber-800 px-2.5 py-1 rounded-full border border-amber-200">
+                                                        Skor Maks
+                                                    </span>
                                                 </div>
-                                                <span className="text-[10px] font-black uppercase tracking-wider bg-amber-100 text-amber-800 px-2.5 py-1 rounded-full border border-amber-200">
-                                                    Skor Maks
-                                                </span>
+                                                <h4 className="text-xs font-black uppercase tracking-wider text-amber-700">Kuiz Pantas 20s</h4>
+                                                <div className="text-2xl sm:text-3xl font-black text-slate-900 mt-1">
+                                                    {scoreCount > 0 ? scoreCount * 100 : 500} <span className="text-xs font-bold text-slate-400">/ 500</span>
+                                                </div>
+                                                <p className="text-[11px] text-slate-500 mt-1 font-medium leading-tight">
+                                                    Rekod 5/5 jawapan betul berturut-turut!
+                                                </p>
                                             </div>
-                                            <h4 className="text-xs font-black uppercase tracking-wider text-amber-700">Kuiz Pantas 20s</h4>
-                                            <div className="text-2xl sm:text-3xl font-black text-slate-900 mt-1">
-                                                {scoreCount > 0 ? scoreCount * 100 : 500} <span className="text-xs font-bold text-slate-400">/ 500</span>
-                                            </div>
-                                            <p className="text-[11px] text-slate-500 mt-1 font-medium leading-tight">
-                                                Rekod 5/5 jawapan betul berturut-turut!
-                                            </p>
+                                            <button
+                                                onClick={() => { playAudioFeedback("tap"); setCurrentView("quizList"); }}
+                                                className="mt-4 w-full py-2 bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-500 hover:to-orange-600 text-slate-950 text-xs font-black rounded-xl shadow-md cursor-pointer transition-all flex items-center justify-center gap-1.5"
+                                            >
+                                                <GraphicLightningBolt className="w-3.5 h-3.5" />
+                                                <span>Cabar Kuiz</span>
+                                            </button>
                                         </div>
-                                        <button
-                                            onClick={() => { playAudioFeedback("tap"); setCurrentView("quizList"); }}
-                                            className="mt-4 w-full py-2 bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-500 hover:to-orange-600 text-slate-950 text-xs font-black rounded-xl shadow-md cursor-pointer transition-all flex items-center justify-center gap-1.5"
-                                        >
-                                            <GraphicLightningBolt className="w-3.5 h-3.5" />
-                                            <span>Cabar Kuiz</span>
-                                        </button>
-                                    </div>
 
-                                    {/* Kad 3: Modul Nota Dibaca */}
-                                    <div className="bg-gradient-to-b from-sky-500/10 via-white to-sky-50 rounded-3xl p-5 border-2 border-sky-200 shadow-md hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between group">
-                                        <div>
-                                            <div className="flex items-center justify-between mb-3">
-                                                <div className="w-12 h-12 rounded-2xl bg-sky-100 border-2 border-sky-300 flex items-center justify-center text-2xl group-hover:scale-110 group-hover:rotate-6 transition-all shadow-sm">
-                                                    📖
+                                        {/* Kad 3: Modul Nota Dibaca */}
+                                        <div className="bg-gradient-to-b from-sky-500/10 via-white to-sky-50 rounded-3xl p-5 border-2 border-sky-200 shadow-md hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between group">
+                                            <div>
+                                                <div className="flex items-center justify-between mb-3">
+                                                    <div className="w-12 h-12 rounded-2xl bg-sky-100 border-2 border-sky-300 flex items-center justify-center text-2xl group-hover:scale-110 group-hover:rotate-6 transition-all shadow-sm">
+                                                        📖
+                                                    </div>
+                                                    <span className="text-[10px] font-black uppercase tracking-wider bg-sky-100 text-sky-800 px-2.5 py-1 rounded-full border border-sky-200">
+                                                        100% Selesai
+                                                    </span>
                                                 </div>
-                                                <span className="text-[10px] font-black uppercase tracking-wider bg-sky-100 text-sky-800 px-2.5 py-1 rounded-full border border-sky-200">
-                                                    100% Selesai
-                                                </span>
+                                                <h4 className="text-xs font-black uppercase tracking-wider text-sky-700">Nota Sains</h4>
+                                                <div className="text-2xl sm:text-3xl font-black text-slate-900 mt-1">
+                                                    2 <span className="text-xs font-bold text-slate-400">/ 2 Topik</span>
+                                                </div>
+                                                <p className="text-[11px] text-slate-500 mt-1 font-medium leading-tight">
+                                                    Sistem Suria & Fotosintesis ditamatkan.
+                                                </p>
                                             </div>
-                                            <h4 className="text-xs font-black uppercase tracking-wider text-sky-700">Nota Sains</h4>
-                                            <div className="text-2xl sm:text-3xl font-black text-slate-900 mt-1">
-                                                2 <span className="text-xs font-bold text-slate-400">/ 2 Topik</span>
-                                            </div>
-                                            <p className="text-[11px] text-slate-500 mt-1 font-medium leading-tight">
-                                                Sistem Suria & Fotosintesis ditamatkan.
-                                            </p>
+                                            <button
+                                                onClick={() => { playAudioFeedback("tap"); setCurrentView("learningList"); }}
+                                                className="mt-4 w-full py-2 bg-gradient-to-r from-sky-400 to-blue-500 hover:from-sky-500 hover:to-blue-600 text-white text-xs font-black rounded-xl shadow-md cursor-pointer transition-all flex items-center justify-center gap-1.5"
+                                            >
+                                                <GraphicBookOpen className="w-3.5 h-3.5" />
+                                                <span>Ulang Kaji</span>
+                                            </button>
                                         </div>
-                                        <button
-                                            onClick={() => { playAudioFeedback("tap"); setCurrentView("learningList"); }}
-                                            className="mt-4 w-full py-2 bg-gradient-to-r from-sky-400 to-blue-500 hover:from-sky-500 hover:to-blue-600 text-white text-xs font-black rounded-xl shadow-md cursor-pointer transition-all flex items-center justify-center gap-1.5"
-                                        >
-                                            <GraphicBookOpen className="w-3.5 h-3.5" />
-                                            <span>Ulang Kaji</span>
-                                        </button>
-                                    </div>
 
-                                    {/* Kad 4: Kepantasan Analisis Minda */}
-                                    <div className="bg-gradient-to-b from-emerald-500/10 via-white to-emerald-50 rounded-3xl p-5 border-2 border-emerald-200 shadow-md hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between group">
-                                        <div>
-                                            <div className="flex items-center justify-between mb-3">
-                                                <div className="w-12 h-12 rounded-2xl bg-emerald-100 border-2 border-emerald-300 flex items-center justify-center text-2xl group-hover:scale-110 group-hover:-rotate-6 transition-all shadow-sm">
-                                                    ⏱️
+                                        {/* Kad 4: Kepantasan Analisis Minda */}
+                                        <div className="bg-gradient-to-b from-emerald-500/10 via-white to-emerald-50 rounded-3xl p-5 border-2 border-emerald-200 shadow-md hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between group">
+                                            <div>
+                                                <div className="flex items-center justify-between mb-3">
+                                                    <div className="w-12 h-12 rounded-2xl bg-emerald-100 border-2 border-emerald-300 flex items-center justify-center text-2xl group-hover:scale-110 group-hover:-rotate-6 transition-all shadow-sm">
+                                                        ⏱️
+                                                    </div>
+                                                    <span className="text-[10px] font-black uppercase tracking-wider bg-emerald-100 text-emerald-800 px-2.5 py-1 rounded-full border border-emerald-200">
+                                                        Respons Kilat
+                                                    </span>
                                                 </div>
-                                                <span className="text-[10px] font-black uppercase tracking-wider bg-emerald-100 text-emerald-800 px-2.5 py-1 rounded-full border border-emerald-200">
-                                                    Respons Kilat
-                                                </span>
+                                                <h4 className="text-xs font-black uppercase tracking-wider text-emerald-700">Kelajuan Minda</h4>
+                                                <div className="text-2xl sm:text-3xl font-black text-slate-900 mt-1">
+                                                    7.2s <span className="text-xs font-bold text-slate-400">purata</span>
+                                                </div>
+                                                <p className="text-[11px] text-slate-500 mt-1 font-medium leading-tight">
+                                                    Masa respons pantas dari had 20 saat!
+                                                </p>
                                             </div>
-                                            <h4 className="text-xs font-black uppercase tracking-wider text-emerald-700">Kelajuan Minda</h4>
-                                            <div className="text-2xl sm:text-3xl font-black text-slate-900 mt-1">
-                                                7.2s <span className="text-xs font-bold text-slate-400">purata</span>
-                                            </div>
-                                            <p className="text-[11px] text-slate-500 mt-1 font-medium leading-tight">
-                                                Masa respons pantas dari had 20 saat!
-                                            </p>
+                                            <button
+                                                onClick={() => { playAudioFeedback("tap"); setCurrentView("quizList"); }}
+                                                className="mt-4 w-full py-2 bg-gradient-to-r from-emerald-400 to-teal-500 hover:from-emerald-500 hover:to-teal-600 text-white text-xs font-black rounded-xl shadow-md cursor-pointer transition-all flex items-center justify-center gap-1.5"
+                                            >
+                                                <span>⚡</span>
+                                                <span>Latih Laju</span>
+                                            </button>
                                         </div>
-                                        <button
-                                            onClick={() => { playAudioFeedback("tap"); setCurrentView("quizList"); }}
-                                            className="mt-4 w-full py-2 bg-gradient-to-r from-emerald-400 to-teal-500 hover:from-emerald-500 hover:to-teal-600 text-white text-xs font-black rounded-xl shadow-md cursor-pointer transition-all flex items-center justify-center gap-1.5"
-                                        >
-                                            <span>⚡</span>
-                                            <span>Latih Laju</span>
-                                        </button>
                                     </div>
                                 </div>
-                            </div>
+                            )}
 
                             {/* DUA LAJUR: KOMPETENSI STEM (KIRI) & MISI HARIAN (KANAN) */}
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-5 pt-2">
+                            {(dashboardActiveTab === "all" || dashboardActiveTab === "skills" || dashboardActiveTab === "quests") && (
+                                <div className={`grid gap-5 pt-2 anim-fade-in ${dashboardActiveTab === "all" ? "grid-cols-1 md:grid-cols-2" : "grid-cols-1"}`}>
 
-                                {/* Lajur Kiri: Penguasaan Kemahiran STEM */}
-                                <div className="bg-slate-50 rounded-3xl p-5 border-2 border-slate-200/80 shadow-sm">
-                                    <div className="flex items-center justify-between mb-4">
-                                        <div className="flex items-center gap-2">
-                                            <span className="text-xl">🧬</span>
-                                            <h3 className="text-sm sm:text-base font-black text-slate-800">
-                                                Kompetensi & Kemahiran STEM
-                                            </h3>
+                                    {/* Lajur Kiri: Penguasaan Kemahiran STEM */}
+                                    {(dashboardActiveTab === "all" || dashboardActiveTab === "skills") && (
+                                        <div className="bg-slate-50 rounded-3xl p-5 border-2 border-slate-200/80 shadow-sm flex flex-col justify-between">
+                                            <div>
+                                                <div className="flex items-center justify-between mb-4">
+                                                    <div className="flex items-center gap-2">
+                                                        <span className="text-xl">🧬</span>
+                                                        <h3 className="text-sm sm:text-base font-black text-slate-800">
+                                                            Kompetensi & Kemahiran STEM
+                                                        </h3>
+                                                    </div>
+                                                    <span className="text-[10px] font-black text-indigo-700 bg-indigo-100 px-2 py-0.5 rounded-full">
+                                                        Purata 90%
+                                                    </span>
+                                                </div>
+
+                                                <div className="space-y-4">
+                                                    {STEM_SKILLS.map((skill, idx) => (
+                                                        <div key={idx} className="space-y-1.5">
+                                                            <div className="flex items-center justify-between text-xs">
+                                                                <span className="font-black text-slate-700 flex items-center gap-1.5">
+                                                                    <span>{skill.icon}</span>
+                                                                    <span>{skill.name}</span>
+                                                                </span>
+                                                                <div className="flex items-center gap-1.5">
+                                                                    <span className={`text-[10px] font-black px-2 py-0.5 rounded-full ${skill.bgBadge} ${skill.textColor}`}>
+                                                                        {skill.status}
+                                                                    </span>
+                                                                    <span className="font-black text-slate-900">{skill.score}%</span>
+                                                                </div>
+                                                            </div>
+                                                            <div className="w-full h-2.5 bg-slate-200 rounded-full overflow-hidden p-0.5 shadow-inner">
+                                                                <div
+                                                                    className={`h-full rounded-full transition-all duration-700 ${skill.barColor}`}
+                                                                    style={{ width: `${skill.score}%` }}
+                                                                />
+                                                            </div>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            </div>
+
+                                            <div className="mt-5 p-3 bg-gradient-to-r from-blue-50 to-sky-50 rounded-2xl border border-sky-200 flex items-center gap-3">
+                                                <div className="w-9 h-9 rounded-xl bg-sky-200/70 flex items-center justify-center text-lg shrink-0">
+                                                    💡
+                                                </div>
+                                                <p className="text-[11px] text-slate-600 font-medium leading-snug">
+                                                    <strong>Tip Cikgu Robot:</strong> Kemahiran astronomi anda sangat cemerlang! Teruskan mengulang kaji fotosintesis untuk mencapai 100% skor.
+                                                </p>
+                                            </div>
                                         </div>
-                                        <span className="text-[10px] font-black text-indigo-700 bg-indigo-100 px-2 py-0.5 rounded-full">
-                                            Purata 90%
+                                    )}
+
+                                    {/* Lajur Kanan: Misi Harian & Ganjaran XP */}
+                                    {(dashboardActiveTab === "all" || dashboardActiveTab === "quests") && (
+                                        <div className="bg-slate-50 rounded-3xl p-5 border-2 border-slate-200/80 shadow-sm flex flex-col justify-between">
+                                            <div>
+                                                <div className="flex items-center justify-between mb-4">
+                                                    <div className="flex items-center gap-2">
+                                                        <span className="text-xl">📋</span>
+                                                        <h3 className="text-sm sm:text-base font-black text-slate-800">
+                                                            Misi Harian Penjelajah
+                                                        </h3>
+                                                    </div>
+                                                    <span className="text-[10px] font-black text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded-full">
+                                                        3/3 Selesai
+                                                    </span>
+                                                </div>
+
+                                                <div className="space-y-3">
+                                                    {DAILY_QUESTS.map((quest) => (
+                                                        <div
+                                                            key={quest.id}
+                                                            className="bg-white rounded-2xl p-3.5 border-2 border-slate-200 flex items-center justify-between gap-3 shadow-xs hover:border-sky-300 transition-all"
+                                                        >
+                                                            <div className="flex items-center gap-3">
+                                                                <div className="w-10 h-10 rounded-xl bg-slate-100 border border-slate-200 flex items-center justify-center text-xl shrink-0">
+                                                                    {quest.icon}
+                                                                </div>
+                                                                <div>
+                                                                    <h4 className="text-xs font-black text-slate-800 leading-snug">
+                                                                        {quest.title}
+                                                                    </h4>
+                                                                    <div className="flex items-center gap-1.5 mt-0.5">
+                                                                        <span className={`text-[9px] font-black px-2 py-0.5 rounded-full ${quest.colorBadge}`}>
+                                                                            {quest.category}
+                                                                        </span>
+                                                                        <span className="text-[10px] font-black text-amber-600">
+                                                                            {quest.xp}
+                                                                        </span>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+                                                            <div className="shrink-0 flex items-center gap-2">
+                                                                <span className="w-6 h-6 rounded-full bg-emerald-500 text-white flex items-center justify-center text-xs font-black shadow-sm">
+                                                                    ✓
+                                                                </span>
+                                                                <button
+                                                                    onClick={() => { playAudioFeedback("tap"); setCurrentView(quest.targetView); }}
+                                                                    className="px-2.5 py-1 text-[11px] font-black text-sky-700 hover:text-sky-900 bg-sky-50 hover:bg-sky-100 rounded-lg cursor-pointer transition-all border border-sky-200"
+                                                                >
+                                                                    Buka
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            </div>
+
+                                            {/* Bonus Harian Ditebus */}
+                                            <div className="mt-4 p-3.5 bg-gradient-to-r from-amber-400/20 via-orange-400/20 to-yellow-400/20 rounded-2xl border-2 border-amber-300 flex items-center justify-between">
+                                                <div className="flex items-center gap-2.5">
+                                                    <span className="text-2xl animate-bounce">🎁</span>
+                                                    <div>
+                                                        <span className="text-[10px] uppercase font-black text-amber-800 block">Bonus Misi Harian</span>
+                                                        <span className="text-xs font-black text-slate-900">+300 XP Berjaya Ditebus!</span>
+                                                    </div>
+                                                </div>
+                                                <span className="px-3 py-1 bg-amber-400 text-slate-950 font-black text-xs rounded-xl shadow-sm">
+                                                    Ditebus ✅
+                                                </span>
+                                            </div>
+                                        </div>
+                                    )}
+
+                                </div>
+                            )}
+
+                            {/* KOLEKSI LENCANA & PETI TROFI STEM (INTERACTIVE CABINET) */}
+                            {(dashboardActiveTab === "all" || dashboardActiveTab === "badges") && (
+                                <div className="bg-gradient-to-b from-sky-50/70 via-white to-slate-50 rounded-3xl p-6 border-2 border-sky-200 shadow-md anim-fade-in">
+                                    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 mb-4">
+                                        <div>
+                                            <h3 className="text-base sm:text-lg font-black text-slate-900 flex items-center gap-2">
+                                                <span>🏆</span>
+                                                <span>Peti Lencana & Trofi Kehormatan STEM</span>
+                                            </h3>
+                                            <p className="text-xs text-slate-500 mt-0.5">
+                                                Klik mana-mana lencana untuk melihat butiran pencapaian dan fakta sains unik!
+                                            </p>
+                                        </div>
+                                        <span className="text-xs font-black text-amber-800 bg-amber-100 px-3 py-1 rounded-full border border-amber-300 self-start sm:self-center shadow-xs">
+                                            6 / 6 Lencana Terkumpul 🏅
                                         </span>
                                     </div>
 
-                                    <div className="space-y-4">
-                                        {STEM_SKILLS.map((skill, idx) => (
-                                            <div key={idx} className="space-y-1.5">
-                                                <div className="flex items-center justify-between text-xs">
-                                                    <span className="font-black text-slate-700 flex items-center gap-1.5">
-                                                        <span>{skill.icon}</span>
-                                                        <span>{skill.name}</span>
-                                                    </span>
-                                                    <div className="flex items-center gap-1.5">
-                                                        <span className={`text-[10px] font-black px-2 py-0.5 rounded-full ${skill.bgBadge} ${skill.textColor}`}>
-                                                            {skill.status}
-                                                        </span>
-                                                        <span className="font-black text-slate-900">{skill.score}%</span>
+                                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3.5 pt-2">
+                                        {DASHBOARD_BADGES.map((badge) => (
+                                            <div
+                                                key={badge.id}
+                                                onClick={() => {
+                                                    playAudioFeedback("sparkle");
+                                                    setSelectedBadgeModal(badge);
+                                                }}
+                                                className="bg-white rounded-2xl p-3 border-2 border-slate-200 hover:border-amber-400 shadow-sm hover:shadow-xl hover:-translate-y-1.5 active:scale-95 transition-all duration-300 cursor-pointer flex flex-col items-center text-center group relative overflow-hidden"
+                                            >
+                                                {/* Top Level Pill */}
+                                                <span className="text-[9px] font-black uppercase text-amber-800 bg-amber-50 px-2 py-0.5 rounded-full border border-amber-200 mb-2">
+                                                    {badge.level}
+                                                </span>
+
+                                                {/* Badge Icon With 3D Halo */}
+                                                <div className="relative mb-2">
+                                                    <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-amber-400 via-orange-400 to-rose-400 p-0.5 shadow-md group-hover:rotate-6 group-hover:scale-110 transition-all">
+                                                        <div className="w-full h-full bg-slate-900 rounded-[0.9rem] flex items-center justify-center text-2xl">
+                                                            {badge.icon}
+                                                        </div>
                                                     </div>
+                                                    <span className="absolute -bottom-1 -right-1 w-5 h-5 bg-emerald-500 rounded-full text-white text-[10px] font-black flex items-center justify-center border border-white shadow-xs">
+                                                        ✓
+                                                    </span>
                                                 </div>
-                                                <div className="w-full h-2.5 bg-slate-200 rounded-full overflow-hidden p-0.5 shadow-inner">
-                                                    <div
-                                                        className={`h-full rounded-full transition-all duration-700 ${skill.barColor}`}
-                                                        style={{ width: `${skill.score}%` }}
-                                                    />
-                                                </div>
+
+                                                <h4 className="text-xs font-black text-slate-800 line-clamp-1 group-hover:text-[#0099e5] transition-colors">
+                                                    {badge.name}
+                                                </h4>
+                                                <span className="text-[10px] font-bold text-amber-600 mt-0.5">
+                                                    {badge.xp}
+                                                </span>
+                                                <span className="text-[9px] text-slate-400 mt-1 block">
+                                                    Klik butiran 🔍
+                                                </span>
                                             </div>
                                         ))}
                                     </div>
-
-                                    <div className="mt-5 p-3 bg-gradient-to-r from-blue-50 to-sky-50 rounded-2xl border border-sky-200 flex items-center gap-3">
-                                        <div className="w-9 h-9 rounded-xl bg-sky-200/70 flex items-center justify-center text-lg shrink-0">
-                                            💡
-                                        </div>
-                                        <p className="text-[11px] text-slate-600 font-medium leading-snug">
-                                            <strong>Tip Cikgu Robot:</strong> Kemahiran astronomi anda sangat cemerlang! Teruskan mengulang kaji fotosintesis untuk mencapai 100% skor.
-                                        </p>
-                                    </div>
                                 </div>
-
-                                {/* Lajur Kanan: Misi Harian & Ganjaran XP */}
-                                <div className="bg-slate-50 rounded-3xl p-5 border-2 border-slate-200/80 shadow-sm flex flex-col justify-between">
-                                    <div>
-                                        <div className="flex items-center justify-between mb-4">
-                                            <div className="flex items-center gap-2">
-                                                <span className="text-xl">📋</span>
-                                                <h3 className="text-sm sm:text-base font-black text-slate-800">
-                                                    Misi Harian Penjelajah
-                                                </h3>
-                                            </div>
-                                            <span className="text-[10px] font-black text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded-full">
-                                                3/3 Selesai
-                                            </span>
-                                        </div>
-
-                                        <div className="space-y-3">
-                                            {DAILY_QUESTS.map((quest) => (
-                                                <div
-                                                    key={quest.id}
-                                                    className="bg-white rounded-2xl p-3.5 border-2 border-slate-200 flex items-center justify-between gap-3 shadow-xs hover:border-sky-300 transition-all"
-                                                >
-                                                    <div className="flex items-center gap-3">
-                                                        <div className="w-10 h-10 rounded-xl bg-slate-100 border border-slate-200 flex items-center justify-center text-xl shrink-0">
-                                                            {quest.icon}
-                                                        </div>
-                                                        <div>
-                                                            <h4 className="text-xs font-black text-slate-800 leading-snug">
-                                                                {quest.title}
-                                                            </h4>
-                                                            <div className="flex items-center gap-1.5 mt-0.5">
-                                                                <span className={`text-[9px] font-black px-2 py-0.5 rounded-full ${quest.colorBadge}`}>
-                                                                    {quest.category}
-                                                                </span>
-                                                                <span className="text-[10px] font-black text-amber-600">
-                                                                    {quest.xp}
-                                                                </span>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-
-                                                    <div className="shrink-0 flex items-center gap-2">
-                                                        <span className="w-6 h-6 rounded-full bg-emerald-500 text-white flex items-center justify-center text-xs font-black shadow-sm">
-                                                            ✓
-                                                        </span>
-                                                        <button
-                                                            onClick={() => { playAudioFeedback("tap"); setCurrentView(quest.targetView); }}
-                                                            className="px-2.5 py-1 text-[11px] font-black text-sky-700 hover:text-sky-900 bg-sky-50 hover:bg-sky-100 rounded-lg cursor-pointer transition-all border border-sky-200"
-                                                        >
-                                                            Buka
-                                                        </button>
-                                                    </div>
-                                                </div>
-                                            ))}
-                                        </div>
-                                    </div>
-
-                                    {/* Bonus Harian Ditebus */}
-                                    <div className="mt-4 p-3.5 bg-gradient-to-r from-amber-400/20 via-orange-400/20 to-yellow-400/20 rounded-2xl border-2 border-amber-300 flex items-center justify-between">
-                                        <div className="flex items-center gap-2.5">
-                                            <span className="text-2xl animate-bounce">🎁</span>
-                                            <div>
-                                                <span className="text-[10px] uppercase font-black text-amber-800 block">Bonus Misi Harian</span>
-                                                <span className="text-xs font-black text-slate-900">+300 XP Berjaya Ditebus!</span>
-                                            </div>
-                                        </div>
-                                        <span className="px-3 py-1 bg-amber-400 text-slate-950 font-black text-xs rounded-xl shadow-sm">
-                                            Ditebus ✅
-                                        </span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            {/* KOLEKSI LENCANA & PETI TROFI STEM (INTERACTIVE CABINET) */}
-                            <div className="bg-gradient-to-b from-sky-50/70 via-white to-slate-50 rounded-3xl p-6 border-2 border-sky-200 shadow-md">
-                                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 mb-4">
-                                    <div>
-                                        <h3 className="text-base sm:text-lg font-black text-slate-900 flex items-center gap-2">
-                                            <span>🏆</span>
-                                            <span>Peti Lencana & Trofi Kehormatan STEM</span>
-                                        </h3>
-                                        <p className="text-xs text-slate-500 mt-0.5">
-                                            Klik mana-mana lencana untuk melihat butiran pencapaian dan fakta sains unik!
-                                        </p>
-                                    </div>
-                                    <span className="text-xs font-black text-amber-800 bg-amber-100 px-3 py-1 rounded-full border border-amber-300 self-start sm:self-center shadow-xs">
-                                        6 / 6 Lencana Terkumpul 🏅
-                                    </span>
-                                </div>
-
-                                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3.5 pt-2">
-                                    {DASHBOARD_BADGES.map((badge) => (
-                                        <div
-                                            key={badge.id}
-                                            onClick={() => {
-                                                playAudioFeedback("sparkle");
-                                                setSelectedBadgeModal(badge);
-                                            }}
-                                            className="bg-white rounded-2xl p-3 border-2 border-slate-200 hover:border-amber-400 shadow-sm hover:shadow-xl hover:-translate-y-1.5 active:scale-95 transition-all duration-300 cursor-pointer flex flex-col items-center text-center group relative overflow-hidden"
-                                        >
-                                            {/* Top Level Pill */}
-                                            <span className="text-[9px] font-black uppercase text-amber-800 bg-amber-50 px-2 py-0.5 rounded-full border border-amber-200 mb-2">
-                                                {badge.level}
-                                            </span>
-
-                                            {/* Badge Icon With 3D Halo */}
-                                            <div className="relative mb-2">
-                                                <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-amber-400 via-orange-400 to-rose-400 p-0.5 shadow-md group-hover:rotate-6 group-hover:scale-110 transition-all">
-                                                    <div className="w-full h-full bg-slate-900 rounded-[0.9rem] flex items-center justify-center text-2xl">
-                                                        {badge.icon}
-                                                    </div>
-                                                </div>
-                                                <span className="absolute -bottom-1 -right-1 w-5 h-5 bg-emerald-500 rounded-full text-white text-[10px] font-black flex items-center justify-center border border-white shadow-xs">
-                                                    ✓
-                                                </span>
-                                            </div>
-
-                                            <h4 className="text-xs font-black text-slate-800 line-clamp-1 group-hover:text-[#0099e5] transition-colors">
-                                                {badge.name}
-                                            </h4>
-                                            <span className="text-[10px] font-bold text-amber-600 mt-0.5">
-                                                {badge.xp}
-                                            </span>
-                                            <span className="text-[9px] text-slate-400 mt-1 block">
-                                                Klik butiran 🔍
-                                            </span>
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
+                            )}
 
                             {/* PINTASAN PANTAS (QUICK LAUNCHER ACTION BUTTONS) */}
                             <div className="bg-gradient-to-r from-slate-900 via-slate-800 to-indigo-950 rounded-3xl p-5 sm:p-6 text-white shadow-xl flex flex-col sm:flex-row items-center justify-between gap-4">
@@ -3721,6 +4010,7 @@ export default function LessonPage() {
 
                 </div>
             </div>
+            </main>
         </div>
     );
 }

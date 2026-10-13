@@ -7,6 +7,7 @@ import {
     GraphicCoin,
     GraphicBackArrow,
 } from "./Graphics";
+import { VectorAvatarAstro, VectorAvatarGuest } from "./GameIcons";
 
 export default function CompetitionView({
     onNavigate,
@@ -15,7 +16,7 @@ export default function CompetitionView({
     studentName = "Penjelajah",
     isLoggedIn = false,
     studentCoins = 50,
-    equippedAvatarIcon = "🧑‍🚀",
+    equippedAvatarIcon = "avatar_astro_1",
     mathScore = 0,
     mathSubmitted = false,
     spellingScore = 0,
@@ -76,16 +77,13 @@ export default function CompetitionView({
                         <button
                             type="button"
                             onClick={() => handleAction("sparkle", () => onNavigate && onNavigate("profile"))}
-                            className="w-10 h-10 rounded-full bg-sky-50 hover:bg-sky-100 border border-sky-200 text-sky-600 flex items-center justify-center text-base shadow-xs cursor-pointer active:scale-95 transition-all shrink-0"
+                            className="w-10 h-10 rounded-full bg-sky-50 hover:bg-sky-100 border border-sky-200 text-sky-600 flex items-center justify-center shadow-xs cursor-pointer active:scale-95 transition-all shrink-0 p-1.5"
                             title={isLoggedIn ? studentName : (t ? t("Buka Profil", "Open Profile") : "Buka Profil")}
                         >
                             {isLoggedIn ? (
-                                <span>{equippedAvatarIcon || "🧑‍🚀"}</span>
+                                <VectorAvatarAstro className="w-full h-full" />
                             ) : (
-                                <svg className="w-5 h-5 text-sky-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.3" strokeLinecap="round" strokeLinejoin="round">
-                                    <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
-                                    <circle cx="12" cy="7" r="4" />
-                                </svg>
+                                <VectorAvatarGuest className="w-full h-full text-sky-500" />
                             )}
                         </button>
                     </div>

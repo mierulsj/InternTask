@@ -7,8 +7,34 @@ import {
     GraphicLightningBolt,
     GraphicBookOpen,
     GraphicCoin,
+    GraphicNatureLeaf,
+    GraphicSaturnPlanet,
+    GraphicStarMedal,
+    GraphicGrandTrophy,
+    GraphicLightbulb,
+    GraphicQuizLightning,
 } from "./Graphics";
 import ShopView from "./ShopView";
+import ProfileAvatarFrame, { BORDER_STYLES } from "./ProfileAvatarFrame";
+import {
+    VectorSchool,
+    VectorCrown,
+    VectorPencil,
+    VectorDiamond,
+    VectorTrophy,
+    VectorTarget,
+    VectorDna,
+    VectorClipboard,
+    VectorGrid,
+    VectorAvatarGuest,
+    VectorFlame,
+    VectorStar,
+    VectorBee,
+    VectorMath,
+    VectorMicroscope,
+    VectorBook,
+    VectorPlant,
+} from "./GameIcons";
 import { SHOP_CATALOG } from "../../../lib/shopService";
 import { getLevelDetails, LEVELS_CONFIG, MAX_EXPLORIA_XP } from "../../../lib/levelService";
 
@@ -43,19 +69,20 @@ export default function DashboardView({
     mathSubmitted = false,
     studentCoins = 50,
     setStudentCoins,
-    ownedItems = ["title_cadet", "avatar_astro_1"],
+    ownedItems = ["border_cadet", "avatar_astro_1"],
     setOwnedItems,
-    equippedItems = { title: "title_cadet", avatar: "avatar_astro_1", pet: null },
+    equippedItems = { border: "border_cadet", avatar: "avatar_astro_1", pet: null },
     setEquippedItems,
     onNavigate,
+    onOpenSettings,
     t,
     playAudioFeedback,
     isLoggedIn = false,
     onLogout,
 }) {
     const [copiedStuId, setCopiedStuId] = useState(false);
-    const equippedTitleItem = SHOP_CATALOG.find((i) => i.id === equippedItems?.title) || { name: "Kadet STEM", icon: "🎓" };
-    const equippedAvatarItem = SHOP_CATALOG.find((i) => i.id === equippedItems?.avatar) || { name: "Angkasawan Perintis", icon: "🧑‍🚀" };
+    const equippedBorderId = equippedItems?.border || "border_cadet";
+    const equippedAvatarItem = SHOP_CATALOG.find((i) => i.id === equippedItems?.avatar) || { id: "avatar_astro_1", name: "Angkasawan Perintis", icon: "avatar_astro_1" };
     const equippedPetItem = SHOP_CATALOG.find((i) => i.id === equippedItems?.pet);
     const readTopicsCount = Array.isArray(readTopics) ? readTopics.length : 0;
     const effectiveXP = isLoggedIn ? (studentXP ?? 100) : 0;
@@ -87,7 +114,7 @@ export default function DashboardView({
             level: "Gangsa",
             xp: "+100 XP",
             unlocked: isLoggedIn,
-            icon: "🚀",
+            icon: <GraphicStarMedal className="w-8 h-8" />,
             requirement: "Daftar akaun murid di Exploria.",
         },
         {
@@ -96,7 +123,7 @@ export default function DashboardView({
             level: "Emas",
             xp: "+300 XP",
             unlocked: solarSubmitted && solarScore >= 800,
-            icon: "🪐",
+            icon: <GraphicSaturnPlanet className="w-8 h-8" />,
             requirement: "Susun 8 planet dengan markah 800/800.",
         },
         {
@@ -105,7 +132,7 @@ export default function DashboardView({
             level: "Emas",
             xp: "+300 XP",
             unlocked: plantSubmitted && plantScore >= 500,
-            icon: "🌱",
+            icon: <GraphicNatureLeaf className="w-8 h-8" />,
             requirement: "Selesaikan Makmal Tumbuhan sekurang-kurangnya 500 mata.",
         },
         {
@@ -114,7 +141,7 @@ export default function DashboardView({
             level: "Emas",
             xp: "+250 XP",
             unlocked: effectiveQuizScore >= 500,
-            icon: "⚡",
+            icon: <GraphicLightningBolt className="w-8 h-8 text-amber-500" />,
             requirement: "Capai 500 mata dalam Kuiz Pantas 20s.",
         },
         {
@@ -123,7 +150,7 @@ export default function DashboardView({
             level: "Perak",
             xp: "+200 XP",
             unlocked: readTopicsCount >= 2,
-            icon: "📚",
+            icon: <GraphicBookOpen className="w-8 h-8 text-[#0099e5]" />,
             requirement: "Selesaikan bacaan semua topik nota.",
         },
         {
@@ -132,7 +159,7 @@ export default function DashboardView({
             level: "Emas",
             xp: "+350 XP",
             unlocked: effectiveStreak >= 7,
-            icon: "🔥",
+            icon: <GraphicStarMedal className="w-8 h-8" />,
             requirement: "Kekalkan streak 7 hari berturut-turut.",
         },
         {
@@ -141,7 +168,7 @@ export default function DashboardView({
             level: "Platinum",
             xp: "+500 XP",
             unlocked: solarSubmitted && solarScore >= 800 && effectiveQuizScore >= 500 && readTopicsCount >= 2,
-            icon: "🏆",
+            icon: <GraphicGrandTrophy className="w-8 h-8" />,
             requirement: "Tamatkan aktiviti Suria, Kuiz, dan Nota.",
         },
     ];
@@ -155,7 +182,7 @@ export default function DashboardView({
             title: "Susun 8 Planet Sistem Suria",
             xp: "+100 XP",
             completed: Boolean(solarSubmitted && solarScore > 0),
-            icon: "🪐",
+            icon: <GraphicSaturnPlanet className="w-5 h-5" />,
             targetView: "solarDragDrop",
         },
         {
@@ -163,7 +190,7 @@ export default function DashboardView({
             title: "Makmal Tumbuhan",
             xp: "+120 XP",
             completed: Boolean(plantSubmitted && plantScore > 0),
-            icon: "🌱",
+            icon: <VectorPlant className="w-5 h-5" />,
             targetView: "plantActivity",
         },
         {
@@ -171,7 +198,7 @@ export default function DashboardView({
             title: "Cabar Kuiz Pantas 20s",
             xp: "+150 XP",
             completed: effectiveQuizScore > 0,
-            icon: "⚡",
+            icon: <GraphicLightningBolt className="w-5 h-5" />,
             targetView: "quizList",
         },
         {
@@ -179,7 +206,7 @@ export default function DashboardView({
             title: "Ulang Kaji Nota Sains",
             xp: "+80 XP",
             completed: readTopicsCount > 0,
-            icon: "📖",
+            icon: <VectorBook className="w-5 h-5" />,
             targetView: "menu",
         },
     ];
@@ -193,10 +220,10 @@ export default function DashboardView({
     const inqScore = Math.round((astroScore + speedScore + lifeScore) / 3);
 
     const stemSkills = [
-        { name: "Astronomi & Angkasa", score: astroScore, icon: "🪐" },
-        { name: "Inkuiri Sains", score: inqScore, icon: "🔬" },
-        { name: "Kepantasan Berfikir", score: speedScore, icon: "⚡" },
-        { name: "Sains Hayat", score: lifeScore, icon: "🌿" },
+        { name: "Astronomi & Angkasa", score: astroScore, icon: <GraphicSaturnPlanet className="w-4 h-4" /> },
+        { name: "Inkuiri Sains", score: inqScore, icon: <VectorMicroscope className="w-4 h-4" /> },
+        { name: "Kepantasan Berfikir", score: speedScore, icon: <GraphicLightningBolt className="w-4 h-4" /> },
+        { name: "Sains Hayat", score: lifeScore, icon: <VectorPlant className="w-4 h-4" /> },
     ];
 
     const skillsAverage = Math.round((astroScore + inqScore + speedScore + lifeScore) / 4);
@@ -207,8 +234,8 @@ export default function DashboardView({
             {/* BAR ATAS: IDENTITI & NAVIGASI */}
             <div className="bg-white rounded-2xl p-3.5 sm:p-4 border-2 border-slate-200 shadow-xs flex items-center justify-between gap-3">
                 <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-xl bg-sky-50 text-[#0099e5] flex items-center justify-center text-xl shrink-0 border border-sky-100">
-                        {isLoggedIn ? "🤖" : "👤"}
+                    <div className="w-10 h-10 rounded-xl bg-sky-50 text-[#0099e5] flex items-center justify-center p-1.5 shrink-0 border border-sky-100">
+                        {isLoggedIn ? <GraphicMascotRobot className="w-full h-full" /> : <VectorAvatarGuest className="w-full h-full" />}
                     </div>
                     <div>
                         <div className="flex items-center gap-2">
@@ -222,8 +249,8 @@ export default function DashboardView({
                             </span>
                         </div>
                         {isLoggedIn && (studentSchool || (typeof window !== "undefined" && localStorage.getItem("exploria_student_school"))) && (
-                            <p className="text-[11px] sm:text-xs font-semibold text-slate-500 flex items-center gap-1 mt-0.5">
-                                <span>🏫</span>
+                            <p className="text-[11px] sm:text-xs font-semibold text-slate-500 flex items-center gap-1.5 mt-0.5">
+                                <VectorSchool className="w-3.5 h-3.5 text-slate-400 shrink-0" />
                                 <span className="truncate max-w-[190px] sm:max-w-[300px]">
                                     {studentSchool || (typeof window !== "undefined" && localStorage.getItem("exploria_student_school"))}
                                 </span>
@@ -269,25 +296,20 @@ export default function DashboardView({
                 </div>
             </div>
 
-            {/* KAD HERO: PROFIL & STATISTIK RINGKAS */}
-            <div className="rounded-3xl bg-gradient-to-br from-[#0088cc] via-[#0099e5] to-[#0284c7] p-5 sm:p-6 text-white shadow-md border-2 border-sky-300/40">
+            {/* KAD HERO: PROFIL & STATISTIK (DISEMBUNYIKAN BILA DI TAB KEDAI AGAR KEMAS & MINIMALIS) */}
+            {dashboardActiveTab !== "shop" && (
+                <div className="rounded-3xl bg-gradient-to-br from-[#0088cc] via-[#0099e5] to-[#0284c7] p-5 sm:p-6 text-white shadow-md border-2 border-sky-300/40">
                 <div className="flex flex-col md:flex-row items-center md:items-start justify-between gap-5">
                     {/* Identiti & XP */}
                     <div className="flex items-center gap-4 w-full md:w-auto">
                         <div className="relative shrink-0">
-                            <div className="w-16 h-16 sm:w-18 sm:h-18 rounded-2xl bg-white/20 p-1 border border-white/40 shadow-xs">
-                                <div className="w-full h-full bg-slate-900 rounded-xl flex items-center justify-center text-3xl overflow-hidden relative">
-                                    {isLoggedIn ? (equippedAvatarItem?.icon || "🧑‍🚀") : "👤"}
-                                </div>
-                            </div>
-                            {equippedPetItem && (
-                                <span className="absolute -top-1.5 -right-1.5 text-base bg-white rounded-full p-0.5 shadow-xs border border-slate-200" title={`Maskot: ${equippedPetItem.name}`}>
-                                    {equippedPetItem.icon}
-                                </span>
-                            )}
-                            <span className="absolute -bottom-2 -right-1 bg-white text-slate-900 font-black text-[10px] px-2 py-0.2 rounded-full shadow-xs border border-slate-200">
-                                Lv. {levelNum}
-                            </span>
+                            <ProfileAvatarFrame
+                                avatar={isLoggedIn ? (equippedAvatarItem?.id || "avatar_astro_1") : "avatar_astro_1"}
+                                borderId={equippedBorderId}
+                                pet={equippedPetItem}
+                                size="lg"
+                                level={levelNum}
+                            />
                         </div>
 
                         <div className="flex-1">
@@ -337,14 +359,15 @@ export default function DashboardView({
                                                         setIsEditingName(true);
                                                         playAudioFeedback("tap");
                                                     }}
-                                                    className="w-6 h-6 bg-white/20 hover:bg-white/30 rounded-md flex items-center justify-center text-[11px] text-white cursor-pointer"
+                                                    className="w-6 h-6 bg-white/20 hover:bg-white/30 rounded-md flex items-center justify-center text-white cursor-pointer"
                                                 >
-                                                    ✏️
+                                                    <VectorPencil className="w-3.5 h-3.5 text-white" />
                                                 </button>
                                             </div>
                                         )}
-                                        <span className="text-[10px] font-black uppercase px-2 py-0.5 rounded-full bg-amber-300 text-amber-950 shadow-xs border border-amber-400">
-                                            {equippedTitleItem?.name || title}
+                                        <span className="text-[10px] font-black uppercase px-2.5 py-0.5 rounded-full bg-slate-900/40 text-amber-300 shadow-xs border border-amber-400/50 flex items-center gap-1.5 backdrop-blur-xs">
+                                            <VectorCrown className="w-3 h-3 text-amber-300 shrink-0" />
+                                            <span>{BORDER_STYLES[equippedBorderId]?.name || "Besi Perintis"}</span>
                                         </span>
                                     </div>
 
@@ -378,10 +401,11 @@ export default function DashboardView({
                                                     setTimeout(() => setCopiedStuId(false), 2000);
                                                 }
                                             }}
-                                            className="text-[10px] bg-white/20 hover:bg-white/35 active:scale-95 text-white font-bold px-2 py-0.5 rounded-lg cursor-pointer transition-all ml-1"
+                                            className="text-[10px] bg-white/20 hover:bg-white/35 active:scale-95 text-white font-bold px-2 py-0.5 rounded-lg cursor-pointer transition-all ml-1 flex items-center gap-1"
                                             title="Salin ID untuk diberikan kepada ibu bapa anda"
                                         >
-                                            {copiedStuId ? "✓ Disalin" : "📋 Salin ID"}
+                                            <VectorClipboard className="w-3 h-3 shrink-0" />
+                                            <span>{copiedStuId ? "Disalin" : "Salin ID"}</span>
                                         </button>
                                     </div>
                                 </div>
@@ -403,38 +427,40 @@ export default function DashboardView({
                             <span className="text-[10px] uppercase font-bold text-amber-200">Koin</span>
                             <span className="text-xs sm:text-sm font-black text-amber-300 block font-mono">{studentCoins}</span>
                         </div>
-                        <div className="bg-white/15 px-2.5 py-2 rounded-xl border border-white/20 text-center">
-                            <span className="text-base block">🔥</span>
+                        <div className="bg-white/15 px-2.5 py-2 rounded-xl border border-white/20 text-center flex flex-col items-center justify-center">
+                            <VectorFlame className="w-5 h-5 mx-auto mb-0.5 text-amber-300" />
                             <span className="text-[10px] uppercase font-bold text-sky-100">Streak</span>
                             <span className="text-xs sm:text-sm font-black text-white block">{effectiveStreak} Hari</span>
                         </div>
-                        <div className="bg-white/15 px-2.5 py-2 rounded-xl border border-white/20 text-center">
-                            <span className="text-base block">⭐</span>
+                        <div className="bg-white/15 px-2.5 py-2 rounded-xl border border-white/20 text-center flex flex-col items-center justify-center">
+                            <VectorStar className="w-5 h-5 mx-auto mb-0.5 text-amber-300" />
                             <span className="text-[10px] uppercase font-bold text-sky-100">Bintang</span>
                             <span className="text-xs sm:text-sm font-black text-white block">{totalStars} / 24</span>
                         </div>
-                        <div className="bg-white/15 px-2.5 py-2 rounded-xl border border-white/20 text-center">
-                            <span className="text-base block">💎</span>
+                        <div className="bg-white/15 px-2.5 py-2 rounded-xl border border-white/20 text-center flex flex-col items-center">
+                            <VectorDiamond className="w-5 h-5 text-sky-200 mb-0.5" />
                             <span className="text-[10px] uppercase font-bold text-sky-100">Skor</span>
                             <span className="text-xs sm:text-sm font-black text-white block">{totalScore.toLocaleString()}</span>
                         </div>
-                        <div className="bg-white/15 px-2.5 py-2 rounded-xl border border-white/20 text-center">
-                            <span className="text-base block">🏆</span>
+                        <div className="bg-white/15 px-2.5 py-2 rounded-xl border border-white/20 text-center flex flex-col items-center">
+                            <VectorTrophy className="w-5 h-5 text-amber-200 mb-0.5" />
                             <span className="text-[10px] uppercase font-bold text-sky-100">Lencana</span>
                             <span className="text-xs sm:text-sm font-black text-white block">{unlockedBadgesCount} / {badges.length}</span>
                         </div>
                     </div>
                 </div>
             </div>
+            )}
 
             {/* TAB NAVIGASI */}
             <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar pb-0.5">
                 {[
-                    { id: "all", label: "Semua", icon: "📌" },
-                    { id: "records", label: "Aktiviti", icon: "🎯", count: 6 },
-                    { id: "skills", label: "Kemahiran", icon: "🧬" },
-                    { id: "quests", label: "Misi", icon: "📋", count: `${completedQuestsCount}/${quests.length}` },
-                    { id: "badges", label: "Lencana", icon: "🏆", count: unlockedBadgesCount },
+                    { id: "all", label: "Semua", icon: <VectorGrid className="w-3.5 h-3.5" /> },
+                    { id: "shop", label: "Kedai Border", icon: <VectorCrown className="w-3.5 h-3.5" /> },
+                    { id: "records", label: "Aktiviti", icon: <VectorTarget className="w-3.5 h-3.5" />, count: 6 },
+                    { id: "skills", label: "Kemahiran", icon: <VectorDna className="w-3.5 h-3.5" /> },
+                    { id: "quests", label: "Misi", icon: <VectorClipboard className="w-3.5 h-3.5" />, count: `${completedQuestsCount}/${quests.length}` },
+                    { id: "badges", label: "Lencana", icon: <VectorTrophy className="w-3.5 h-3.5" />, count: unlockedBadgesCount },
                 ].map((tab) => {
                     const isActive = dashboardActiveTab === tab.id;
                     return (
@@ -487,7 +513,9 @@ export default function DashboardView({
                         <div className="bg-white rounded-2xl p-4 border-2 border-slate-200 hover:border-[#0099e5] shadow-xs transition-all flex flex-col justify-between">
                             <div>
                                 <div className="flex items-center justify-between mb-2">
-                                    <span className="text-2xl">🌱</span>
+                                    <div className="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center p-1 border border-emerald-100">
+                                        <VectorPlant className="w-5 h-5" />
+                                    </div>
                                     <span className={`text-[10px] font-black uppercase px-2 py-0.5 rounded-full border ${
                                         !plantSubmitted || plantScore === 0
                                             ? "bg-slate-50 text-slate-500 border-slate-200"
@@ -513,7 +541,9 @@ export default function DashboardView({
                         <div className="bg-white rounded-2xl p-4 border-2 border-slate-200 hover:border-[#0099e5] shadow-xs transition-all flex flex-col justify-between">
                             <div>
                                 <div className="flex items-center justify-between mb-2">
-                                    <span className="text-2xl">🪐</span>
+                                    <div className="w-8 h-8 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center p-1 border border-indigo-100">
+                                        <GraphicSaturnPlanet className="w-5 h-5" />
+                                    </div>
                                     <span className={`text-[10px] font-black uppercase px-2 py-0.5 rounded-full border ${
                                         !solarSubmitted || solarScore === 0
                                             ? "bg-slate-50 text-slate-500 border-slate-200"
@@ -539,7 +569,9 @@ export default function DashboardView({
                         <div className="bg-white rounded-2xl p-4 border-2 border-slate-200 hover:border-[#0099e5] shadow-xs transition-all flex flex-col justify-between">
                             <div>
                                 <div className="flex items-center justify-between mb-2">
-                                    <span className="text-2xl">⚡</span>
+                                    <div className="w-8 h-8 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center p-1 border border-amber-100">
+                                        <GraphicLightningBolt className="w-5 h-5" />
+                                    </div>
                                     <span className={`text-[10px] font-black uppercase px-2 py-0.5 rounded-full border ${
                                         effectiveQuizScore === 0
                                             ? "bg-slate-50 text-slate-500 border-slate-200"
@@ -566,7 +598,9 @@ export default function DashboardView({
                         <div className="bg-white rounded-2xl p-4 border-2 border-slate-200 hover:border-[#0099e5] shadow-xs transition-all flex flex-col justify-between">
                             <div>
                                 <div className="flex items-center justify-between mb-2">
-                                    <span className="text-2xl">🐝</span>
+                                    <div className="w-8 h-8 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center p-1 border border-amber-100">
+                                        <VectorBee className="w-5 h-5" />
+                                    </div>
                                     <span className={`text-[10px] font-black uppercase px-2 py-0.5 rounded-full border ${
                                         !spellingSubmitted || spellingScore === 0
                                             ? "bg-slate-50 text-slate-500 border-slate-200"
@@ -592,7 +626,9 @@ export default function DashboardView({
                         <div className="bg-white rounded-2xl p-4 border-2 border-slate-200 hover:border-[#0099e5] shadow-xs transition-all flex flex-col justify-between">
                             <div>
                                 <div className="flex items-center justify-between mb-2">
-                                    <span className="text-2xl">🔢</span>
+                                    <div className="w-8 h-8 rounded-xl bg-sky-50 text-sky-600 flex items-center justify-center p-1 border border-sky-100">
+                                        <VectorMath className="w-5 h-5" />
+                                    </div>
                                     <span className={`text-[10px] font-black uppercase px-2 py-0.5 rounded-full border ${
                                         !mathSubmitted || mathScore === 0
                                             ? "bg-slate-50 text-slate-500 border-slate-200"
@@ -618,7 +654,9 @@ export default function DashboardView({
                         <div className="bg-white rounded-2xl p-4 border-2 border-slate-200 hover:border-[#0099e5] shadow-xs transition-all flex flex-col justify-between">
                             <div>
                                 <div className="flex items-center justify-between mb-2">
-                                    <span className="text-2xl">📖</span>
+                                    <div className="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center p-1 border border-emerald-100">
+                                        <VectorBook className="w-5 h-5" />
+                                    </div>
                                     <span className={`text-[10px] font-black uppercase px-2 py-0.5 rounded-full border ${
                                         readTopicsCount === 0
                                             ? "bg-slate-50 text-slate-500 border-slate-200"
@@ -653,7 +691,7 @@ export default function DashboardView({
                         <div className="bg-white rounded-2xl p-4 sm:p-5 border-2 border-slate-200 shadow-xs space-y-3">
                             <div className="flex items-center justify-between border-b border-slate-100 pb-2">
                                 <h3 className="text-sm font-black text-slate-800 flex items-center gap-1.5">
-                                    <span>🧬</span>
+                                    <VectorDna className="w-4 h-4 text-sky-500" />
                                     <span>Kemahiran STEM</span>
                                 </h3>
                                 <span className="text-xs font-black text-[#0099e5]">
@@ -666,7 +704,7 @@ export default function DashboardView({
                                     <div key={idx} className="space-y-1">
                                         <div className="flex items-center justify-between text-xs">
                                             <span className="font-bold text-slate-700 flex items-center gap-1.5">
-                                                <span>{skill.icon}</span>
+                                                <span className="shrink-0">{skill.icon}</span>
                                                 <span>{skill.name}</span>
                                             </span>
                                             <span className="font-black text-slate-900">{skill.score}%</span>
@@ -688,7 +726,7 @@ export default function DashboardView({
                         <div className="bg-white rounded-2xl p-4 sm:p-5 border-2 border-slate-200 shadow-xs space-y-3">
                             <div className="flex items-center justify-between border-b border-slate-100 pb-2">
                                 <h3 className="text-sm font-black text-slate-800 flex items-center gap-1.5">
-                                    <span>📋</span>
+                                    <VectorClipboard className="w-4 h-4 text-sky-500" />
                                     <span>Misi Harian</span>
                                 </h3>
                                 <span className="text-xs font-black text-slate-700 bg-slate-100 px-2 py-0.2 rounded-full">
@@ -703,7 +741,9 @@ export default function DashboardView({
                                         className="bg-slate-50 rounded-xl p-2.5 flex items-center justify-between gap-2.5 border border-slate-200/80"
                                     >
                                         <div className="flex items-center gap-2.5 min-w-0">
-                                            <span className="text-lg shrink-0">{quest.icon}</span>
+                                            <div className="w-7 h-7 rounded-lg bg-sky-50 text-[#0099e5] flex items-center justify-center p-1 shrink-0 border border-sky-100">
+                                                {quest.icon}
+                                            </div>
                                             <div className="min-w-0">
                                                 <h4 className="text-xs font-black text-slate-800 truncate">
                                                     {quest.title}
@@ -741,7 +781,7 @@ export default function DashboardView({
                 <div className="bg-white rounded-2xl p-4 sm:p-5 border-2 border-slate-200 shadow-xs anim-fade-in space-y-3">
                     <div className="flex items-center justify-between border-b border-slate-100 pb-2">
                         <h3 className="text-sm font-black text-slate-800 flex items-center gap-1.5">
-                            <span>🏆</span>
+                            <VectorTrophy className="w-4 h-4 text-amber-500" />
                             <span>Peti Lencana</span>
                         </h3>
                         <span className="text-xs font-black text-[#0099e5]">

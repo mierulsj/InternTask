@@ -27,17 +27,17 @@ export default function Admin2FA({
                 </div>
 
                 {demoOtp && (
-                    <div className="bg-emerald-50 border border-emerald-200 p-2.5 rounded-xl text-center space-y-1">
-                        <span className="text-[10px] text-emerald-700 uppercase font-black tracking-wider block">
-                            Kod 2FA Demo (Simulasi)
+                    <div className="bg-sky-50 border border-sky-200 p-2.5 rounded-xl text-center space-y-1">
+                        <span className="text-[10px] text-sky-700 uppercase font-black tracking-wider block">
+                            Kod 2FA Demo
                         </span>
-                        <div className="font-mono text-xl font-black text-emerald-600 tracking-widest">
+                        <div className="font-mono text-xl font-black text-[#0099e5] tracking-widest">
                             {demoOtp}
                         </div>
                         <button
                             type="button"
                             onClick={() => setOtpInput(demoOtp)}
-                            className="text-[11px] text-emerald-700 hover:text-emerald-900 underline font-bold cursor-pointer"
+                            className="text-[11px] text-[#0088cc] hover:underline font-bold cursor-pointer"
                         >
                             Auto-Isi Kod
                         </button>
@@ -59,13 +59,13 @@ export default function Admin2FA({
                         placeholder="000000"
                         autoFocus
                         required
-                        className="w-full text-center py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-slate-900 font-mono text-xl font-bold tracking-widest outline-none focus:bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 transition-all"
+                        className="w-full text-center py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-slate-900 font-mono text-xl font-bold tracking-widest outline-none focus:bg-white focus:border-[#0099e5] focus:ring-2 focus:ring-sky-100 transition-all"
                     />
 
                     <button
                         type="submit"
                         disabled={isLoading || otpInput.length !== 6}
-                        className="w-full py-2.5 bg-emerald-600 hover:bg-emerald-500 active:scale-98 text-white font-bold text-xs rounded-lg cursor-pointer disabled:opacity-50 shadow-sm transition-all"
+                        className="w-full py-2.5 bg-[#0099e5] hover:bg-[#0088cc] active:scale-98 text-white font-bold text-xs rounded-lg cursor-pointer disabled:opacity-50 shadow-sm transition-all"
                     >
                         {isLoading ? "Mengesahkan..." : "Sahkan & Masuk"}
                     </button>

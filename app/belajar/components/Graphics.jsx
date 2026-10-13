@@ -1862,7 +1862,7 @@ export function GraphicLevelEnergy({ className = "w-28 h-28" }) {
 }
 
 // Helper Pintar: Pilih Ilustrasi 3D Sesuai dengan Tajuk / Kategori / Grafik Pilihan Modul
-export function getTopicIllustration(topic) {
+export function getTopicIllustration(topic, idx = 0) {
     const iconKey = (topic?.graphicType || topic?.icon || "").toLowerCase();
     if (iconKey === "planet" || iconKey === "suria") return <GraphicLevelPlanets className="w-full h-full" />;
     if (iconKey === "plant" || iconKey === "tumbuhan" || iconKey === "fotosintesis") return <GraphicLevelPlantSprout className="w-full h-full" />;
@@ -1884,8 +1884,16 @@ export function getTopicIllustration(topic) {
         return <GraphicLevelEnergy className="w-full h-full" />;
     }
 
-    // Lalai: Buku Sains
-    return <GraphicScienceBook className="w-20 h-20 sm:w-24 sm:h-24" />;
+    // Variasi 3D visual untuk topik tambahan
+    const fallbacks = [
+        <GraphicLevelPlanets className="w-full h-full" key="f0" />,
+        <GraphicLevelPlantSprout className="w-full h-full" key="f1" />,
+        <GraphicLevelRocket className="w-full h-full" key="f2" />,
+        <GraphicLevelEnergy className="w-full h-full" key="f3" />,
+        <GraphicLevelLuggage className="w-full h-full" key="f4" />,
+        <GraphicLevelBalloon className="w-full h-full" key="f5" />,
+    ];
+    return fallbacks[idx % fallbacks.length];
 }
 
 

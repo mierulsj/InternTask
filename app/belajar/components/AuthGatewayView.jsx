@@ -1,7 +1,15 @@
 "use client";
 
 import React from "react";
-import { GraphicMascotRobot, GraphicArrowRight } from "./Graphics";
+import { GraphicMascotRobot, GraphicArrowRight, GraphicSaturnPlanet } from "./Graphics";
+import {
+    VectorStar,
+    VectorSparkles,
+    VectorPencil,
+    VectorAvatarGuest,
+    VectorAvatarAstro,
+    VectorCrown,
+} from "./GameIcons";
 
 export default function AuthGatewayView({
     onNavigate,
@@ -29,8 +37,9 @@ export default function AuthGatewayView({
                     </div>
 
                     <div className="space-y-1 max-w-lg">
-                        <span className="text-[11px] font-black uppercase tracking-wider bg-amber-400 text-slate-950 px-3 py-1 rounded-full shadow-xs inline-block">
-                            🌟 {t ? t("Portal Pembelajaran STEM", "STEM Learning Portal") : "Portal Pembelajaran STEM"}
+                        <span className="text-[11px] font-black uppercase tracking-wider bg-amber-400 text-slate-950 px-3 py-1 rounded-full shadow-xs inline-flex items-center gap-1.5">
+                            <VectorStar className="w-3.5 h-3.5 text-slate-950" />
+                            <span>{t ? t("Portal Pembelajaran STEM", "STEM Learning Portal") : "Portal Pembelajaran STEM"}</span>
                         </span>
                         <h2 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight leading-tight">
                             {t ? t("Pilih Cara Anda Meneroka!", "Choose How You Explore!") : "Pilih Cara Anda Meneroka!"}
@@ -61,11 +70,13 @@ export default function AuthGatewayView({
                             <span className="text-[10px] font-black uppercase tracking-wider bg-sky-100 text-sky-800 px-2.5 py-0.5 rounded-full border border-sky-200">
                                 {t ? t("Akaun Sedia Ada", "Existing Account") : "Akaun Sedia Ada"}
                             </span>
-                            <span className="text-2xl">🔑</span>
+                            <div className="w-7 h-7 rounded-lg bg-sky-50 text-[#0099e5] flex items-center justify-center border border-sky-100">
+                                <VectorAvatarAstro className="w-5 h-5" />
+                            </div>
                         </div>
 
-                        <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-[#0088cc] to-sky-400 text-white flex items-center justify-center text-2xl shadow-md mb-3 group-hover:rotate-6 transition-transform">
-                            🚀
+                        <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-[#0088cc] to-sky-400 text-white flex items-center justify-center p-2.5 shadow-md mb-3 group-hover:scale-105 transition-transform">
+                            <VectorAvatarAstro className="w-full h-full text-white" />
                         </div>
 
                         <h3 className="text-lg font-black text-slate-900 group-hover:text-[#0088cc] transition-colors">
@@ -84,7 +95,7 @@ export default function AuthGatewayView({
                     <div className="mt-5 pt-3 border-t border-slate-100">
                         <button
                             type="button"
-                            className="w-full py-2.5 bg-transparent border-2 border-[#0099e5] text-[#0099e5] hover:bg-[#0099e5]/10 font-black text-xs rounded-xl flex items-center justify-center gap-1.5 transition-all"
+                            className="w-full py-2.5 bg-transparent border-2 border-[#0099e5] text-[#0099e5] hover:bg-[#0099e5]/10 font-black text-xs rounded-xl flex items-center justify-center gap-1.5 transition-all cursor-pointer"
                         >
                             <span>{t ? t("Log Masuk Sekarang", "Log In Now") : "Log Masuk Sekarang"}</span>
                             <GraphicArrowRight className="w-3.5 h-3.5" />
@@ -98,8 +109,9 @@ export default function AuthGatewayView({
                     className="bg-white rounded-3xl p-5 sm:p-6 border-3 border-sky-400 hover:border-sky-500 shadow-lg hover:shadow-2xl hover:-translate-y-1.5 active:scale-98 transition-all duration-300 cursor-pointer flex flex-col justify-between relative overflow-hidden group ring-3 ring-sky-200/50"
                 >
                     {/* Recommended Pill */}
-                    <div className="absolute top-0 right-0 bg-[#0099e5] text-white font-black text-[9px] uppercase px-3 py-1 rounded-bl-xl shadow-xs">
-                        ⭐ {t ? t("Disyorkan • Bonus 100 XP", "Recommended • 100 XP") : "Disyorkan • Bonus 100 XP"}
+                    <div className="absolute top-0 right-0 bg-[#0099e5] text-white font-black text-[9px] uppercase px-3 py-1 rounded-bl-xl shadow-xs flex items-center gap-1">
+                        <VectorStar className="w-3 h-3 text-amber-300" />
+                        <span>{t ? t("Disyorkan • Bonus 100 XP", "Recommended • 100 XP") : "Disyorkan • Bonus 100 XP"}</span>
                     </div>
 
                     <div>
@@ -107,11 +119,13 @@ export default function AuthGatewayView({
                             <span className="text-[10px] font-black uppercase tracking-wider bg-sky-100 text-sky-800 px-2.5 py-0.5 rounded-full border border-sky-200">
                                 {t ? t("Murid Baharu", "New Student") : "Murid Baharu"}
                             </span>
-                            <span className="text-2xl">✨</span>
+                            <div className="w-7 h-7 rounded-lg bg-amber-50 text-amber-500 flex items-center justify-center border border-amber-100">
+                                <VectorSparkles className="w-4 h-4" />
+                            </div>
                         </div>
 
-                        <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-[#0088cc] to-sky-400 text-white flex items-center justify-center text-2xl shadow-md mb-3 group-hover:rotate-6 transition-transform">
-                            📝
+                        <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-[#0088cc] to-sky-400 text-white flex items-center justify-center p-2.5 shadow-md mb-3 group-hover:scale-105 transition-transform">
+                            <VectorPencil className="w-6 h-6 text-white" />
                         </div>
 
                         <h3 className="text-lg font-black text-slate-900 group-hover:text-[#0088cc] transition-colors">
@@ -130,7 +144,7 @@ export default function AuthGatewayView({
                     <div className="mt-5 pt-3 border-t border-slate-100">
                         <button
                             type="button"
-                            className="w-full py-2.5 bg-gradient-to-r from-[#0088cc] to-[#0099e5] hover:from-[#0077b6] hover:to-[#0088cc] text-white font-black text-xs rounded-xl shadow-md flex items-center justify-center gap-1.5 transition-all"
+                            className="w-full py-2.5 bg-gradient-to-r from-[#0088cc] to-[#0099e5] hover:from-[#0077b6] hover:to-[#0088cc] text-white font-black text-xs rounded-xl shadow-md flex items-center justify-center gap-1.5 transition-all cursor-pointer"
                         >
                             <span>{t ? t("Daftar Percuma", "Register Free") : "Daftar Percuma"}</span>
                             <GraphicArrowRight className="w-3.5 h-3.5" />
@@ -155,11 +169,13 @@ export default function AuthGatewayView({
                             <span className="text-[10px] font-black uppercase tracking-wider bg-slate-100 text-slate-600 px-2.5 py-0.5 rounded-full border border-slate-200">
                                 {t ? t("Cuba Dahulu", "Try First") : "Cuba Dahulu"}
                             </span>
-                            <span className="text-2xl">👤</span>
+                            <div className="w-7 h-7 rounded-lg bg-slate-100 text-slate-500 flex items-center justify-center border border-slate-200">
+                                <VectorAvatarGuest className="w-5 h-5" />
+                            </div>
                         </div>
 
-                        <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-slate-600 to-indigo-700 text-white flex items-center justify-center text-2xl shadow-md mb-3 group-hover:rotate-6 transition-transform">
-                            🪐
+                        <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-slate-600 to-indigo-700 text-white flex items-center justify-center p-2.5 shadow-md mb-3 group-hover:scale-105 transition-transform">
+                            <GraphicSaturnPlanet className="w-7 h-7" />
                         </div>
 
                         <h3 className="text-lg font-black text-slate-900 group-hover:text-indigo-600 transition-colors">
@@ -178,7 +194,7 @@ export default function AuthGatewayView({
                     <div className="mt-5 pt-3 border-t border-slate-100">
                         <button
                             type="button"
-                            className="w-full py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-black text-xs rounded-xl shadow-xs flex items-center justify-center gap-1.5 transition-all"
+                            className="w-full py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-black text-xs rounded-xl shadow-xs flex items-center justify-center gap-1.5 transition-all cursor-pointer"
                         >
                             <span>{t ? t("Mula Teroka (Tetamu)", "Start as Guest") : "Mula Teroka (Tetamu)"}</span>
                             <GraphicArrowRight className="w-3.5 h-3.5" />
@@ -190,15 +206,15 @@ export default function AuthGatewayView({
             {/* 3. FOOTER GUARANTEE PILLS */}
             <div className="flex items-center justify-center gap-3 sm:gap-6 flex-wrap pt-2 text-xs font-bold text-slate-500">
                 <span className="flex items-center gap-1.5 bg-white/70 backdrop-blur-sm px-3 py-1.5 rounded-xl border border-slate-200/80 shadow-xs">
-                    <span>🛡️</span>
+                    <span className="w-2 h-2 rounded-full bg-emerald-500" />
                     <span>{t ? t("Pangkalan Data Selamat Firestore", "Secure Firestore Database") : "Pangkalan Data Selamat Firestore"}</span>
                 </span>
                 <span className="flex items-center gap-1.5 bg-white/70 backdrop-blur-sm px-3 py-1.5 rounded-xl border border-slate-200/80 shadow-xs">
-                    <span>🌟</span>
+                    <VectorCrown className="w-3.5 h-3.5 text-amber-500" />
                     <span>{t ? t("100% Percuma Untuk Murid", "100% Free For Students") : "100% Percuma Untuk Murid"}</span>
                 </span>
                 <span className="flex items-center gap-1.5 bg-white/70 backdrop-blur-sm px-3 py-1.5 rounded-xl border border-slate-200/80 shadow-xs">
-                    <span>🪐</span>
+                    <GraphicSaturnPlanet className="w-3.5 h-3.5" />
                     <span>{t ? t("Kurikulum Sains KSSR", "KSSR Science Curriculum") : "Kurikulum Sains KSSR"}</span>
                 </span>
             </div>

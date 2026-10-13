@@ -13,8 +13,14 @@ import {
     GraphicPhotosynthesisBanner,
     LanguageToggle,
     GraphicCoin,
+    GraphicMascotRobot,
+    GraphicArrowRight,
     SOLAR_PLANETS,
 } from "./components/Graphics";
+import { VectorSparkles, VectorPencil, VectorAvatarAstro } from "./components/GameIcons";
+import ModuleNavCards from "./components/ModuleNavCards";
+import LeaderboardView from "./components/LeaderboardView";
+import MobileBottomNav from "./components/MobileBottomNav";
 import MainMenu from "./components/MainMenu";
 import LearningView from "./components/LearningView";
 import QuizView from "./components/QuizView";
@@ -25,6 +31,8 @@ import MathSpeedQuiz from "./components/MathSpeedQuiz";
 import CompetitionView from "./components/CompetitionView";
 import ActivityView from "./components/ActivityView";
 import DashboardView from "./components/DashboardView";
+import StudentSettingsModal from "./components/StudentSettingsModal";
+import ProfileAvatarFrame from "./components/ProfileAvatarFrame";
 import RegisterPage from "./Register";
 import LoginPage from "./Login";
 import AuthGatewayView from "./components/AuthGatewayView";
@@ -58,6 +66,7 @@ export default function LessonPage() {
     // Guest Auth Notice Modal State
     const [showGuestAuthModal, setShowGuestAuthModal] = useState(false);
     const [guestModalContext, setGuestModalContext] = useState("kuiz"); // "kuiz" | "aktiviti"
+    const [showStudentSettingsModal, setShowStudentSettingsModal] = useState(false);
 
     const triggerGuestNotice = (feature = "kuiz") => {
         playAudioFeedback("error");
@@ -78,6 +87,13 @@ export default function LessonPage() {
     const handleNavigate = (view) => {
         if (view === "shop") {
             setDashboardActiveTab("shop");
+            setCurrentView("profile");
+            return;
+        }
+        if (view === "profile") {
+            if (dashboardActiveTab === "shop") {
+                setDashboardActiveTab("all");
+            }
             setCurrentView("profile");
             return;
         }
@@ -193,11 +209,11 @@ export default function LessonPage() {
 
     // Game Currency & Shop States (🌟 Koin Bintang & Item Buka Kunci)
     const [studentCoins, setStudentCoins] = useState(50);
-    const [ownedItems, setOwnedItems] = useState(["title_cadet", "avatar_astro_1"]);
-    const [equippedItems, setEquippedItems] = useState({ title: "title_cadet", avatar: "avatar_astro_1", pet: null });
+    const [ownedItems, setOwnedItems] = useState(["border_cadet", "avatar_astro_1"]);
+    const [equippedItems, setEquippedItems] = useState({ border: "border_cadet", avatar: "avatar_astro_1", pet: null });
 
-    const equippedTitleItem = SHOP_CATALOG.find((i) => i.id === equippedItems?.title) || { name: "Kadet STEM", icon: "🎓" };
-    const equippedAvatarItem = SHOP_CATALOG.find((i) => i.id === equippedItems?.avatar) || { name: "Angkasawan Perintis", icon: "🧑‍🚀" };
+    const equippedBorderId = equippedItems?.border || "border_cadet";
+    const equippedAvatarItem = SHOP_CATALOG.find((i) => i.id === equippedItems?.avatar) || { id: "avatar_astro_1", name: "Angkasawan Perintis", icon: "avatar_astro_1" };
     const equippedPetItem = SHOP_CATALOG.find((i) => i.id === equippedItems?.pet);
 
     // Fungsi Ganjaran Koin Bintang
@@ -489,14 +505,14 @@ export default function LessonPage() {
             setAverageQuizSpeed(null);
 
             setStudentCoins(50);
-            setOwnedItems(["title_cadet", "avatar_astro_1"]);
-            setEquippedItems({ title: "title_cadet", avatar: "avatar_astro_1", pet: null });
+            setOwnedItems(["border_cadet", "avatar_astro_1"]);
+            setEquippedItems({ border: "border_cadet", avatar: "avatar_astro_1", pet: null });
 
             if (cleanIC) {
                 try {
                     localStorage.setItem(`exploria_student_${cleanIC}_stats`, JSON.stringify(freshStats));
-                    localStorage.setItem(`exploria_student_${cleanIC}_shop`, JSON.stringify({ coins: 50, ownedItems: ["title_cadet", "avatar_astro_1"] }));
-                    localStorage.setItem(`exploria_student_${cleanIC}_equipped`, JSON.stringify({ title: "title_cadet", avatar: "avatar_astro_1", pet: null }));
+                    localStorage.setItem(`exploria_student_${cleanIC}_shop`, JSON.stringify({ coins: 50, ownedItems: ["border_cadet", "avatar_astro_1"] }));
+                    localStorage.setItem(`exploria_student_${cleanIC}_equipped`, JSON.stringify({ border: "border_cadet", avatar: "avatar_astro_1", pet: null }));
                 } catch {}
             }
             try {
@@ -587,7 +603,8 @@ export default function LessonPage() {
                     } catch {}
 
                     const coinsVal = typeof data?.koinBintang === "number" ? data.koinBintang : (shopData?.coins ?? 50);
-                    const ownedVal = Array.isArray(data?.barangDimiliki) ? data.barangDimiliki : (shopData?.ownedItems ?? ["title_cadet", "avatar_astro_1"]);
+                    const rawOwned = Array.isArray(data?.barangDimiliki) ? data.barangDimiliki : (shopData?.ownedItems ?? ["border_cadet", "avatar_astro_1"]);
+                    const ownedVal = rawOwned.includes("border_cadet") ? rawOwned : [...rawOwned, "border_cadet"];
                     setStudentCoins(coinsVal);
                     setOwnedItems(ownedVal);
 
@@ -598,7 +615,7 @@ export default function LessonPage() {
                     } catch {}
 
                     const eqVal = {
-                        title: data?.gelaranDipilih || eqData?.title || "title_cadet",
+                        border: data?.borderDipilih || eqData?.border || "border_cadet",
                         avatar: data?.avatarDipilih || eqData?.avatar || "avatar_astro_1",
                         pet: data?.petDipilih || eqData?.pet || null,
                     };
@@ -1937,8 +1954,8 @@ export default function LessonPage() {
                 }}
             >
                 <div className="flex flex-col items-center gap-3 animate-pulse">
-                    <div className="w-16 h-16 rounded-2xl bg-white/80 backdrop-blur-md flex items-center justify-center text-3xl shadow-lg border border-slate-300 text-sky-600">
-                        🚀
+                    <div className="w-16 h-16 rounded-2xl bg-white/80 backdrop-blur-md flex items-center justify-center p-2.5 shadow-lg border border-slate-300 text-sky-600">
+                        <GraphicMascotRobot className="w-full h-full" />
                     </div>
                     <div className="text-xl font-black tracking-wide text-slate-800 drop-shadow-sm">EXPLORIA STEM</div>
                     <div className="text-xs text-slate-600 font-bold">Memuatkan portal penjelajahan...</div>
@@ -2200,42 +2217,6 @@ export default function LessonPage() {
                         </span>
                     </div>
 
-                    {/* TENGAH: TAB NAVIGASI UTAMA (COMMON DESIGN - DESKTOP & TABLET) */}
-                    <div className="hidden md:flex items-center gap-1 bg-black/20 backdrop-blur-md p-1 rounded-2xl border border-white/20 shadow-inner">
-                        {/* Tab 1: Menu Utama */}
-                        <button
-                            onClick={() => { playAudioFeedback("tap"); setCurrentView("menu"); }}
-                            className={`px-3.5 py-1.5 rounded-xl text-xs font-black transition-all flex items-center justify-center cursor-pointer ${currentView === "menu"
-                                ? "bg-white text-blue-900 shadow-sm"
-                                : "text-white/85 hover:text-white hover:bg-white/15"
-                                }`}
-                        >
-                            <span>{t("Teroka", "Explore")}</span>
-                        </button>
-
-                        {/* Tab 2: Pusat Aktiviti (Termasuk Kuiz Topik) */}
-                        <button
-                            onClick={() => { playAudioFeedback("tap"); setCurrentView("activityList"); }}
-                            className={`px-3.5 py-1.5 rounded-xl text-xs font-black transition-all flex items-center justify-center cursor-pointer ${currentView === "activityList" || currentView === "solarDragDrop" || currentView === "plantActivity" || currentView === "quizList" || currentView === "quizRules" || currentView === "quiz"
-                                ? "bg-white text-blue-900 shadow-sm"
-                                : "text-white/85 hover:text-white hover:bg-white/15"
-                                }`}
-                        >
-                            <span>{t("Aktiviti", "Activities")}</span>
-                        </button>
-
-                        {/* Tab 3: Pusat Pertandingan (Sifir & Spelling Bee) */}
-                        <button
-                            onClick={() => { playAudioFeedback("tap"); setCurrentView("competitionList"); }}
-                            className={`px-3.5 py-1.5 rounded-xl text-xs font-black transition-all flex items-center justify-center cursor-pointer ${currentView === "competitionList" || currentView === "spellingBee" || currentView === "mathQuiz"
-                                ? "bg-white text-blue-900 shadow-sm"
-                                : "text-white/85 hover:text-white hover:bg-white/15"
-                                }`}
-                        >
-                            <span>{t("Pertandingan", "Competitions")}</span>
-                        </button>
-
-                    </div>
 
                     {/* KANAN: PILIHAN BAHASA, CART EMOJI KEDAI & STATUS PELAJAR */}
                     <div className="flex items-center gap-1.5 sm:gap-2.5 shrink-0">
@@ -2269,6 +2250,20 @@ export default function LessonPage() {
                             </span>
                         </button>
 
+                        {/* BUTANG TETAPAN (SETTINGS) UNTUK MURID */}
+                        <button
+                            type="button"
+                            onClick={() => { playAudioFeedback("tap"); setShowStudentSettingsModal(true); }}
+                            className="h-8 sm:h-9 w-8 sm:w-9 rounded-xl sm:rounded-2xl flex items-center justify-center transition-all cursor-pointer shadow-xs active:scale-95 border bg-white/15 hover:bg-white/25 text-white border-white/20 backdrop-blur-md"
+                            title={t("Tetapan Murid", "Student Settings")}
+                            aria-label="Tetapan Murid"
+                        >
+                            <svg className="w-4 h-4 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                                <circle cx="12" cy="12" r="3"></circle>
+                                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                            </svg>
+                        </button>
+
                         {/* Profile Chip / Trigger Button & Log Masuk */}
                         {isLoggedIn ? (
                             <button
@@ -2279,16 +2274,12 @@ export default function LessonPage() {
                                     }`}
                                 title={t("Buka Profil Murid", "Open Student Profile")}
                             >
-                                <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-sky-400 to-[#0099e5] p-0.5 shadow-xs shrink-0 relative">
-                                    <div className="w-full h-full bg-slate-900 rounded-[0.6rem] flex items-center justify-center text-sm">
-                                        {equippedAvatarItem?.icon || "🧑‍🚀"}
-                                    </div>
-                                    {equippedPetItem && (
-                                        <span className="absolute -bottom-1 -right-1 text-[10px] bg-white rounded-full px-0.5 shadow-2xs border border-slate-200">
-                                            {equippedPetItem.icon}
-                                        </span>
-                                    )}
-                                </div>
+                                <ProfileAvatarFrame
+                                    avatar={equippedAvatarItem?.id || "avatar_astro_1"}
+                                    borderId={equippedBorderId}
+                                    pet={equippedPetItem}
+                                    size="sm"
+                                />
                                 <div className="text-left leading-tight hidden min-[520px]:block">
                                     <div className="flex items-center gap-1.5">
                                         <span className={`text-xs font-black ${currentView === "profile" || currentView === "dashboard" ? "text-[#0077b6]" : "text-white"}`}>{studentName || "Penjelajah"}</span>
@@ -2346,32 +2337,6 @@ export default function LessonPage() {
 
                 </div>
 
-                {/* SUB-NAVIGASI UNTUK PERANTI MUDAH ALIH (MOBILE HORIZONTAL SCROLL) */}
-                <div className="md:hidden border-t border-white/15 px-3 py-1.5 flex items-center gap-1.5 overflow-x-auto no-scrollbar bg-black/20 backdrop-blur-md">
-                    <button
-                        onClick={() => { playAudioFeedback("tap"); setCurrentView("menu"); }}
-                        className={`px-3 py-1 rounded-xl text-xs font-black whitespace-nowrap flex items-center justify-center ${currentView === "menu" ? "bg-white text-blue-900 shadow-xs" : "bg-white/15 text-white border border-white/20"
-                            }`}
-                    >
-                        {t("Teroka", "Explore")}
-                    </button>
-
-                    <button
-                        onClick={() => { playAudioFeedback("tap"); setCurrentView("activityList"); }}
-                        className={`px-3 py-1 rounded-xl text-xs font-black whitespace-nowrap flex items-center justify-center ${currentView === "activityList" || currentView === "solarDragDrop" || currentView === "plantActivity" || currentView === "quizList" || currentView === "quizRules" || currentView === "quiz" ? "bg-white text-blue-900 shadow-xs" : "bg-white/15 text-white border border-white/20"
-                            }`}
-                    >
-                        {t("Aktiviti", "Activities")}
-                    </button>
-
-                    <button
-                        onClick={() => { playAudioFeedback("tap"); setCurrentView("competitionList"); }}
-                        className={`px-3 py-1 rounded-xl text-xs font-black whitespace-nowrap flex items-center justify-center ${currentView === "competitionList" || currentView === "spellingBee" || currentView === "mathQuiz" ? "bg-white text-blue-900 shadow-xs" : "bg-white/15 text-white border border-white/20"
-                            }`}
-                    >
-                        {t("Pertandingan", "Competitions")}
-                    </button>
-                </div>
 
             </nav>
 
@@ -2379,7 +2344,7 @@ export default function LessonPage() {
 
             {/* KANDUNGAN UTAMA (MAIN CONTAINER) */}
 
-            <main className="flex-1 w-full py-5 sm:py-8 px-3 sm:px-6 flex flex-col items-center justify-start relative z-10">
+            <main className="flex-1 w-full pt-5 sm:pt-8 pb-24 sm:pb-28 px-3 sm:px-6 flex flex-col items-center justify-start relative z-10">
 
 
 
@@ -2393,59 +2358,48 @@ export default function LessonPage() {
 
 
 
-                    {/* Header dengan warna Biru Khas Logo Exploria (Responsif tanpa perlanggaran butang pada skrin kecil) */}
-
                     <div
                         className={`p-4 sm:p-8 text-white relative shadow-md flex flex-col items-center justify-center ${currentView !== "menu" ? "pt-14 sm:pt-8" : "pt-8"}`}
                         style={{
                             background: "linear-gradient(135deg, #0284c7 0%, #1d4ed8 55%, #4f46e5 80%, #7c3aed 100%)"
                         }}
                     >
-
-
-
-                        {/* BUTTON MENU UTAMA: HANYA KETIKA BUKAN MENU, DETAIL LESSON, AKTIVITI, ATAU PERTANDINGAN (YANG DAH ADA BACK SENDIRI) */}
-
-                        {currentView !== "menu" && currentView !== "learningDetail" && currentView !== "activityList" && currentView !== "competitionList" && currentView !== "competition" && currentView !== "pertandingan" && currentView !== "mathQuiz" && currentView !== "spellingBee" && (
-
+                        {/* BUTTON MENU UTAMA: HANYA KETIKA BUKAN MENU, DETAIL LESSON, AKTIVITI, ATAU PERTANDINGAN */}
+                        {currentView !== "menu" && currentView !== "learningDetail" && currentView !== "activityList" && currentView !== "competitionList" && currentView !== "competition" && currentView !== "pertandingan" && currentView !== "mathQuiz" && currentView !== "spellingBee" && currentView !== "leaderboard" && (
                             <div className="absolute left-3 top-3 sm:left-6 sm:top-6 z-20">
-
                                 <button
-
                                     onClick={() => { playAudioFeedback("tap"); setCurrentView("menu"); resetQuizState(); resetSolarGame(); }}
-
                                     title={t("Kembali ke Teroka", "Back to Explore")}
-
                                     aria-label={t("Kembali ke Teroka", "Back to Explore")}
-
                                     className="h-9 sm:h-11 px-3 sm:px-4 bg-white/20 hover:bg-white/35 active:scale-90 text-white rounded-2xl transition-all flex items-center gap-1.5 cursor-pointer backdrop-blur-md shadow-md border-2 border-white/35 hover:border-white/60 group"
-
                                 >
-
                                     <GraphicBackArrow className="w-4 h-4 sm:w-5 sm:h-5 text-white group-hover:-translate-x-1 transition-transform" />
-
                                     <span className="text-xs sm:text-sm font-black text-white">Back</span>
-
                                 </button>
-
                             </div>
-
                         )}
 
-
-
-
                         <h1 className="text-xl sm:text-2xl md:text-3xl font-black tracking-tight text-white drop-shadow-sm px-2 text-balance leading-tight">
-
                             {courseData.courseTitle}
-
                         </h1>
-
                     </div>
 
 
 
                     <div className="p-3.5 sm:p-7 md:p-10 bg-white flex flex-col items-center justify-center">
+
+                        {/* 3 KAD NAVIGASI MODUL UTAMA GAYA REKA BENTUK MODEN (TEROKA, AKTIVITI, PERTANDINGAN) */}
+                        {(currentView === "menu" || currentView === "activityList" || currentView === "competitionList") && (
+                            <ModuleNavCards
+                                currentView={currentView}
+                                onSelectView={(view) => {
+                                    playAudioFeedback("tap");
+                                    setCurrentView(view);
+                                }}
+                                t={t}
+                                playAudioFeedback={playAudioFeedback}
+                            />
+                        )}
 
                         {/* PAPARAN 1: TEROKA / MENU UTAMA */}
                         {currentView === "menu" && (
@@ -2459,8 +2413,8 @@ export default function LessonPage() {
                                 studentXP={studentXP}
                                 studentStreak={studentStreak}
                                 studentCoins={studentCoins}
-                                equippedAvatarIcon={equippedAvatarItem?.icon || "🧑‍🚀"}
-                                equippedTitleName={equippedTitleItem?.name || "Kadet STEM"}
+                                equippedAvatarIcon={equippedAvatarItem?.id || "avatar_astro_1"}
+                                equippedTitleName=""
                                 equippedPetIcon={equippedPetItem?.icon || null}
                                 unlockedBadgesCount={1}
                                 curriculumTopics={courseData.topics}
@@ -2519,7 +2473,7 @@ export default function LessonPage() {
                                 studentName={studentName}
                                 isLoggedIn={isLoggedIn}
                                 studentCoins={studentCoins}
-                                equippedAvatarIcon={equippedAvatarItem?.icon || "🧑‍🚀"}
+                                equippedAvatarIcon={equippedAvatarItem?.id || "avatar_astro_1"}
                                 quizHighScore={quizHighScore}
                                 solarSubmitted={solarSubmitted || isSolarBoardFinished}
                                 plantSubmitted={plantSubmitted}
@@ -2610,12 +2564,25 @@ export default function LessonPage() {
                                 studentName={studentName}
                                 isLoggedIn={isLoggedIn}
                                 studentCoins={studentCoins}
-                                equippedAvatarIcon={equippedAvatarItem?.icon || "🧑‍🚀"}
+                                equippedAvatarIcon={equippedAvatarItem?.id || "avatar_astro_1"}
                                 mathScore={mathScore}
                                 mathSubmitted={mathSubmitted}
                                 spellingScore={spellingScore}
                                 spellingSubmitted={spellingSubmitted}
                                 onBlockedAction={() => triggerGuestNotice("aktiviti")}
+                            />
+                        )}
+
+                        {/* PAPARAN: PAPAN JUARA (LEADERBOARD BERASASKAN DATA FIRESTORE REAL-TIME GAYA SKRIN 3) */}
+                        {currentView === "leaderboard" && (
+                            <LeaderboardView
+                                onNavigate={handleNavigate}
+                                t={t}
+                                playAudioFeedback={playAudioFeedback}
+                                isLoggedIn={isLoggedIn}
+                                studentName={studentName}
+                                studentIC={studentIC}
+                                studentXP={studentXP}
                             />
                         )}
 
@@ -2660,6 +2627,7 @@ export default function LessonPage() {
                                 t={t}
                                 playAudioFeedback={playAudioFeedback}
                                 isLoggedIn={isLoggedIn}
+                                onOpenSettings={() => setShowStudentSettingsModal(true)}
                                 onLogout={handleLogout}
                             />
                         )}
@@ -2720,11 +2688,14 @@ export default function LessonPage() {
 
                         {/* Mascot Robot & Lock Frame */}
                         <div className="mx-auto w-20 h-20 sm:w-22 sm:h-22 rounded-3xl bg-gradient-to-tr from-amber-400 via-orange-400 to-rose-400 p-1 shadow-xl shadow-amber-500/25 anim-float relative mt-1">
-                            <div className="w-full h-full bg-slate-900 rounded-[1.3rem] flex items-center justify-center text-4xl border-2 border-white/40">
-                                🤖
+                            <div className="w-full h-full bg-slate-900 rounded-[1.3rem] flex items-center justify-center p-3 border-2 border-white/40">
+                                <GraphicMascotRobot className="w-full h-full" />
                             </div>
-                            <span className="absolute -bottom-2 -right-2 bg-rose-500 text-white text-sm w-7 h-7 rounded-full border-2 border-white flex items-center justify-center shadow-md">
-                                🔒
+                            <span className="absolute -bottom-2 -right-2 bg-rose-500 text-white text-xs w-7 h-7 rounded-full border-2 border-white flex items-center justify-center shadow-md p-1.5">
+                                <svg className="w-full h-full" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                                    <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                                </svg>
                             </span>
                         </div>
 
@@ -2747,7 +2718,7 @@ export default function LessonPage() {
 
                         {/* Reward Highlight */}
                         <div className="my-4 p-3 bg-amber-50 rounded-2xl border border-amber-200 text-left flex items-center gap-2.5">
-                            <span className="text-2xl">✨</span>
+                            <VectorSparkles className="w-6 h-6 shrink-0 text-amber-500" />
                             <div className="text-[11px] leading-tight">
                                 <span className="font-black text-slate-800 block">Daftar sekarang & dapatkan:</span>
                                 <span className="text-amber-800 font-bold">100 XP Selamat Datang + Simpanan Rekod Penuh</span>
@@ -2765,9 +2736,9 @@ export default function LessonPage() {
                                 }}
                                 className="w-full py-3.5 bg-transparent border-2 border-[#0099e5] hover:bg-[#0099e5]/10 text-[#0099e5] font-black text-xs sm:text-sm rounded-xl flex items-center justify-center gap-2 cursor-pointer transition-all active:scale-98"
                             >
-                                <span>🔑</span>
+                                <VectorAvatarAstro className="w-4 h-4 shrink-0" />
                                 <span>Log Masuk Akaun Sedia Ada</span>
-                                <span>➔</span>
+                                <GraphicArrowRight className="w-3.5 h-3.5" />
                             </button>
 
                             <button
@@ -2779,9 +2750,9 @@ export default function LessonPage() {
                                 }}
                                 className="w-full py-3.5 bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 font-bold text-xs sm:text-sm rounded-xl shadow-xs flex items-center justify-center gap-2 cursor-pointer transition-all active:scale-98"
                             >
-                                <span>📝</span>
+                                <VectorPencil className="w-4 h-4 shrink-0 text-sky-500" />
                                 <span>Daftar Akaun Percuma (Murid Baharu)</span>
-                                <span>➔</span>
+                                <GraphicArrowRight className="w-3.5 h-3.5" />
                             </button>
 
                             <button
@@ -2798,7 +2769,30 @@ export default function LessonPage() {
                     </div>
                 </div>
             )}
+
+            {/* MODAL TETAPAN MURID (CHANGE PASSWORD & PREFERENCES) */}
+            <StudentSettingsModal
+                isOpen={showStudentSettingsModal}
+                onClose={() => setShowStudentSettingsModal(false)}
+                isLoggedIn={isLoggedIn}
+                studentName={studentName}
+                studentIC={studentIC}
+                studentSchool={studentSchool}
+                onNavigate={handleNavigate}
+                playAudioFeedback={playAudioFeedback}
+            />
             </main>
+
+            {/* MOBILE BOTTOM NAVIGATION BAR GAYA APLIKASI MUDAH ALIH (TEROKA, KEDAI, LEADERBOARD, PROFIL) */}
+            {currentView !== "login" && currentView !== "register" && (
+                <MobileBottomNav
+                    currentView={currentView}
+                    dashboardActiveTab={dashboardActiveTab}
+                    onNavigate={handleNavigate}
+                    playAudioFeedback={playAudioFeedback}
+                    t={t}
+                />
+            )}
         </div>
     );
 }

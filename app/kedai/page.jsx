@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import ShopView from "../belajar/components/ShopView";
+import ProfileAvatarFrame, { BORDER_STYLES } from "../belajar/components/ProfileAvatarFrame";
 import { GraphicHomeButton, GraphicBackArrow, GraphicMascotRobot, LanguageToggle, GraphicCoin } from "../belajar/components/Graphics";
 import { SHOP_CATALOG, DEFAULT_OWNED_ITEMS } from "../../lib/shopService";
 
@@ -14,7 +15,7 @@ export default function KedaiPage() {
     const [studentCoins, setStudentCoins] = useState(150); // Baki permulaan demo jika belum login
     const [ownedItems, setOwnedItems] = useState(DEFAULT_OWNED_ITEMS);
     const [equippedItems, setEquippedItems] = useState({
-        title: "title_cadet",
+        border: "border_cadet",
         avatar: "avatar_astro_1",
         pet: null,
     });
@@ -127,8 +128,8 @@ export default function KedaiPage() {
 
     if (!isMounted) return null;
 
+    const equippedBorderId = equippedItems?.border || "border_cadet";
     const equippedAvatarItem = SHOP_CATALOG.find((i) => i.id === equippedItems?.avatar);
-    const equippedTitleItem = SHOP_CATALOG.find((i) => i.id === equippedItems?.title);
     const equippedPetItem = SHOP_CATALOG.find((i) => i.id === equippedItems?.pet);
 
     return (
@@ -198,14 +199,19 @@ export default function KedaiPage() {
                             <span>+100 Koin Ujian</span>
                         </button>
 
-                        <div className="flex items-center gap-2 bg-white/10 border border-white/20 px-3 py-1.5 rounded-2xl">
-                            <span className="text-base">{equippedAvatarItem?.icon || "🧑‍🚀"}</span>
+                        <div className="flex items-center gap-2 bg-white/10 border border-white/20 px-2.5 py-1 rounded-2xl">
+                            <ProfileAvatarFrame
+                                avatar={equippedAvatarItem?.icon || "🧑‍🚀"}
+                                borderId={equippedBorderId}
+                                pet={equippedPetItem}
+                                size="xs"
+                            />
                             <div className="text-left hidden sm:block">
                                 <span className="text-[11px] font-black text-white block leading-tight">
                                     {studentName}
                                 </span>
                                 <span className="text-[9px] font-bold text-amber-300">
-                                    {equippedTitleItem?.name || "Kadet STEM"}
+                                    {BORDER_STYLES[equippedBorderId]?.name || "Besi Perintis"}
                                 </span>
                             </div>
                             <span className="font-mono font-black text-amber-300 text-xs sm:text-sm pl-1 border-l border-white/20 flex items-center gap-1">

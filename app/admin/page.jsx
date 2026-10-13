@@ -16,6 +16,7 @@ import SpellingBeeTab from "./components/SpellingBeeTab";
 import TopicModal from "./components/TopicModal";
 import QuestionModal from "./components/QuestionModal";
 import SpellingModal from "./components/SpellingModal";
+import StudentModal from "./components/StudentModal";
 
 export default function AdminPage() {
     const [viewMode, setViewMode] = useState("login"); // "login" | "2fa" | "dashboard"
@@ -49,6 +50,9 @@ export default function AdminPage() {
     const [studentsList, setStudentsList] = useState([]);
     const [isLoadingStudents, setIsLoadingStudents] = useState(false);
     const [searchTerm, setSearchTerm] = useState("");
+    const [selectedStudentForEdit, setSelectedStudentForEdit] = useState(null);
+    const [isStudentModalOpen, setIsStudentModalOpen] = useState(false);
+    const [isSavingStudent, setIsSavingStudent] = useState(false);
 
     // Data: Curriculum Topics & Quizzes
     const [topics, setTopics] = useState(INITIAL_CURRICULUM_TOPICS);
@@ -577,6 +581,10 @@ export default function AdminPage() {
                                 searchTerm={searchTerm}
                                 setSearchTerm={setSearchTerm}
                                 onRefresh={() => fetchStudents(adminSession?.token)}
+                                onEditStudent={(st) => {
+                                    setSelectedStudentForEdit(st);
+                                    setIsStudentModalOpen(true);
+                                }}
                             />
                         </div>
                     )}
@@ -709,6 +717,46 @@ export default function AdminPage() {
                 isSaving={isSavingSpelling}
                 onSave={handleSaveSpellingWord}
                 onClose={() => setSpellingModalMode(null)}
+            />
+
+            {/* Modal: Ubah Data Pelajar oleh Admin */}
+            <StudentModal
+                isOpen={isStudentModalOpen}
+                student={selectedStudentForEdit}
+                onClose={() => {
+                    setIsStudentModalOpen(false);
+                    setSelectedStudentForEdit(null);
+                }}
+                onSave={async (updatedData) => {
+                    if (!adminSession?.token) return;
+                    setIsSavingStudent(true);
+                    try {
+                        const res = await fetch("/api/admin/students", {
+                            method: "PUT",
+                            headers: {
+                                "Content-Type": "application/json",
+                                Authorization: `Bearer ${adminSession.token}`,
+                            },
+                            body: JSON.stringify(updatedData),
+                        });
+                        const result = await res.json();
+                        if (result.success) {
+                            setStudentsList((prev) =>
+                                prev.map((s) => (s.ic === updatedData.ic ? { ...s, ...updatedData } : s))
+                            );
+                            setIsStudentModalOpen(false);
+                            setSelectedStudentForEdit(null);
+                        } else {
+                            alert(result.error || "Gagal mengemas kini rekod murid.");
+                        }
+                    } catch (err) {
+                        console.error("Ralat mengemas kini murid:", err);
+                        alert("Ralat sambungan pelayan ketika mengemas kini data murid.");
+                    } finally {
+                        setIsSavingStudent(false);
+                    }
+                }}
+                isSaving={isSavingStudent}
             />
         </div>
     );

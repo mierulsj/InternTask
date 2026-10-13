@@ -14,6 +14,7 @@ export default function AdminDrawer({
     spellingWordsCount = 0,
     adminSession = null,
     onLogout,
+    onOpenSettings,
 }) {
     const navItems = [
         {
@@ -21,28 +22,24 @@ export default function AdminDrawer({
             label: "Data Pelajar",
             icon: "👥",
             badge: studentsCount,
-            badgeColor: "bg-sky-100 text-sky-800",
         },
         {
             id: "notes",
             label: "Pengurusan Nota",
             icon: "📖",
             badge: topicsCount,
-            badgeColor: "bg-emerald-100 text-emerald-800",
         },
         {
             id: "quizzes",
             label: "Pengurusan Kuiz",
             icon: "⚡",
-            badge: `${totalQuestions} Soalan`,
-            badgeColor: "bg-amber-100 text-amber-800",
+            badge: totalQuestions,
         },
         {
             id: "spelling",
             label: "Spelling Bee",
             icon: "🐝",
-            badge: `${spellingWordsCount} Kata`,
-            badgeColor: "bg-purple-100 text-purple-800",
+            badge: spellingWordsCount,
         },
     ];
 
@@ -111,7 +108,7 @@ export default function AdminDrawer({
                                     className={`text-[10px] font-bold px-2 py-0.5 rounded-md ${
                                         isActive
                                             ? "bg-white/20 text-white"
-                                            : item.badgeColor
+                                            : "bg-slate-100 text-slate-600 font-bold"
                                     }`}
                                 >
                                     {item.badge}

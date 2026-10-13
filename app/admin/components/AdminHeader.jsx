@@ -9,6 +9,7 @@ export default function AdminHeader({
     onLogout,
     activeTab = "students",
     onToggleDrawer,
+    onOpenSettings,
 }) {
     const tabTitles = {
         students: "Data Pelajar",
@@ -94,6 +95,16 @@ export default function AdminHeader({
                         {adminSession?.email}
                     </span>
                 </div>
+
+                <button
+                    type="button"
+                    onClick={onOpenSettings}
+                    className="text-xs font-bold text-slate-700 hover:text-slate-900 px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 border border-slate-200 cursor-pointer transition-colors flex items-center gap-1.5"
+                    title="Tetapan Pentadbir"
+                >
+                    <span>⚙️</span>
+                    <span className="hidden sm:inline">Tetapan</span>
+                </button>
 
                 <button
                     type="button"

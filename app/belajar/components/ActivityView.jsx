@@ -2,12 +2,13 @@
 
 import React from "react";
 import {
+    GraphicCoin,
+    GraphicBackArrow,
     GraphicLevelRocket,
     GraphicLevelPlanets,
     GraphicLevelPlantSprout,
-    GraphicCoin,
-    GraphicBackArrow,
 } from "./Graphics";
+import { VectorAvatarAstro, VectorAvatarGuest } from "./GameIcons";
 
 export default function ActivityView({
     onNavigate,
@@ -16,7 +17,7 @@ export default function ActivityView({
     studentName = "Penjelajah",
     isLoggedIn = false,
     studentCoins = 50,
-    equippedAvatarIcon = "🧑‍🚀",
+    equippedAvatarIcon = "avatar_astro_1",
     quizHighScore = 0,
     solarSubmitted = false,
     plantSubmitted = false,
@@ -40,7 +41,7 @@ export default function ActivityView({
     return (
         <div className="w-full max-w-sm sm:max-w-md mx-auto anim-fade-in space-y-6 pb-8 select-none text-left">
 
-            {/* 1. HEADER ATAS & BAR PERATUS KEMAJUAN (PROGRESS BAR) */}
+            {/* 1. HEADER ATAS DENGAN BUTANG NAVIGASI, KOIN & AVATAR */}
             <div className="px-1 pt-1 space-y-3">
                 <div className="flex items-center justify-between">
                     {/* Kiri: Butang Back & Tajuk */}
@@ -80,16 +81,13 @@ export default function ActivityView({
                         <button
                             type="button"
                             onClick={() => handleAction("sparkle", () => onNavigate && onNavigate("profile"))}
-                            className="w-10 h-10 rounded-full bg-sky-50 hover:bg-sky-100 border border-sky-200 text-sky-600 flex items-center justify-center text-base shadow-xs cursor-pointer active:scale-95 transition-all shrink-0"
+                            className="w-10 h-10 rounded-full bg-sky-50 hover:bg-sky-100 border border-sky-200 text-sky-600 flex items-center justify-center shadow-xs cursor-pointer active:scale-95 transition-all shrink-0 p-1.5"
                             title={isLoggedIn ? studentName : (t ? t("Buka Profil", "Open Profile") : "Buka Profil")}
                         >
                             {isLoggedIn ? (
-                                <span>{equippedAvatarIcon || "🧑‍🚀"}</span>
+                                <VectorAvatarAstro className="w-full h-full" />
                             ) : (
-                                <svg className="w-5 h-5 text-sky-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.3" strokeLinecap="round" strokeLinejoin="round">
-                                    <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
-                                    <circle cx="12" cy="7" r="4" />
-                                </svg>
+                                <VectorAvatarGuest className="w-full h-full text-sky-500" />
                             )}
                         </button>
                     </div>

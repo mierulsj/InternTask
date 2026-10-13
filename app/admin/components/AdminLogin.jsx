@@ -93,13 +93,13 @@ export default function AdminLogin({
                         <button
                             type="submit"
                             disabled={isLoading}
-                            className="w-full py-2.5 bg-cyan-600 hover:bg-cyan-500 active:scale-98 text-white font-bold text-xs rounded-lg transition-all cursor-pointer disabled:opacity-50 mt-1 shadow-sm"
+                            className="w-full py-2.5 bg-[#0099e5] hover:bg-[#0088cc] active:scale-98 text-white font-bold text-xs rounded-lg transition-all cursor-pointer disabled:opacity-50 mt-1 shadow-sm"
                         >
                             {isLoading ? "Menyemak..." : "Log Masuk Pentadbir"}
                         </button>
 
                         <div className="pt-2 text-center text-[11px] text-slate-400 font-mono">
-                            Bcrypt Hash • Anti Brute-force (5x) • 2FA
+                            Keselamatan: Bcrypt • Anti Brute-Force • 2FA
                         </div>
                     </form>
                 )}

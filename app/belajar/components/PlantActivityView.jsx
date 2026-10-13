@@ -5,7 +5,9 @@ import {
     GraphicBackArrow,
     GraphicArrowRight,
     GraphicRefresh,
+    GraphicCoin,
 } from "./Graphics";
+import { VectorStar, VectorPlant } from "./GameIcons";
 
 /* =========================================================================
    CUSTOM VECTOR SVG ILLUSTRATIONS FOR PLANT LAB
@@ -482,7 +484,7 @@ const TOOLS_CONFIG = [
         nameEN: "Watering Can",
         subBM: "Air (H₂O)",
         subEN: "Water (H₂O)",
-        badge: "Air 💧",
+        badge: "Air",
         targetZoneLabelBM: "Zon Pasu & Tanah",
         targetZoneLabelEN: "Pot & Soil Zone",
         colorBadge: "bg-sky-100 text-sky-800 border-sky-300",
@@ -501,7 +503,7 @@ const TOOLS_CONFIG = [
         nameEN: "Sunlight Beam",
         subBM: "Tenaga Suria",
         subEN: "Solar Light",
-        badge: "Cahaya ☀️",
+        badge: "Cahaya",
         targetZoneLabelBM: "Zon Dedaun",
         targetZoneLabelEN: "Foliage Leaves Zone",
         colorBadge: "bg-amber-100 text-amber-800 border-amber-300",
@@ -520,7 +522,7 @@ const TOOLS_CONFIG = [
         nameEN: "CO₂ Gas Cloud",
         subBM: "Aliran Udara CO₂",
         subEN: "CO₂ Air Supply",
-        badge: "Gas CO₂ 💨",
+        badge: "Gas CO₂",
         targetZoneLabelBM: "Zon Dedaun",
         targetZoneLabelEN: "Foliage Leaves Zone",
         colorBadge: "bg-purple-100 text-purple-800 border-purple-300",
@@ -539,7 +541,7 @@ const TOOLS_CONFIG = [
         nameEN: "Soil Fertilizer",
         subBM: "Garam Mineral",
         subEN: "Soil Minerals",
-        badge: "Baja 🧪",
+        badge: "Baja",
         targetZoneLabelBM: "Zon Pasu & Tanah",
         targetZoneLabelEN: "Pot & Soil Zone",
         colorBadge: "bg-emerald-100 text-emerald-800 border-emerald-300",
@@ -1131,18 +1133,18 @@ export default function PlantActivityView({
                     <div className="bg-gradient-to-r from-emerald-50 via-teal-50 to-emerald-100 p-5 sm:p-6 rounded-3xl border-3 border-emerald-400 shadow-xl text-center space-y-3.5 anim-pop">
                         <div className="space-y-1">
                             <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-200 text-emerald-900 font-black text-xs border border-emerald-400">
-                                <span>🌟</span>
+                                <VectorPlant className="w-3.5 h-3.5" />
                                 <span>{translate("Fotosintesis Selesai & Berjaya!", "Photosynthesis Complete!")}</span>
                             </div>
                             <h3 className="text-xl sm:text-2xl font-black text-emerald-950">
-                                {translate("Pokok Membesar Subur & Sihat! 🌻", "Plant Is Lush & Blooming! 🌻")}
+                                {translate("Pokok Membesar Subur & Sihat!", "Plant Is Lush & Blooming!")}
                             </h3>
                         </div>
 
                         {/* Score & Coins Chips */}
                         <div className="flex flex-wrap items-center justify-center gap-3">
                             <div className="inline-flex items-center gap-2.5 bg-white px-4 py-2 rounded-2xl border-2 border-emerald-300 shadow-xs">
-                                <span className="text-2xl">⭐</span>
+                                <VectorStar className="w-6 h-6 text-emerald-600" />
                                 <div className="text-left leading-tight">
                                     <span className="text-[9px] font-black uppercase text-emerald-600 block">
                                         {translate("Markah", "Score")}
@@ -1152,12 +1154,12 @@ export default function PlantActivityView({
                             </div>
 
                             <div className="inline-flex items-center gap-2.5 bg-gradient-to-r from-amber-400 via-yellow-300 to-amber-400 px-4 py-2 rounded-2xl border-2 border-white shadow-sm text-amber-950 anim-pop">
-                                <span className="text-2xl">🌟</span>
+                                <GraphicCoin className="w-6 h-6" />
                                 <div className="text-left leading-tight">
                                     <span className="text-[9px] font-black uppercase text-amber-900 block">
                                         {translate("Ganjaran Koin", "Coin Reward")}
                                     </span>
-                                    <span className="text-sm sm:text-base font-black text-slate-950">+20 🌟 Koin</span>
+                                    <span className="text-sm sm:text-base font-black text-slate-950">+20 Koin</span>
                                 </div>
                             </div>
                         </div>

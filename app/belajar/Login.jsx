@@ -1,9 +1,10 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { loginStudentWithFirestore } from "../../lib/firestoreService";
+import { VectorAvatarAstro, VectorAvatarGuest } from "./components/GameIcons";
 
 export default function LoginPage({ onNavigate, onSuccess, onContinueAsGuest }) {
     const router = useRouter();
@@ -287,7 +288,7 @@ export default function LoginPage({ onNavigate, onSuccess, onContinueAsGuest }) 
                         onClick={() => playSound("tap")}
                         className="flex-1 py-2.5 rounded-xl text-xs font-black transition-all flex items-center justify-center gap-1.5 cursor-pointer bg-white text-[#0088cc] shadow-xs border border-slate-200/80"
                     >
-                        <span>🧑‍🎓</span>
+                        <VectorAvatarAstro className="w-4 h-4 text-[#0088cc]" />
                         <span>Log Masuk Pelajar</span>
                     </button>
                     <button
@@ -299,7 +300,7 @@ export default function LoginPage({ onNavigate, onSuccess, onContinueAsGuest }) 
                         className="flex-1 py-2.5 rounded-xl text-xs font-black transition-all flex items-center justify-center gap-1.5 cursor-pointer text-slate-500 hover:text-indigo-600 hover:bg-white/60"
                         title="Buka Portal Ibu Bapa"
                     >
-                        <span>👨‍👩‍👧</span>
+                        <VectorAvatarGuest className="w-4 h-4 text-slate-500" />
                         <span>Log Masuk Ibu Bapa</span>
                     </button>
                 </div>
@@ -309,7 +310,7 @@ export default function LoginPage({ onNavigate, onSuccess, onContinueAsGuest }) 
                     {/* Error Alert Box */}
                     {loginError && (
                         <div className="bg-rose-50 border border-rose-300 p-3 rounded-xl text-rose-800 text-xs font-bold anim-shake flex items-center gap-2">
-                            <span>⚠️</span>
+                            <span className="w-4 h-4 rounded-full bg-rose-500 text-white flex items-center justify-center text-[10px] font-black shrink-0">!</span>
                             <span>{loginError}</span>
                         </div>
                     )}
@@ -515,8 +516,8 @@ export default function LoginPage({ onNavigate, onSuccess, onContinueAsGuest }) 
                         onClick={(e) => e.stopPropagation()}
                         className="bg-white rounded-3xl max-w-sm w-full p-6 text-center space-y-4 shadow-2xl border border-slate-200 relative overflow-hidden"
                     >
-                        <div className="w-14 h-14 mx-auto rounded-2xl bg-sky-50 border border-sky-200 flex items-center justify-center text-2xl text-sky-600">
-                            🔑
+                        <div className="w-14 h-14 mx-auto rounded-2xl bg-sky-50 border border-sky-200 flex items-center justify-center p-3 text-sky-600">
+                            <VectorAvatarAstro className="w-full h-full" />
                         </div>
                         <div>
                             <h3 className="text-base font-black text-slate-900">

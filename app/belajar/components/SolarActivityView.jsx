@@ -11,6 +11,8 @@ import {
     GraphicExploBot,
     GraphicMascotRobot,
     GraphicRefresh,
+    GraphicSaturnPlanet,
+    GraphicCoin,
     SOLAR_PLANETS,
 } from "./Graphics";
 
@@ -110,7 +112,7 @@ export default function SolarActivityView({
                                                                 ? "bg-emerald-100 text-emerald-900 border-emerald-300"
                                                                 : "bg-purple-100 text-purple-900 border-purple-300"
                                                     }`}>
-                                                        {correctCount === 8 ? "🏆 Sistem Suria Sempurna" : correctCount >= 5 ? "🌟 Pencapaian Hebat" : "🚀 Usaha Baik"}
+                                                        {correctCount === 8 ? "Sistem Suria Sempurna" : correctCount >= 5 ? "Pencapaian Hebat" : "Usaha Baik"}
                                                     </span>
                                                     <h3 className="text-xl sm:text-2xl font-black text-slate-800">
                                                         {correctCount} / 8 Planet Tepat ({pct}%)
@@ -125,7 +127,10 @@ export default function SolarActivityView({
                                                     </div>
                                                     <div className="bg-gradient-to-br from-amber-50 to-yellow-100/70 p-2.5 rounded-2xl border-2 border-amber-300 shadow-xs">
                                                         <span className="text-[10px] font-black uppercase text-amber-700 block">Ganjaran Koin</span>
-                                                        <span className="text-lg sm:text-xl font-black text-amber-950">+{coinsEarned} 🌟</span>
+                                                        <span className="text-lg sm:text-xl font-black text-amber-950 flex items-center justify-center gap-1">
+                                                            <span>+{coinsEarned}</span>
+                                                            <GraphicCoin className="w-4 h-4 shrink-0 inline" />
+                                                        </span>
                                                     </div>
                                                 </div>
                                             </div>
@@ -220,7 +225,7 @@ export default function SolarActivityView({
                                             }}
                                             className="py-3.5 bg-gradient-to-r from-purple-600 via-indigo-600 to-purple-700 hover:from-purple-700 hover:to-indigo-700 text-white font-black rounded-2xl text-xs sm:text-sm flex items-center justify-center gap-2 cursor-pointer shadow-md transition-all active:scale-98"
                                         >
-                                            <span>✅</span>
+                                            <span className="font-bold text-sm">✓</span>
                                             <span>Selesai</span>
                                         </button>
                                         <button
@@ -281,7 +286,7 @@ export default function SolarActivityView({
 
                                         <div className="flex items-center gap-2 shrink-0">
                                             <div className="bg-sky-100 border border-sky-300 text-sky-950 font-black text-xs px-3 py-1.5 rounded-xl shadow-xs flex items-center gap-1.5">
-                                                <span>🪐</span>
+                                                <GraphicSaturnPlanet className="w-4 h-4 shrink-0" />
                                                 <span>{Object.keys(placedPlanets).length}/8</span>
                                             </div>
                                             <button
@@ -303,7 +308,11 @@ export default function SolarActivityView({
                                                 : "bg-sky-50 border-sky-400 text-sky-900"
                                         }`}>
                                             <div className="flex items-center gap-2">
-                                                <span>{solarFeedbackMessage.type === "success" ? "🎉" : "💡"}</span>
+                                                <span className={`w-4 h-4 rounded-full flex items-center justify-center text-[10px] font-black shrink-0 ${
+                                                    solarFeedbackMessage.type === "success" ? "bg-emerald-500 text-white" : "bg-sky-500 text-white"
+                                                }`}>
+                                                    {solarFeedbackMessage.type === "success" ? "✓" : "i"}
+                                                </span>
                                                 <span>{solarFeedbackMessage.text}</span>
                                             </div>
                                             <button

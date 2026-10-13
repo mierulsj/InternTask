@@ -5,17 +5,11 @@ import {
     GraphicCoin,
     getTopicIllustration,
 } from "./Graphics";
-
-// Warna pastel biru yang serasi dan tenang untuk semua kad pembelajaran (tiada lagi warna-warni)
-const PASTEL_CARD_GRADIENT = "linear-gradient(135deg, #5c9de5 0%, #4a8fd8 55%, #3a7ec8 100%)";
-
-function getTopicCardGradient(topic, idx) {
-    return PASTEL_CARD_GRADIENT;
-}
+import { VectorAvatarAstro, VectorAvatarGuest } from "./GameIcons";
 
 export default function MainMenu({
     onNavigate,
-    t,
+    t = (bm, en) => bm,
     playAudioFeedback,
     studentName = "Penjelajah",
     isLoggedIn = false,
@@ -23,18 +17,20 @@ export default function MainMenu({
     studentXP = 100,
     studentStreak = 1,
     studentCoins = 50,
-    equippedAvatarIcon = "🧑‍🚀",
+    equippedAvatarIcon = "avatar_astro_1",
     equippedTitleName = "Kadet STEM",
     curriculumTopics = [],
     readTopics = [],
     setSelectedTopicIndex,
 }) {
     const handleAction = (sound, cb) => {
-        if (playAudioFeedback) playAudioFeedback(sound);
+        try {
+            if (playAudioFeedback) playAudioFeedback(sound);
+        } catch (e) {}
         if (cb) cb();
     };
 
-    // Senarai topik kurikulum dinamik sepenuhnya dari portal admin
+    // Senarai topik kurikulum dinamik dari portal admin
     const topicsList = Array.isArray(curriculumTopics) && curriculumTopics.length > 0
         ? curriculumTopics
         : [];
@@ -52,26 +48,31 @@ export default function MainMenu({
     return (
         <div className="w-full max-w-sm sm:max-w-md mx-auto anim-fade-in space-y-6 pb-8 select-none text-left">
 
-            {/* 1. HEADER ATAS & BAR PERATUS KEMAJUAN (PROGRESS BAR) */}
+            {/* 1. HEADER ATAS DENGAN TAJUK TEROKA, KOIN & AVATAR (PERSIS GAYA AKTIVITI) */}
             <div className="px-1 pt-1 space-y-3">
-                <div className="flex items-start justify-between">
-                    <div>
-                        <h2 className="text-2xl sm:text-3xl font-black text-[#0099e5] tracking-tight">
-                            {t("Jom Teroka", "Let's Explore")}
-                        </h2>
-                        <p className="text-xs sm:text-sm text-slate-400 font-semibold mt-0.5">
-                            {t("Pilih pelajaran anda", "Pick your lesson")}
-                        </p>
+                <div className="flex items-center justify-between">
+                    {/* Kiri: Tajuk Teroka */}
+                    <div className="flex items-center gap-3">
+                        <div>
+                            <h2 className="text-2xl sm:text-3xl font-black text-[#0099e5] tracking-tight">
+                                {t ? t("Teroka", "Explore") : "Teroka"}
+                            </h2>
+                            <p className="text-xs sm:text-sm text-slate-400 font-semibold mt-0.5">
+                                {isLoggedIn
+                                    ? `Hai, ${studentName}! ` + (t ? t("Pilih topik anda", "Pick your topic") : "Pilih topik anda")
+                                    : (t ? t("Pilih topik pembelajaran anda", "Pick your learning topic") : "Pilih topik pembelajaran anda")}
+                            </p>
+                        </div>
                     </div>
 
-                    {/* Butang Atas Kanan: Koin & Profil */}
+                    {/* Kanan: Koin & Profil Avatar */}
                     <div className="flex items-center gap-2 shrink-0">
                         {/* Koin */}
                         <button
                             type="button"
                             onClick={() => handleAction("sparkle", () => onNavigate && onNavigate("shop"))}
                             className="h-10 px-3 rounded-full bg-amber-50 hover:bg-amber-100 border border-amber-200/80 text-amber-900 font-bold text-xs flex items-center gap-1.5 shadow-xs cursor-pointer active:scale-95 transition-all"
-                            title={t(`${studentCoins} Koin`, `${studentCoins} Coins`)}
+                            title={t ? t(`${studentCoins} Koin`, `${studentCoins} Coins`) : `${studentCoins} Koin`}
                         >
                             <GraphicCoin className="w-4 h-4 shrink-0" />
                             <span className="font-bold text-xs">{studentCoins}</span>
@@ -81,26 +82,23 @@ export default function MainMenu({
                         <button
                             type="button"
                             onClick={() => handleAction("sparkle", () => onNavigate && onNavigate("profile"))}
-                            className="w-10 h-10 rounded-full bg-sky-50 hover:bg-sky-100 border border-sky-200 text-sky-600 flex items-center justify-center text-base shadow-xs cursor-pointer active:scale-95 transition-all shrink-0"
-                            title={isLoggedIn ? studentName : t("Buka Profil", "Open Profile")}
+                            className="w-10 h-10 rounded-full bg-sky-50 hover:bg-sky-100 border border-sky-200 text-sky-600 flex items-center justify-center shadow-xs cursor-pointer active:scale-95 transition-all shrink-0 p-1.5"
+                            title={isLoggedIn ? studentName : (t ? t("Buka Profil", "Open Profile") : "Buka Profil")}
                         >
                             {isLoggedIn ? (
-                                <span>{equippedAvatarIcon || "🧑‍🚀"}</span>
+                                <VectorAvatarAstro className="w-full h-full" />
                             ) : (
-                                <svg className="w-5 h-5 text-sky-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.3" strokeLinecap="round" strokeLinejoin="round">
-                                    <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
-                                    <circle cx="12" cy="7" r="4" />
-                                </svg>
+                                <VectorAvatarGuest className="w-full h-full text-sky-500" />
                             )}
                         </button>
                     </div>
                 </div>
 
-                {/* BAR KEMAJUAN / PROGRESS BAR */}
+                {/* BAR KEMAJUAN / PROGRESS BAR (PERSIS GAYA AKTIVITI) */}
                 <div className="bg-slate-50 border border-slate-200/80 rounded-2xl p-3 shadow-2xs">
                     <div className="flex items-center justify-between text-xs font-bold mb-1.5">
                         <span className="text-slate-600 font-bold text-[11px] sm:text-xs">
-                            {t("Kemajuan", "Progress")}
+                            {t ? t("Kemajuan Pembelajaran", "Learning Progress") : "Kemajuan Pembelajaran"}
                         </span>
                         <span className="font-black text-[#0099e5] font-mono text-xs sm:text-sm">
                             {progressPercent}%
@@ -115,24 +113,25 @@ export default function MainMenu({
                 </div>
             </div>
 
-            {/* 2. SENARAI KAD PELAJARAN (LESSON 1, 2, 3...) - DINAMIK PENUH DARI PORTAL ADMIN */}
+            {/* 2. SENARAI KAD TOPIK TEROKA (PERSIS GAYA KAD AKTIVITI: ROUNDED 2.2REM + GRADIENT + 3D FLOATING GRAPHIC) */}
             <div className="space-y-6 pt-3">
                 {topicsList.map((topic, idx) => {
                     const isDone = readTopics.includes(idx);
                     const lessonNum = idx + 1;
-                    const cardBg = getTopicCardGradient(topic, idx);
-                    const illustration = getTopicIllustration(topic);
+                    const illustration = getTopicIllustration(topic, idx);
                     const displayTitle = topic.shortTitle || topic.title?.replace(/^Topik\s*\d+:\s*/i, "") || topic.title;
 
                     return (
                         <div
                             key={topic.id || `topic-${idx}`}
-                            onClick={() => handleAction("tap", () => {
+                            onClick={() => handleAction("sparkle", () => {
                                 if (setSelectedTopicIndex) setSelectedTopicIndex(idx);
-                                onNavigate && onNavigate("learningDetail");
+                                if (onNavigate) onNavigate("learningDetail");
                             })}
                             className="relative w-full rounded-[2.2rem] p-6 pr-28 sm:pr-32 min-h-[148px] sm:min-h-[162px] flex flex-col justify-between text-white shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-1.5 active:scale-[0.98] cursor-pointer group"
-                            style={{ background: cardBg }}
+                            style={{
+                                background: "linear-gradient(135deg, #5c9de5 0%, #4a8fd8 55%, #3a7ec8 100%)",
+                            }}
                         >
                             {/* Ilustrasi 3D Terapung Di Penjuru Kanan Atas */}
                             <div className="absolute -top-7 sm:-top-8 -right-1 sm:right-1 w-28 h-28 sm:w-34 sm:h-34 drop-shadow-xl group-hover:scale-108 group-hover:-rotate-3 transition-transform duration-300 pointer-events-none select-none z-10 flex items-center justify-center">
@@ -152,10 +151,10 @@ export default function MainMenu({
                                 )}
                             </div>
 
-                            {/* Teks: Hanya Lesson & Tajuk (Clean & Bold) */}
+                            {/* Teks: Ringkas, Simple & Padat */}
                             <div className="mt-4">
                                 <span className="text-xs sm:text-sm font-medium text-white/80 block">
-                                    {t(`lesson ${lessonNum}`, `lesson ${lessonNum}`)}
+                                    {t ? t(`topik ${lessonNum}`, `topic ${lessonNum}`) : `topik ${lessonNum}`}
                                 </span>
                                 <h3 className="text-2xl sm:text-[26px] font-bold text-white tracking-tight leading-tight mt-0.5">
                                     {displayTitle}
@@ -167,7 +166,7 @@ export default function MainMenu({
 
                 {topicsList.length === 0 && (
                     <div className="p-8 text-center bg-slate-50 rounded-3xl border border-slate-200 text-slate-500 text-xs">
-                        {t("Tiada pelajaran tersedia buat masa ini.", "No lessons available currently.")}
+                        {t ? t("Tiada topik tersedia buat masa ini.", "No topics available currently.") : "Tiada topik tersedia buat masa ini."}
                     </div>
                 )}
             </div>

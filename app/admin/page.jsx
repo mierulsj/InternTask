@@ -4,7 +4,9 @@ import React, { useState, useEffect, useRef, useCallback } from "react";
 import { getCurriculumTopics, saveCurriculumTopics, INITIAL_CURRICULUM_TOPICS } from "../../lib/curriculumService";
 import { getSpellingWords, saveSpellingWords, INITIAL_SPELLING_WORDS } from "../../lib/spellingService";
 import AdminHeader from "./components/AdminHeader";
+import AdminDrawer from "./components/AdminDrawer";
 import AdminKPI from "./components/AdminKPI";
+import AdminCharts from "./components/AdminCharts";
 import AdminLogin from "./components/AdminLogin";
 import Admin2FA from "./components/Admin2FA";
 import StudentsTab from "./components/StudentsTab";
@@ -18,6 +20,8 @@ import SpellingModal from "./components/SpellingModal";
 export default function AdminPage() {
     const [viewMode, setViewMode] = useState("login"); // "login" | "2fa" | "dashboard"
     const [activeTab, setActiveTab] = useState("students"); // "students" | "notes" | "quizzes" | "spelling"
+    const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+    const [showCharts, setShowCharts] = useState(true);
     const [isMounted, setIsMounted] = useState(false);
 
     // Form inputs
@@ -281,7 +285,8 @@ export default function AdminPage() {
                 const newTopic = {
                     ...editingTopic,
                     id: newId,
-                    shortTitle: editingTopic.title,
+                    shortTitle: editingTopic.shortTitle || editingTopic.title,
+                    graphicType: editingTopic.graphicType || "planet",
                     questions: editingTopic.questions || [],
                 };
                 updatedList = [...topics, newTopic];
@@ -467,49 +472,76 @@ export default function AdminPage() {
 
     const totalQuizQuestions = topics.reduce((acc, t) => acc + (t.questions?.length || 0), 0);
 
+    if (viewMode !== "dashboard") {
+        return (
+            <div className="min-h-screen bg-slate-100/70 text-slate-800 flex flex-col items-center justify-start select-none font-sans relative overflow-x-hidden">
+                <AdminHeader
+                    viewMode={viewMode}
+                    adminSession={adminSession}
+                    onLogout={handleLogout}
+                />
+
+                {/* View 1: Login */}
+                {viewMode === "login" && (
+                    <AdminLogin
+                        email={email}
+                        setEmail={setEmail}
+                        password={password}
+                        setPassword={setPassword}
+                        showPassword={showPassword}
+                        setShowPassword={setShowPassword}
+                        isLoading={isLoading}
+                        errorMessage={errorMessage}
+                        isLocked={isLocked}
+                        lockoutRemaining={lockoutRemaining}
+                        onEmergencyUnlock={handleEmergencyUnlock}
+                        onSubmit={handleLoginSubmit}
+                    />
+                )}
+
+                {/* View 2: 2FA Verification */}
+                {viewMode === "2fa" && (
+                    <Admin2FA
+                        otpInput={otpInput}
+                        setOtpInput={setOtpInput}
+                        demoOtp={demoOtp}
+                        otpError={otpError}
+                        isLoading={isLoading}
+                        onSubmit={handleVerify2FA}
+                        onCancel={() => setViewMode("login")}
+                    />
+                )}
+            </div>
+        );
+    }
+
     return (
-        <div className="min-h-screen bg-slate-100/70 text-slate-800 flex flex-col items-center justify-start select-none font-sans relative overflow-x-hidden">
-            {/* Header Component */}
-            <AdminHeader
-                viewMode={viewMode}
+        <div className="min-h-screen bg-slate-100/70 text-slate-800 flex flex-col lg:flex-row select-none font-sans relative overflow-x-hidden">
+            {/* 1. DRAWER PADA KIRI WEB (SIDEBAR) */}
+            <AdminDrawer
+                isOpen={isDrawerOpen}
+                onClose={() => setIsDrawerOpen(false)}
+                activeTab={activeTab}
+                setActiveTab={setActiveTab}
+                studentsCount={studentsList.length}
+                topicsCount={topics.length}
+                totalQuestions={totalQuizQuestions}
+                spellingWordsCount={spellingWords.length}
                 adminSession={adminSession}
                 onLogout={handleLogout}
             />
 
-            {/* View 1: Login */}
-            {viewMode === "login" && (
-                <AdminLogin
-                    email={email}
-                    setEmail={setEmail}
-                    password={password}
-                    setPassword={setPassword}
-                    showPassword={showPassword}
-                    setShowPassword={setShowPassword}
-                    isLoading={isLoading}
-                    errorMessage={errorMessage}
-                    isLocked={isLocked}
-                    lockoutRemaining={lockoutRemaining}
-                    onEmergencyUnlock={handleEmergencyUnlock}
-                    onSubmit={handleLoginSubmit}
+            {/* 2. KAWASAN KANDUNGAN UTAMA (MAIN CONTENT) */}
+            <div className="flex-1 flex flex-col min-w-0 min-h-screen">
+                <AdminHeader
+                    viewMode={viewMode}
+                    adminSession={adminSession}
+                    onLogout={handleLogout}
+                    activeTab={activeTab}
+                    onToggleDrawer={() => setIsDrawerOpen((prev) => !prev)}
                 />
-            )}
 
-            {/* View 2: 2FA Verification */}
-            {viewMode === "2fa" && (
-                <Admin2FA
-                    otpInput={otpInput}
-                    setOtpInput={setOtpInput}
-                    demoOtp={demoOtp}
-                    otpError={otpError}
-                    isLoading={isLoading}
-                    onSubmit={handleVerify2FA}
-                    onCancel={() => setViewMode("login")}
-                />
-            )}
-
-            {/* View 3: Dashboard */}
-            {viewMode === "dashboard" && (
-                <main className="w-full max-w-6xl mx-auto px-4 py-6 space-y-4">
+                <main className="flex-1 p-4 sm:p-6 lg:p-8 space-y-6 max-w-7xl mx-auto w-full">
                     {/* Top KPI Metrics Strip */}
                     <AdminKPI
                         studentsCount={studentsList.length}
@@ -518,66 +550,35 @@ export default function AdminPage() {
                         spellingWordsCount={spellingWords.length}
                     />
 
-                    {/* Navigation Tabs */}
-                    <div className="flex items-center gap-2 border-b border-slate-200 pb-2 overflow-x-auto">
-                        <button
-                            type="button"
-                            onClick={() => setActiveTab("students")}
-                            className={`px-4 py-2 rounded-lg text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
-                                activeTab === "students"
-                                    ? "bg-cyan-600 text-white shadow-xs"
-                                    : "bg-white text-slate-600 hover:text-slate-900 border border-slate-200 hover:bg-slate-50"
-                            }`}
-                        >
-                            📊 Data Pelajar ({studentsList.length})
-                        </button>
-
-                        <button
-                            type="button"
-                            onClick={() => setActiveTab("notes")}
-                            className={`px-4 py-2 rounded-lg text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
-                                activeTab === "notes"
-                                    ? "bg-emerald-600 text-white shadow-xs"
-                                    : "bg-white text-slate-600 hover:text-slate-900 border border-slate-200 hover:bg-slate-50"
-                            }`}
-                        >
-                            📖 Pengurusan Nota ({topics.length})
-                        </button>
-
-                        <button
-                            type="button"
-                            onClick={() => setActiveTab("quizzes")}
-                            className={`px-4 py-2 rounded-lg text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
-                                activeTab === "quizzes"
-                                    ? "bg-amber-600 text-white shadow-xs"
-                                    : "bg-white text-slate-600 hover:text-slate-900 border border-slate-200 hover:bg-slate-50"
-                            }`}
-                        >
-                            ⚡ Pengurusan Kuiz ({totalQuizQuestions} Soalan)
-                        </button>
-
-                        <button
-                            type="button"
-                            onClick={() => setActiveTab("spelling")}
-                            className={`px-4 py-2 rounded-lg text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
-                                activeTab === "spelling"
-                                    ? "bg-purple-600 text-white shadow-xs"
-                                    : "bg-white text-slate-600 hover:text-slate-900 border border-slate-200 hover:bg-slate-50"
-                            }`}
-                        >
-                            🐝 Spelling Bee ({spellingWords.length} Kata)
-                        </button>
-                    </div>
-
                     {/* Tab 1: Pelajar */}
                     {activeTab === "students" && (
-                        <StudentsTab
-                            studentsList={studentsList}
-                            isLoadingStudents={isLoadingStudents}
-                            searchTerm={searchTerm}
-                            setSearchTerm={setSearchTerm}
-                            onRefresh={() => fetchStudents(adminSession?.token)}
-                        />
+                        <div className="space-y-6">
+                            {/* Header Ringkas */}
+                            <div className="flex items-center justify-between">
+                                <h2 className="text-sm font-black text-slate-800">
+                                    Analisis Prestasi
+                                </h2>
+                                <button
+                                    type="button"
+                                    onClick={() => setShowCharts((prev) => !prev)}
+                                    className="text-xs font-bold text-slate-500 hover:text-slate-800 px-2.5 py-1 rounded-lg bg-white hover:bg-slate-100 border border-slate-200 transition-colors cursor-pointer"
+                                >
+                                    {showCharts ? "Sorok Graf ▲" : "Papar Graf ▼"}
+                                </button>
+                            </div>
+
+                            {/* Komponen Graf & Carta */}
+                            {showCharts && <AdminCharts studentsList={studentsList} />}
+
+                            {/* Jadual Lengkap Murid */}
+                            <StudentsTab
+                                studentsList={studentsList}
+                                isLoadingStudents={isLoadingStudents}
+                                searchTerm={searchTerm}
+                                setSearchTerm={setSearchTerm}
+                                onRefresh={() => fetchStudents(adminSession?.token)}
+                            />
+                        </div>
                     )}
 
                     {/* Tab 2: Nota */}
@@ -589,6 +590,7 @@ export default function AdminPage() {
                                     id: "",
                                     title: "",
                                     shortTitle: "",
+                                    graphicType: "planet",
                                     category: "Sains Am",
                                     themeColor: "#0099e5",
                                     videoEmbedUrl: "",
@@ -673,7 +675,7 @@ export default function AdminPage() {
                         />
                     )}
                 </main>
-            )}
+            </div>
 
             {/* Modal: Tambah / Ubah Topik Nota */}
             <TopicModal

@@ -2,14 +2,16 @@
 
 import React from "react";
 import {
-    GraphicMascotRobot,
-    GraphicArrowRight,
-    GraphicScienceBook,
-    GraphicBookOpen,
-    GraphicQuizLightning,
-    GraphicLightningBolt,
-    GraphicGamepadActivity,
+    GraphicCoin,
+    getTopicIllustration,
 } from "./Graphics";
+
+// Warna pastel biru yang serasi dan tenang untuk semua kad pembelajaran (tiada lagi warna-warni)
+const PASTEL_CARD_GRADIENT = "linear-gradient(135deg, #5c9de5 0%, #4a8fd8 55%, #3a7ec8 100%)";
+
+function getTopicCardGradient(topic, idx) {
+    return PASTEL_CARD_GRADIENT;
+}
 
 export default function MainMenu({
     onNavigate,
@@ -20,313 +22,156 @@ export default function MainMenu({
     studentLevel = 1,
     studentXP = 100,
     studentStreak = 1,
-    unlockedBadgesCount = 1
+    studentCoins = 50,
+    equippedAvatarIcon = "🧑‍🚀",
+    equippedTitleName = "Kadet STEM",
+    curriculumTopics = [],
+    readTopics = [],
+    setSelectedTopicIndex,
 }) {
+    const handleAction = (sound, cb) => {
+        if (playAudioFeedback) playAudioFeedback(sound);
+        if (cb) cb();
+    };
+
+    // Senarai topik kurikulum dinamik sepenuhnya dari portal admin
+    const topicsList = Array.isArray(curriculumTopics) && curriculumTopics.length > 0
+        ? curriculumTopics
+        : [];
+
+    // Pengiraan peratus kemajuan pembelajaran (Progress %)
+    const totalTopicsCount = Math.max(topicsList.length, 1);
+    const completedTopicsCount = Array.isArray(readTopics)
+        ? readTopics.filter((idx) => idx < topicsList.length).length
+        : 0;
+    const progressPercent = Math.min(
+        100,
+        Math.round((completedTopicsCount / totalTopicsCount) * 100)
+    );
+
     return (
-        <div className="space-y-6 w-full max-w-2xl anim-fade-in">
-
-
-
-                                {/* Maskot Robot STEM Explorer & Speech Balloon */}
-                                <div className="flex flex-col sm:flex-row items-center justify-between gap-3 bg-gradient-to-r from-sky-50 to-blue-50 p-4 rounded-3xl border-2 border-sky-200 shadow-sm">
-                                    <div className="flex items-center gap-3 w-full sm:w-auto">
-                                        <div className="anim-float shrink-0">
-                                            <GraphicMascotRobot className="w-16 h-16 sm:w-20 sm:h-20" />
-                                        </div>
-                                        <div className="text-left flex-1">
-                                            <span className="text-[10px] font-black uppercase text-[#0099e5] bg-sky-100 px-2 py-0.5 rounded-full">
-                                                ExploBot STEM
-                                            </span>
-                                            <p className="text-xs sm:text-sm font-bold text-slate-700 mt-1 leading-snug">
-                                                &ldquo;{t(
-                                                    "Hai Penjelajah Cilik! Terokai nota sains, kuiz pantas 20s, atau sertai Makmal Tumbuhan & Sistem Suria!",
-                                                    "Hi Young Explorer! Explore science notes, 20s fast quiz, or join the Plant Lab & Solar System!"
-                                                )}&rdquo;
-                                            </p>
-                                        </div>
-                                    </div>
-                                    <div className="shrink-0 w-full sm:w-auto flex items-center gap-2 justify-end">
-                                        {!isLoggedIn ? (
-                                            <>
-                                                <button
-                                                    type="button"
-                                                    onClick={() => { playAudioFeedback("tap"); onNavigate("login"); }}
-                                                    className="flex-1 sm:flex-initial px-3.5 py-2 bg-gradient-to-r from-[#0088cc] to-[#0099e5] hover:from-[#0077b6] hover:to-[#0088cc] text-white rounded-2xl shadow-xs text-xs font-black cursor-pointer transition-all active:scale-95 flex items-center justify-center gap-1.5"
-                                                    title={t("Log Masuk Murid", "Student Login")}
-                                                >
-                                                    <span>🔑</span>
-                                                    <span>{t("Log Masuk", "Login")}</span>
-                                                </button>
-                                                <button
-                                                    type="button"
-                                                    onClick={() => { playAudioFeedback("sparkle"); onNavigate("profile"); }}
-                                                    className="flex-1 sm:flex-initial px-3.5 py-2 bg-gradient-to-r from-amber-400 to-orange-400 hover:from-amber-300 hover:to-orange-300 text-slate-950 rounded-2xl shadow-xs text-xs font-black cursor-pointer transition-all active:scale-95 flex items-center justify-center gap-1.5"
-                                                    title={t("Buka Profil", "Open Profile")}
-                                                >
-                                                    <span>👤</span>
-                                                    <span>{t("Profil", "Profile")}</span>
-                                                </button>
-                                            </>
-                                        ) : (
-                                            <button
-                                                type="button"
-                                                onClick={() => { playAudioFeedback("sparkle"); onNavigate("profile"); }}
-                                                className="w-full sm:w-auto px-3.5 py-2 bg-gradient-to-r from-amber-400 to-orange-400 hover:from-amber-300 hover:to-orange-300 text-slate-950 rounded-2xl shadow-xs text-xs font-black cursor-pointer transition-all active:scale-95 flex items-center justify-center gap-1.5"
-                                                title={t("Buka Profil", "Open Profile")}
-                                            >
-                                                <span>👤</span>
-                                                <span>{studentName || t("Profil", "Profile")}</span>
-                                            </button>
-                                        )}
-                                    </div>
-                                </div>
-
-
-
-                                {/* KAD AKSES PROFIL & PRESTASI PELAJAR */}
-
-                                <div
-
-                                    onClick={() => { playAudioFeedback("sparkle"); onNavigate("profile"); }}
-
-                                    className="w-full bg-gradient-to-r from-[#0088cc] via-[#0099e5] to-indigo-600 rounded-3xl p-4 sm:p-5 text-white shadow-lg hover:shadow-2xl hover:scale-[1.02] active:scale-[0.99] transition-all duration-300 cursor-pointer border-3 border-amber-300/80 relative overflow-hidden group text-left"
-
-                                >
-
-                                    <div className="absolute -right-8 -top-8 w-36 h-36 bg-white/15 rounded-full blur-2xl pointer-events-none group-hover:scale-125 transition-transform" />
-
-                                    <div className="absolute -left-8 -bottom-8 w-36 h-36 bg-amber-400/25 rounded-full blur-2xl pointer-events-none" />
-
-
-
-                                    <div className="relative z-10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-
-                                        <div className="flex items-center gap-3.5">
-
-                                            <div className="w-13 h-13 sm:w-15 sm:h-15 rounded-2xl bg-white/20 backdrop-blur-md border-2 border-white/40 flex items-center justify-center text-3xl shadow-inner shrink-0 group-hover:rotate-6 group-hover:scale-110 transition-all">
-
-                                                {isLoggedIn ? "🤖" : "👤"}
-
-                                            </div>
-
-                                            <div>
-
-                                                <div className="flex items-center gap-2">
-
-                                                    <span className="text-[10px] font-black uppercase tracking-wider bg-amber-400 text-slate-950 px-2.5 py-0.5 rounded-full shadow-xs">
-
-                                                        🌟 {isLoggedIn ? t("Profil Pelajar", "Student Profile") : t("Profil Penjelajah", "Explorer Profile")}
-
-                                                    </span>
-
-                                                    <span className="text-[10px] font-black text-white/90 bg-white/20 px-2 py-0.5 rounded-full">
-
-                                                        {isLoggedIn ? `${t("Tahap", "Level")} ${studentLevel}` : t("Mod Tetamu", "Guest Mode")}
-
-                                                    </span>
-
-                                                </div>
-
-                                                <h3 className="text-base sm:text-lg font-black text-white mt-1 drop-shadow-sm">
-
-                                                    {isLoggedIn
-                                                        ? `${t("Profil & Pencapaian ", "Profile & Achievements: ")}${studentName}`
-                                                        : t("Profil & Rekod Pembelajaran", "Learning Profile & Records")
-                                                    }
-
-                                                </h3>
-
-                                                <p className="text-[11px] sm:text-xs text-sky-100 font-medium mt-0.5">
-
-                                                    {isLoggedIn
-                                                        ? `${studentXP.toLocaleString()} XP • ${unlockedBadgesCount} Lencana • ${studentStreak} Hari Streak 🔥`
-                                                        : t("Log masuk untuk simpan lencana, mata XP & rekod aktiviti anda ✨", "Log in to save badges, XP points & activity records ✨")
-                                                    }
-
-                                                </p>
-
-                                            </div>
-
-                                        </div>
-
-
-
-                                        <div className="self-end sm:self-center shrink-0">
-
-                                            <span className="px-4 py-2 bg-white text-[#0088cc] font-black text-xs rounded-xl shadow-md group-hover:bg-amber-400 group-hover:text-slate-950 transition-all flex items-center gap-1.5">
-
-                                                <span>{isLoggedIn ? t("Buka Profil", "Open Profile") : t("Buka Profil Tetamu", "Open Guest Profile")}</span>
-
-                                                <GraphicArrowRight className="w-3.5 h-3.5" />
-
-                                            </span>
-
-                                        </div>
-
-                                    </div>
-
-                                </div>
-
-
-
-                                <div className="text-center space-y-1">
-
-                                    <h2 className="text-2xl sm:text-3xl font-black text-[#0099e5]">
-
-                                        {t("Pilih Mod Pengembaraan Anda!", "Choose Your Adventure Mode!")}
-
-                                    </h2>
-
-                                    <p className="text-slate-600 text-xs sm:text-sm">
-
-                                        {t(
-
-                                            "Pilih nota visual, uji minda pantas 20s, atau sertai permainan interaktif seronok.",
-
-                                            "Choose visual notes, test your mind in 20s, or join fun interactive games."
-
-                                        )}
-
-                                    </p>
-
-                                </div>
-
-
-
-                                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-1">
-
-                                    {/* Button Mod 1: Pembelajaran */}
-
-                                    <div
-
-                                        onClick={() => { playAudioFeedback("tap"); onNavigate("learningList"); }}
-
-                                        className="bg-gradient-to-b from-[#00acc1]/10 to-[#00acc1]/20 border-3 border-[#00acc1] hover:border-[#00838f] p-5 sm:p-6 rounded-3xl cursor-pointer transition-all duration-300 shadow-md hover:shadow-xl hover:-translate-y-1.5 active:translate-y-0 active:scale-98 group flex flex-col items-center justify-between text-center relative overflow-hidden"
-
-                                    >
-
-                                        <div className="w-16 h-16 rounded-2xl bg-white/90 border-2 border-[#00acc1]/30 flex items-center justify-center mb-3 group-hover:scale-110 group-hover:rotate-3 transition-all duration-300 shadow-sm">
-
-                                            <GraphicScienceBook className="w-12 h-12" />
-
-                                        </div>
-
-                                        <span className="text-[9px] font-black uppercase tracking-wider text-[#00838f] bg-white/90 px-2.5 py-0.5 rounded-full mb-1 border border-[#00acc1]/30">
-
-                                            {t("Mod Santai", "Relaxed Mode")}
-
-                                        </span>
-
-                                        <h3 className="text-lg font-black text-[#00838f]">{t("Pembelajaran", "Learning")}</h3>
-
-                                        <p className="text-[11px] text-slate-600 mt-1 leading-relaxed">
-
-                                            {t("Tonton video & baca nota sains visual.", "Watch videos & read visual science notes.")}
-
-                                        </p>
-
-                                        <div className="mt-4 px-3.5 py-1.5 bg-[#00acc1] text-white text-[11px] font-black rounded-xl shadow-md group-hover:bg-[#00838f] transition-all flex items-center gap-1.5">
-
-                                            <GraphicBookOpen className="w-3.5 h-3.5" />
-
-                                            <span>{t("Mula Belajar", "Start Learning")}</span>
-
-                                            <GraphicArrowRight className="w-3 h-3" />
-
-                                        </div>
-
-                                    </div>
-
-
-
-                                    {/* Button Mod 2: Kuiz Topik */}
-
-                                    <div
-
-                                        onClick={() => { playAudioFeedback("tap"); onNavigate("quizList"); }}
-
-                                        className="bg-gradient-to-b from-[#ffa726]/15 to-[#ffa726]/25 border-3 border-[#ffa726] hover:border-[#fb8c00] p-5 sm:p-6 rounded-3xl cursor-pointer transition-all duration-300 shadow-md hover:shadow-xl hover:-translate-y-1.5 active:translate-y-0 active:scale-98 group flex flex-col items-center justify-between text-center relative overflow-hidden"
-
-                                    >
-
-                                        <div className="w-16 h-16 rounded-2xl bg-white/90 border-2 border-[#ffa726]/30 flex items-center justify-center mb-3 group-hover:scale-110 group-hover:-rotate-3 transition-all duration-300 shadow-sm">
-
-                                            <GraphicQuizLightning className="w-12 h-12" />
-
-                                        </div>
-
-                                        <span className="text-[9px] font-black uppercase tracking-wider text-[#e65100] bg-white/90 px-2.5 py-0.5 rounded-full mb-1 border border-[#ffa726]/30">
-
-                                            {t("20s Per Soalan", "20s Per Question")}
-
-                                        </span>
-
-                                        <h3 className="text-lg font-black text-[#e65100]">{t("Kuiz Topik", "Topic Quiz")}</h3>
-
-                                        <p className="text-[11px] text-slate-600 mt-1 leading-relaxed">
-
-                                            {t("Cabaran 5 soalan pantas menguji kefahaman!", "5 fast-paced questions to test your knowledge!")}
-
-                                        </p>
-
-                                        <div className="mt-4 px-3.5 py-1.5 bg-gradient-to-r from-[#ffa726] to-[#fb8c00] text-slate-950 text-[11px] font-black rounded-xl shadow-md group-hover:from-[#fb8c00] group-hover:to-[#f57c00] transition-all flex items-center gap-1.5">
-
-                                            <GraphicLightningBolt className="w-3.5 h-3.5" />
-
-                                            <span>{t("Pilih Kuiz", "Select Quiz")}</span>
-
-                                            <GraphicArrowRight className="w-3 h-3" />
-
-                                        </div>
-
-                                    </div>
-
-
-
-                                    {/* Button Mod 3: Aktiviti & Permainan (BARU!) */}
-
-                                    <div
-
-                                        onClick={() => { playAudioFeedback("tap"); onNavigate("activityList"); }}
-
-                                        className="bg-gradient-to-b from-purple-500/15 to-purple-500/25 border-3 border-purple-500 hover:border-purple-600 p-5 sm:p-6 rounded-3xl cursor-pointer transition-all duration-300 shadow-md hover:shadow-xl hover:-translate-y-1.5 active:translate-y-0 active:scale-98 group flex flex-col items-center justify-between text-center relative overflow-hidden"
-
-                                    >
-
-                                        <div className="w-16 h-16 rounded-2xl bg-white/90 border-2 border-purple-300 flex items-center justify-center mb-3 group-hover:scale-110 group-hover:rotate-3 transition-all duration-300 shadow-sm">
-
-                                            <GraphicGamepadActivity className="w-12 h-12" />
-
-                                        </div>
-
-                                        <span className="text-[9px] font-black uppercase tracking-wider text-purple-700 bg-white/90 px-2.5 py-0.5 rounded-full mb-1 border border-purple-300">
-
-                                            Drag & Drop
-
-                                        </span>
-
-                                        <h3 className="text-lg font-black text-purple-700">{t("Aktiviti", "Activity")}</h3>
-
-                                        <p className="text-[11px] text-slate-600 mt-1 leading-relaxed">
-
-                                            {t("Makmal Tumbuhan & Sistem Suria, kumpul skor tanpa timer!", "Plant Lab & Solar System, collect scores without timer!")}
-
-                                        </p>
-
-                                        <div className="mt-4 px-3.5 py-1.5 bg-gradient-to-r from-purple-500 to-indigo-600 text-white text-[11px] font-black rounded-xl shadow-md group-hover:from-purple-600 group-hover:to-indigo-700 transition-all flex items-center gap-1.5">
-
-                                            <span>🎮</span>
-
-                                            <span>{t("Main Game", "Play Game")}</span>
-
-                                            <GraphicArrowRight className="w-3 h-3" />
-
-                                        </div>
-
-                                    </div>
-
-                                </div>
-
+        <div className="w-full max-w-sm sm:max-w-md mx-auto anim-fade-in space-y-6 pb-8 select-none text-left">
+
+            {/* 1. HEADER ATAS & BAR PERATUS KEMAJUAN (PROGRESS BAR) */}
+            <div className="px-1 pt-1 space-y-3">
+                <div className="flex items-start justify-between">
+                    <div>
+                        <h2 className="text-2xl sm:text-3xl font-black text-[#0099e5] tracking-tight">
+                            {t("Jom Teroka", "Let's Explore")}
+                        </h2>
+                        <p className="text-xs sm:text-sm text-slate-400 font-semibold mt-0.5">
+                            {t("Pilih pelajaran anda", "Pick your lesson")}
+                        </p>
+                    </div>
+
+                    {/* Butang Atas Kanan: Koin & Profil */}
+                    <div className="flex items-center gap-2 shrink-0">
+                        {/* Koin */}
+                        <button
+                            type="button"
+                            onClick={() => handleAction("sparkle", () => onNavigate && onNavigate("shop"))}
+                            className="h-10 px-3 rounded-full bg-amber-50 hover:bg-amber-100 border border-amber-200/80 text-amber-900 font-bold text-xs flex items-center gap-1.5 shadow-xs cursor-pointer active:scale-95 transition-all"
+                            title={t(`${studentCoins} Koin`, `${studentCoins} Coins`)}
+                        >
+                            <GraphicCoin className="w-4 h-4 shrink-0" />
+                            <span className="font-bold text-xs">{studentCoins}</span>
+                        </button>
+
+                        {/* Profil Avatar */}
+                        <button
+                            type="button"
+                            onClick={() => handleAction("sparkle", () => onNavigate && onNavigate("profile"))}
+                            className="w-10 h-10 rounded-full bg-sky-50 hover:bg-sky-100 border border-sky-200 text-sky-600 flex items-center justify-center text-base shadow-xs cursor-pointer active:scale-95 transition-all shrink-0"
+                            title={isLoggedIn ? studentName : t("Buka Profil", "Open Profile")}
+                        >
+                            {isLoggedIn ? (
+                                <span>{equippedAvatarIcon || "🧑‍🚀"}</span>
+                            ) : (
+                                <svg className="w-5 h-5 text-sky-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.3" strokeLinecap="round" strokeLinejoin="round">
+                                    <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
+                                    <circle cx="12" cy="7" r="4" />
+                                </svg>
+                            )}
+                        </button>
+                    </div>
+                </div>
+
+                {/* BAR KEMAJUAN / PROGRESS BAR */}
+                <div className="bg-slate-50 border border-slate-200/80 rounded-2xl p-3 shadow-2xs">
+                    <div className="flex items-center justify-between text-xs font-bold mb-1.5">
+                        <span className="text-slate-600 font-bold text-[11px] sm:text-xs">
+                            {t("Kemajuan", "Progress")}
+                        </span>
+                        <span className="font-black text-[#0099e5] font-mono text-xs sm:text-sm">
+                            {progressPercent}%
+                        </span>
+                    </div>
+                    <div className="w-full h-2.5 sm:h-3 bg-slate-200/70 rounded-full overflow-hidden p-0.5 shadow-inner">
+                        <div
+                            className="h-full rounded-full bg-gradient-to-r from-[#0099e5] via-[#0284c7] to-[#38bdf8] transition-all duration-700 ease-out shadow-xs"
+                            style={{ width: `${progressPercent}%` }}
+                        />
+                    </div>
+                </div>
+            </div>
+
+            {/* 2. SENARAI KAD PELAJARAN (LESSON 1, 2, 3...) - DINAMIK PENUH DARI PORTAL ADMIN */}
+            <div className="space-y-6 pt-3">
+                {topicsList.map((topic, idx) => {
+                    const isDone = readTopics.includes(idx);
+                    const lessonNum = idx + 1;
+                    const cardBg = getTopicCardGradient(topic, idx);
+                    const illustration = getTopicIllustration(topic);
+                    const displayTitle = topic.shortTitle || topic.title?.replace(/^Topik\s*\d+:\s*/i, "") || topic.title;
+
+                    return (
+                        <div
+                            key={topic.id || `topic-${idx}`}
+                            onClick={() => handleAction("tap", () => {
+                                if (setSelectedTopicIndex) setSelectedTopicIndex(idx);
+                                onNavigate && onNavigate("learningDetail");
+                            })}
+                            className="relative w-full rounded-[2.2rem] p-6 pr-28 sm:pr-32 min-h-[148px] sm:min-h-[162px] flex flex-col justify-between text-white shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-1.5 active:scale-[0.98] cursor-pointer group"
+                            style={{ background: cardBg }}
+                        >
+                            {/* Ilustrasi 3D Terapung Di Penjuru Kanan Atas */}
+                            <div className="absolute -top-7 sm:-top-8 -right-1 sm:right-1 w-28 h-28 sm:w-34 sm:h-34 drop-shadow-xl group-hover:scale-108 group-hover:-rotate-3 transition-transform duration-300 pointer-events-none select-none z-10 flex items-center justify-center">
+                                {illustration}
                             </div>
+
+                            {/* Ikon Bulat Status (Circle Badge) */}
+                            <div className="w-10 h-10 rounded-full bg-white/25 backdrop-blur-md border border-white/40 flex items-center justify-center text-white shadow-inner group-hover:scale-110 transition-transform">
+                                {isDone ? (
+                                    <svg className="w-5 h-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                                        <polyline points="20 6 9 17 4 12" />
+                                    </svg>
+                                ) : (
+                                    <svg className="w-4 h-4 text-white ml-0.5" viewBox="0 0 24 24" fill="currentColor">
+                                        <polygon points="5 3 19 12 5 21 5 3" />
+                                    </svg>
+                                )}
+                            </div>
+
+                            {/* Teks: Hanya Lesson & Tajuk (Clean & Bold) */}
+                            <div className="mt-4">
+                                <span className="text-xs sm:text-sm font-medium text-white/80 block">
+                                    {t(`lesson ${lessonNum}`, `lesson ${lessonNum}`)}
+                                </span>
+                                <h3 className="text-2xl sm:text-[26px] font-bold text-white tracking-tight leading-tight mt-0.5">
+                                    {displayTitle}
+                                </h3>
+                            </div>
+                        </div>
+                    );
+                })}
+
+                {topicsList.length === 0 && (
+                    <div className="p-8 text-center bg-slate-50 rounded-3xl border border-slate-200 text-slate-500 text-xs">
+                        {t("Tiada pelajaran tersedia buat masa ini.", "No lessons available currently.")}
+                    </div>
+                )}
+            </div>
+
+        </div>
     );
 }

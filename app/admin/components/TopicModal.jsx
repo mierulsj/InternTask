@@ -30,34 +30,60 @@ export default function TopicModal({
                 </div>
 
                 <form onSubmit={onSave} className="space-y-3 text-xs">
-                    <div className="space-y-1">
-                        <label className="text-slate-700 font-bold">Tajuk Topik</label>
-                        <input
-                            type="text"
-                            value={topicData.title}
-                            onChange={(e) => setTopicData({ ...topicData, title: e.target.value })}
-                            required
-                            placeholder="cth: Topik 3: Tenaga & Elektrik"
-                            className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg text-slate-900 outline-none focus:bg-white focus:border-cyan-500 focus:ring-2 focus:ring-cyan-100 transition-all"
-                        />
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                        <div className="space-y-1">
+                            <label className="text-slate-700 font-bold">Tajuk Penuh Pelajaran</label>
+                            <input
+                                type="text"
+                                value={topicData.title || ""}
+                                onChange={(e) => setTopicData({ ...topicData, title: e.target.value })}
+                                required
+                                placeholder="cth: Topik 3: Tenaga & Elektrik"
+                                className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg text-slate-900 outline-none focus:bg-white focus:border-cyan-500 focus:ring-2 focus:ring-cyan-100 transition-all"
+                            />
+                        </div>
+                        <div className="space-y-1">
+                            <label className="text-slate-700 font-bold">Nama Pada Kad Explore (Pendek)</label>
+                            <input
+                                type="text"
+                                value={topicData.shortTitle || ""}
+                                onChange={(e) => setTopicData({ ...topicData, shortTitle: e.target.value })}
+                                placeholder="cth: Tenaga & Elektrik"
+                                className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg text-slate-900 outline-none focus:bg-white focus:border-cyan-500 focus:ring-2 focus:ring-cyan-100 transition-all"
+                            />
+                        </div>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-2">
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
                         <div className="space-y-1">
                             <label className="text-slate-700 font-bold">Kategori</label>
                             <input
                                 type="text"
-                                value={topicData.category}
+                                value={topicData.category || ""}
                                 onChange={(e) => setTopicData({ ...topicData, category: e.target.value })}
                                 placeholder="cth: Fizik & Tenaga"
                                 className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg text-slate-900 outline-none focus:bg-white focus:border-cyan-500 focus:ring-2 focus:ring-cyan-100 transition-all"
                             />
                         </div>
                         <div className="space-y-1">
+                            <label className="text-slate-700 font-bold">Grafik 3D Kad</label>
+                            <select
+                                value={topicData.graphicType || "planet"}
+                                onChange={(e) => setTopicData({ ...topicData, graphicType: e.target.value })}
+                                className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg text-slate-900 outline-none focus:bg-white focus:border-cyan-500 focus:ring-2 focus:ring-cyan-100 transition-all cursor-pointer font-bold"
+                            >
+                                <option value="planet">🪐 Planet & Suria</option>
+                                <option value="plant">🌱 Tumbuhan & Alam</option>
+                                <option value="rocket">🚀 Roket & Angkasa</option>
+                                <option value="energy">⚡ Tenaga & Elektrik</option>
+                                <option value="book">📚 Buku Sains Am</option>
+                            </select>
+                        </div>
+                        <div className="space-y-1">
                             <label className="text-slate-700 font-bold">YouTube Embed URL</label>
                             <input
                                 type="text"
-                                value={topicData.videoEmbedUrl}
+                                value={topicData.videoEmbedUrl || ""}
                                 onChange={(e) => setTopicData({ ...topicData, videoEmbedUrl: e.target.value })}
                                 placeholder="https://www.youtube.com/embed/..."
                                 className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg text-slate-900 outline-none focus:bg-white focus:border-cyan-500 focus:ring-2 focus:ring-cyan-100 transition-all"

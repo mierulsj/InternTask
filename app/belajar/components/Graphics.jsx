@@ -333,6 +333,52 @@ export function GraphicExploBot({ className = "w-16 h-16", expression = "happy" 
     return <GraphicMascotRobot className={className} expression={expression} />;
 }
 
+// 10d. Graphic Gold Star Coin (Bentuk Koin Emas Khas Exploria)
+export function GraphicCoin({ className = "w-4 h-4" }) {
+    return (
+        <svg className={className} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <linearGradient id="expCoinOuter" x1="2" y1="2" x2="22" y2="22" gradientUnits="userSpaceOnUse">
+                    <stop stopColor="#fef08a" />
+                    <stop offset="0.3" stopColor="#f59e0b" />
+                    <stop offset="0.7" stopColor="#d97706" />
+                    <stop offset="1" stopColor="#92400e" />
+                </linearGradient>
+                <linearGradient id="expCoinInner" x1="4" y1="4" x2="20" y2="20" gradientUnits="userSpaceOnUse">
+                    <stop stopColor="#fde047" />
+                    <stop offset="0.4" stopColor="#fbbf24" />
+                    <stop offset="0.8" stopColor="#f59e0b" />
+                    <stop offset="1" stopColor="#b45309" />
+                </linearGradient>
+                <linearGradient id="expCoinStar" x1="12" y1="6" x2="12" y2="18" gradientUnits="userSpaceOnUse">
+                    <stop stopColor="#ffffff" />
+                    <stop offset="1" stopColor="#fef08a" />
+                </linearGradient>
+            </defs>
+            {/* Outer Rim */}
+            <circle cx="12" cy="12" r="10" fill="url(#expCoinOuter)" stroke="#78350f" strokeWidth="0.5" />
+            {/* Inner Recessed Face */}
+            <circle cx="12" cy="12" r="8.2" fill="url(#expCoinInner)" stroke="#fef9c3" strokeWidth="0.8" />
+            {/* Beaded / Dotted Ring */}
+            <circle cx="12" cy="12" r="6.8" stroke="#92400e" strokeWidth="0.6" strokeDasharray="1.2 0.8" opacity="0.55" />
+            {/* Center Star Emblem */}
+            <path
+                d="M12 7.2L13.35 10.35L16.8 10.7L14.2 13L14.9 16.4L12 14.7L9.1 16.4L9.8 13L7.2 10.7L10.65 10.35L12 7.2Z"
+                fill="url(#expCoinStar)"
+                stroke="#b45309"
+                strokeWidth="0.5"
+                strokeLinejoin="round"
+            />
+            {/* Specular Highlight Arc */}
+            <path
+                d="M6 9C7.2 6.5 9.4 5.2 12 5.2C14.6 5.2 16.8 6.5 18 9C16.4 7.5 14.4 6.8 12 6.8C9.6 6.8 7.6 7.5 6 9Z"
+                fill="#ffffff"
+                fillOpacity="0.5"
+            />
+        </svg>
+    );
+}
+
 // 11. Lightbulb Graphic
 export function GraphicLightbulb({ className = "w-8 h-8" }) {
     return (
@@ -1091,7 +1137,7 @@ export const DAILY_QUESTS = [
         total: 1,
         completed: false,
         icon: "🌱",
-        targetView: "learningList",
+        targetView: "menu",
         colorBadge: "bg-emerald-100 text-emerald-800",
     },
 ];
@@ -1148,6 +1194,699 @@ export const STEM_SKILLS = [
 ];
 
 /* =========================================================================
-   MAIN COMPONENT
+   3D GAMIFIED LEVEL ILLUSTRATIONS (FOR TEROKA / LESSON FEED)
    ========================================================================= */
+
+// 1. Level 1: Stacked Travel Suitcases & Map (Travel / Space Explorer Trunks)
+export function GraphicLevelLuggage({ className = "w-28 h-28" }) {
+    return (
+        <svg className={className} viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <linearGradient id="luggageShadow" x1="60" y1="95" x2="60" y2="115" gradientUnits="userSpaceOnUse">
+                    <stop stopColor="#000000" stopOpacity="0.25" />
+                    <stop offset="1" stopColor="#000000" stopOpacity="0" />
+                </linearGradient>
+                {/* Bottom Cyan Trunk */}
+                <linearGradient id="trunkCyan" x1="20" y1="70" x2="100" y2="105" gradientUnits="userSpaceOnUse">
+                    <stop stopColor="#00d2ff" />
+                    <stop offset="1" stopColor="#0077b6" />
+                </linearGradient>
+                {/* Middle Yellow Trunk */}
+                <linearGradient id="trunkOrange" x1="25" y1="45" x2="105" y2="78" gradientUnits="userSpaceOnUse">
+                    <stop stopColor="#ffb703" />
+                    <stop offset="1" stopColor="#fb8500" />
+                </linearGradient>
+                {/* Top Pink Trunk */}
+                <linearGradient id="trunkPink" x1="30" y1="20" x2="100" y2="52" gradientUnits="userSpaceOnUse">
+                    <stop stopColor="#ff758c" />
+                    <stop offset="1" stopColor="#ff416c" />
+                </linearGradient>
+                {/* Leather Strap */}
+                <linearGradient id="strapGrad" x1="0" y1="0" x2="0" y2="100" gradientUnits="userSpaceOnUse">
+                    <stop stopColor="#9a3412" />
+                    <stop offset="1" stopColor="#7c2d12" />
+                </linearGradient>
+            </defs>
+
+            {/* Cast Shadow */}
+            <ellipse cx="62" cy="106" rx="42" ry="7" fill="url(#luggageShadow)" />
+
+            {/* BOTTOM TRUNK (CYAN) */}
+            <g id="bottomTrunk">
+                <rect x="22" y="74" width="76" height="28" rx="6" fill="url(#trunkCyan)" stroke="#023e8a" strokeWidth="1.5" />
+                <path d="M22 88H98" stroke="#0096c7" strokeWidth="1" strokeDasharray="3 2" />
+                {/* Metal Lock / Buckle */}
+                <rect x="56" y="84" width="8" height="8" rx="2" fill="#ffd166" stroke="#d4a373" strokeWidth="0.8" />
+                <circle cx="60" cy="88" r="1.2" fill="#78350f" />
+                {/* Corner Protectors */}
+                <path d="M23 75H29V81H23V75Z" fill="#ffd166" />
+                <path d="M91 75H97V81H91V75Z" fill="#ffd166" />
+                <path d="M23 96H29V101H23V96Z" fill="#ffd166" />
+                <path d="M91 96H97V101H91V96Z" fill="#ffd166" />
+                {/* Dots / Rivets */}
+                <circle cx="34" cy="88" r="1" fill="#ffffff" fillOpacity="0.8" />
+                <circle cx="86" cy="88" r="1" fill="#ffffff" fillOpacity="0.8" />
+            </g>
+
+            {/* MIDDLE TRUNK (ORANGE / YELLOW) */}
+            <g id="middleTrunk">
+                <rect x="26" y="48" width="70" height="27" rx="5.5" fill="url(#trunkOrange)" stroke="#c2410c" strokeWidth="1.5" />
+                <path d="M26 62H96" stroke="#f59e0b" strokeWidth="1" strokeDasharray="3 2" />
+                {/* Straps */}
+                <rect x="36" y="48" width="5" height="27" fill="url(#strapGrad)" />
+                <rect x="80" y="48" width="5" height="27" fill="url(#strapGrad)" />
+                <rect x="35" y="59" width="7" height="6" rx="1.5" fill="#ffd166" />
+                <rect x="79" y="59" width="7" height="6" rx="1.5" fill="#ffd166" />
+                {/* Central Handle */}
+                <rect x="55" y="58" width="12" height="7" rx="2" fill="#ffd166" stroke="#92400e" strokeWidth="0.8" />
+                <circle cx="61" cy="61.5" r="1" fill="#78350f" />
+                {/* Travel Sticker */}
+                <circle cx="70" cy="55" r="4.5" fill="#ffffff" fillOpacity="0.9" />
+                <path d="M70 52L71.2 54.5L74 54.9L72 56.8L72.5 59.5L70 58.2L67.5 59.5L68 56.8L66 54.9L68.8 54.5L70 52Z" fill="#ef4444" />
+            </g>
+
+            {/* TOP TRUNK (ROSE / PINK) */}
+            <g id="topTrunk">
+                <rect x="30" y="24" width="60" height="25" rx="5" fill="url(#trunkPink)" stroke="#be123c" strokeWidth="1.5" />
+                <path d="M30 36H90" stroke="#fda4af" strokeWidth="1" strokeDasharray="2.5 1.5" />
+                {/* Handle */}
+                <path d="M52 24V19C52 17.5 54 16.5 56 16.5H64C66 16.5 68 17.5 68 19V24" stroke="#78350f" strokeWidth="3" strokeLinecap="round" />
+                <rect x="50" y="22" width="4" height="4" rx="1" fill="#ffd166" />
+                <rect x="66" y="22" width="4" height="4" rx="1" fill="#ffd166" />
+                {/* Center Lock */}
+                <rect x="56" y="33" width="8" height="6" rx="1.5" fill="#ffd166" stroke="#9f1239" strokeWidth="0.7" />
+                <circle cx="60" cy="36" r="0.9" fill="#881337" />
+            </g>
+
+            {/* FOLDED MAP ON TOP */}
+            <g id="mapOnTop" transform="translate(68, 12) rotate(14)">
+                <polygon points="0,0 26,2 24,16 -2,14" fill="#ecfdf5" stroke="#059669" strokeWidth="1" />
+                <line x1="8" y1="1" x2="6" y2="15" stroke="#10b981" strokeWidth="0.8" strokeDasharray="2 1" />
+                <line x1="17" y1="2" x2="15" y2="16" stroke="#10b981" strokeWidth="0.8" strokeDasharray="2 1" />
+                <circle cx="12" cy="7" r="2.2" fill="#f43f5e" />
+                <path d="M12 9.2L12 11" stroke="#f43f5e" strokeWidth="1.2" />
+            </g>
+
+            {/* Sparkles */}
+            <path d="M18 42L19.5 46L23.5 47.5L19.5 49L18 53L16.5 49L12.5 47.5L16.5 46L18 42Z" fill="#fef08a" />
+            <path d="M100 32L101 35L104 36L101 37L100 40L99 37L96 36L99 35L100 32Z" fill="#fef08a" />
+        </svg>
+    );
+}
+
+// 2. Level 2: 3D Striped Hot Air Balloon & Puffy Clouds
+export function GraphicLevelBalloon({ className = "w-28 h-28" }) {
+    return (
+        <svg className={className} viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <linearGradient id="balloonMain" x1="30" y1="10" x2="90" y2="80" gradientUnits="userSpaceOnUse">
+                    <stop stopColor="#ff7849" />
+                    <stop offset="0.5" stopColor="#ffc837" />
+                    <stop offset="1" stopColor="#ff3366" />
+                </linearGradient>
+                <linearGradient id="stripeYellow" x1="50" y1="10" x2="70" y2="80" gradientUnits="userSpaceOnUse">
+                    <stop stopColor="#ffe600" />
+                    <stop offset="1" stopColor="#ff9f1c" />
+                </linearGradient>
+                <linearGradient id="stripeBlue" x1="30" y1="20" x2="60" y2="70" gradientUnits="userSpaceOnUse">
+                    <stop stopColor="#00f2fe" />
+                    <stop offset="1" stopColor="#4facfe" />
+                </linearGradient>
+                <linearGradient id="cloudWhite" x1="0" y1="0" x2="0" y2="30" gradientUnits="userSpaceOnUse">
+                    <stop stopColor="#ffffff" />
+                    <stop offset="1" stopColor="#e0f2fe" />
+                </linearGradient>
+                <linearGradient id="basketGrad" x1="50" y1="88" x2="70" y2="102" gradientUnits="userSpaceOnUse">
+                    <stop stopColor="#d4a373" />
+                    <stop offset="1" stopColor="#a9714b" />
+                </linearGradient>
+            </defs>
+
+            {/* Background Clouds */}
+            <path d="M15 82C15 78 18 75 22 75C23.5 75 24.8 75.5 25.8 76.4C27.5 73.7 30.5 72 34 72C39 72 43 75.5 43.8 80.2C45.2 80.4 46.5 81.3 47 82.8C47.8 85.2 46 88 43.5 88H18C16.3 88 15 86.7 15 85V82Z" fill="url(#cloudWhite)" opacity="0.9" />
+
+            {/* BALLOON CANOPY */}
+            <g id="hotAirBalloon">
+                {/* Outer Canopy Shape */}
+                <path d="M60 8C40 8 28 24 28 44C28 58 40 72 52 79L54 82H66L68 79C80 72 92 58 92 44C92 24 80 8 60 8Z" fill="url(#balloonMain)" stroke="#ea580c" strokeWidth="1.2" />
+
+                {/* Central Stripe (Yellow) */}
+                <path d="M60 8C54 8 50 24 50 44C50 58 55 72 60 82C65 72 70 58 70 44C70 24 66 8 60 8Z" fill="url(#stripeYellow)" />
+
+                {/* Center Core Stripe (Cyan / Blue) */}
+                <path d="M60 8C57 8 55 24 55 44C55 58 58 72 60 82C62 72 65 58 65 44C65 24 63 8 60 8Z" fill="url(#stripeBlue)" opacity="0.85" />
+
+                {/* Highlight Arc on Balloon */}
+                <path d="M38 20C44 14 52 11 60 11" stroke="#ffffff" strokeWidth="2.5" strokeLinecap="round" opacity="0.75" />
+
+                {/* Burner / Collar */}
+                <rect x="53" y="82" width="14" height="3" rx="1.5" fill="#dc2626" />
+
+                {/* Ropes to Basket */}
+                <line x1="54" y1="85" x2="52" y2="92" stroke="#78350f" strokeWidth="1.2" />
+                <line x1="60" y1="85" x2="57" y2="92" stroke="#78350f" strokeWidth="1" />
+                <line x1="60" y1="85" x2="63" y2="92" stroke="#78350f" strokeWidth="1" />
+                <line x1="66" y1="85" x2="68" y2="92" stroke="#78350f" strokeWidth="1.2" />
+
+                {/* Basket */}
+                <rect x="50" y="92" width="20" height="13" rx="3.5" fill="url(#basketGrad)" stroke="#78350f" strokeWidth="1" />
+                <line x1="50" y1="96" x2="70" y2="96" stroke="#78350f" strokeWidth="0.8" />
+                <line x1="50" y1="100" x2="70" y2="100" stroke="#78350f" strokeWidth="0.8" />
+                <line x1="55" y1="92" x2="55" y2="105" stroke="#78350f" strokeWidth="0.8" />
+                <line x1="60" y1="92" x2="60" y2="105" stroke="#78350f" strokeWidth="0.8" />
+                <line x1="65" y1="92" x2="65" y2="105" stroke="#78350f" strokeWidth="0.8" />
+            </g>
+
+            {/* Foreground Fluffy Cloud Overlay */}
+            <path d="M72 80C72 74 77 69 83 69C85.5 69 87.7 70 89.4 71.6C91.5 68.5 95.2 66.5 99.5 66.5C106 66.5 111.5 71.5 112 78C114 78.5 116 80.5 116 83C116 86 113.5 88.5 110.5 88.5H76C73.8 88.5 72 86.7 72 84.5V80Z" fill="url(#cloudWhite)" stroke="#e0f2fe" strokeWidth="1" filter="drop-shadow(0 2px 4px rgba(0,0,0,0.06))" />
+
+            {/* Tiny Background Hot Air Balloon */}
+            <g transform="translate(18, 28) scale(0.35)">
+                <path d="M60 8C40 8 28 24 28 44C28 58 40 72 52 79L54 82H66L68 79C80 72 92 58 92 44C92 24 80 8 60 8Z" fill="#ff758c" />
+                <rect x="52" y="88" width="16" height="10" rx="3" fill="#a9714b" />
+            </g>
+        </svg>
+    );
+}
+
+// 3. Level 3: 3D Yellow Camera with Polaroids & Globe
+export function GraphicLevelCamera({ className = "w-28 h-28" }) {
+    return (
+        <svg className={className} viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                {/* Yellow Camera Gradient */}
+                <linearGradient id="cameraYellow" x1="20" y1="35" x2="85" y2="95" gradientUnits="userSpaceOnUse">
+                    <stop stopColor="#ffea00" />
+                    <stop offset="0.7" stopColor="#ffc107" />
+                    <stop offset="1" stopColor="#ff9800" />
+                </linearGradient>
+                {/* Lens Outer Rim */}
+                <linearGradient id="lensOuter" x1="38" y1="46" x2="74" y2="82" gradientUnits="userSpaceOnUse">
+                    <stop stopColor="#374151" />
+                    <stop offset="1" stopColor="#111827" />
+                </linearGradient>
+                {/* Lens Glass Reflection */}
+                <linearGradient id="lensGlass" x1="42" y1="50" x2="70" y2="78" gradientUnits="userSpaceOnUse">
+                    <stop stopColor="#38bdf8" />
+                    <stop offset="0.5" stopColor="#1e3a8a" />
+                    <stop offset="1" stopColor="#0f172a" />
+                </linearGradient>
+                {/* Globe Gradient */}
+                <linearGradient id="globeOcean" x1="75" y1="18" x2="105" y2="48" gradientUnits="userSpaceOnUse">
+                    <stop stopColor="#38bdf8" />
+                    <stop offset="1" stopColor="#0284c7" />
+                </linearGradient>
+            </defs>
+
+            {/* Shadow */}
+            <ellipse cx="60" cy="104" rx="40" ry="7" fill="#000000" fillOpacity="0.22" />
+
+            {/* MINI EARTH GLOBE (BEHIND CAMERA) */}
+            <g id="miniGlobe" transform="translate(68, 12)">
+                <circle cx="20" cy="20" r="18" fill="url(#globeOcean)" stroke="#0369a1" strokeWidth="1.2" />
+                {/* Continents */}
+                <path d="M12 14C14 10 18 10 22 13C25 15 28 12 30 14C31 16 28 20 24 21C20 22 17 25 15 28C13 28 10 24 9 20C9 17 11 15 12 14Z" fill="#4ade80" />
+                <path d="M22 28C25 26 29 27 32 30C34 32 32 35 30 36C26 36 24 33 22 28Z" fill="#4ade80" />
+                {/* Orbit Arc & Airplane */}
+                <path d="M2 24C4 10 24 2 36 12" stroke="#ffffff" strokeWidth="1" strokeDasharray="2 2" />
+                <path d="M5 22L7 17L11 18L9 21L13 22L12 24L5 22Z" fill="#ffffff" />
+            </g>
+
+            {/* POLAROID PHOTO 1 (BEHIND CAMERA) */}
+            <g id="polaroidBack" transform="translate(64, 42) rotate(16)">
+                <rect x="0" y="0" width="28" height="34" rx="2.5" fill="#ffffff" stroke="#cbd5e1" strokeWidth="1" filter="drop-shadow(0 2px 4px rgba(0,0,0,0.12))" />
+                <rect x="2.5" y="2.5" width="23" height="21" rx="1.5" fill="#38bdf8" />
+                {/* Mini landscape */}
+                <path d="M2.5 17L9 11L16 18L21 14L25.5 19V23.5H2.5V17Z" fill="#10b981" />
+                <circle cx="19" cy="7" r="2.2" fill="#fbbf24" />
+            </g>
+
+            {/* 3D CAMERA BODY */}
+            <g id="cameraBody">
+                {/* Main Body */}
+                <rect x="18" y="38" width="70" height="58" rx="14" fill="url(#cameraYellow)" stroke="#d97706" strokeWidth="1.8" />
+
+                {/* Top Shutter Button (Red) */}
+                <rect x="28" y="32" width="11" height="7" rx="3.5" fill="#ef4444" stroke="#b91c1c" strokeWidth="1" />
+
+                {/* Top Flash Mound */}
+                <path d="M62 38V34C62 32.5 64 31.5 66 31.5H74C76 31.5 78 32.5 78 34V38" fill="#fbbf24" stroke="#d97706" strokeWidth="1" />
+                <rect x="65" y="34" width="9" height="4" rx="1.5" fill="#ffffff" fillOpacity="0.85" />
+
+                {/* Viewfinder Window */}
+                <rect x="70" y="44" width="10" height="8" rx="2.5" fill="#1e293b" stroke="#475569" strokeWidth="1" />
+                <circle cx="75" cy="48" r="1.5" fill="#38bdf8" />
+
+                {/* Selfie Mirror / Indicator */}
+                <circle cx="32" cy="48" r="3.5" fill="#e2e8f0" stroke="#94a3b8" strokeWidth="0.8" />
+
+                {/* BIG 3D LENS */}
+                <circle cx="53" cy="67" r="23" fill="url(#lensOuter)" stroke="#0f172a" strokeWidth="2" />
+                <circle cx="53" cy="67" r="19" fill="#1f2937" stroke="#475569" strokeWidth="1" />
+                <circle cx="53" cy="67" r="15" fill="url(#lensGlass)" />
+                <circle cx="53" cy="67" r="10" fill="#0b1329" />
+
+                {/* Glass Reflection Arc */}
+                <path d="M43 60C46 56 50 54 55 54" stroke="#ffffff" strokeWidth="2.2" strokeLinecap="round" strokeOpacity="0.85" />
+                <circle cx="61" cy="73" r="1.5" fill="#ffffff" fillOpacity="0.6" />
+
+                {/* Camera Stripe Detail */}
+                <path d="M19 82H87" stroke="#f59e0b" strokeWidth="2.5" />
+            </g>
+
+            {/* Sparkle Stars */}
+            <path d="M12 36L13.5 39.5L17 41L13.5 42.5L12 46L10.5 42.5L7 41L10.5 39.5L12 36Z" fill="#fef08a" />
+        </svg>
+    );
+}
+
+// 4. Level 4: 3D Champion Trophy Cup with Laurel & Stars
+export function GraphicLevelTrophy({ className = "w-28 h-28" }) {
+    return (
+        <svg className={className} viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <linearGradient id="goldCup" x1="30" y1="15" x2="90" y2="75" gradientUnits="userSpaceOnUse">
+                    <stop stopColor="#fff3b0" />
+                    <stop offset="0.3" stopColor="#ffd166" />
+                    <stop offset="0.8" stopColor="#f59e0b" />
+                    <stop offset="1" stopColor="#d97706" />
+                </linearGradient>
+                <linearGradient id="pedestalGrad" x1="40" y1="80" x2="80" y2="108" gradientUnits="userSpaceOnUse">
+                    <stop stopColor="#374151" />
+                    <stop offset="1" stopColor="#111827" />
+                </linearGradient>
+            </defs>
+
+            {/* Shadow */}
+            <ellipse cx="60" cy="106" rx="38" ry="6" fill="#000000" fillOpacity="0.22" />
+
+            {/* TROPHY CUP */}
+            <g id="trophyCup">
+                {/* Handles (Left & Right) */}
+                <path d="M40 32C24 32 22 48 34 54C38 56 42 56 44 54" stroke="#f59e0b" strokeWidth="5.5" strokeLinecap="round" fill="none" />
+                <path d="M40 32C24 32 22 48 34 54C38 56 42 56 44 54" stroke="#fef08a" strokeWidth="3" strokeLinecap="round" fill="none" />
+
+                <path d="M80 32C96 32 98 48 86 54C82 56 78 56 76 54" stroke="#f59e0b" strokeWidth="5.5" strokeLinecap="round" fill="none" />
+                <path d="M80 32C96 32 98 48 86 54C82 56 78 56 76 54" stroke="#fef08a" strokeWidth="3" strokeLinecap="round" fill="none" />
+
+                {/* Cup Body */}
+                <path d="M36 20H84V42C84 57 73 69 60 69C47 69 36 57 36 42V20Z" fill="url(#goldCup)" stroke="#b45309" strokeWidth="1.5" />
+
+                {/* Lip / Rim on Top */}
+                <ellipse cx="60" cy="20" rx="24" ry="4.5" fill="#ffea00" stroke="#b45309" strokeWidth="1" />
+                <ellipse cx="60" cy="20" rx="20" ry="3" fill="#fff3b0" />
+
+                {/* Embossed Star on Cup */}
+                <path d="M60 32L62.5 39.5L70 40.5L64.5 45.5L66 53L60 49L54 53L55.5 45.5L50 40.5L57.5 39.5L60 32Z" fill="#ffffff" filter="drop-shadow(0 1px 2px rgba(0,0,0,0.2))" />
+
+                {/* Cup Stem */}
+                <path d="M54 69H66V82C66 84 62 85 60 85C58 85 54 84 54 82V69Z" fill="url(#goldCup)" stroke="#b45309" strokeWidth="1" />
+                <ellipse cx="60" cy="84" rx="14" ry="3" fill="#f59e0b" />
+
+                {/* Pedestal Base */}
+                <path d="M44 87H76L80 102H40L44 87Z" fill="url(#pedestalGrad)" stroke="#1f2937" strokeWidth="1.5" />
+                <rect x="48" y="91" width="24" height="8" rx="1.5" fill="#fef08a" stroke="#d97706" strokeWidth="0.8" />
+                <line x1="51" y1="95" x2="69" y2="95" stroke="#92400e" strokeWidth="1" strokeDasharray="2 1" />
+            </g>
+
+            {/* Laurel Leaves (Left & Right) */}
+            <g id="laurelWreath" opacity="0.95">
+                <ellipse cx="26" cy="40" rx="4" ry="2.2" fill="#22c55e" transform="rotate(-30 26 40)" />
+                <ellipse cx="28" cy="48" rx="4" ry="2.2" fill="#22c55e" transform="rotate(-15 28 48)" />
+                <ellipse cx="32" cy="56" rx="4" ry="2.2" fill="#22c55e" transform="rotate(10 32 56)" />
+
+                <ellipse cx="94" cy="40" rx="4" ry="2.2" fill="#22c55e" transform="rotate(30 94 40)" />
+                <ellipse cx="92" cy="48" rx="4" ry="2.2" fill="#22c55e" transform="rotate(15 92 48)" />
+                <ellipse cx="88" cy="56" rx="4" ry="2.2" fill="#22c55e" transform="rotate(-10 88 56)" />
+            </g>
+
+            {/* Floating Sparkles & Confetti */}
+            <path d="M22 18L23.5 21.5L27 23L23.5 24.5L22 28L20.5 24.5L17 23L20.5 21.5L22 18Z" fill="#fef08a" />
+            <path d="M98 16L99.5 19.5L103 21L99.5 22.5L98 26L96.5 22.5L93 21L96.5 19.5L98 16Z" fill="#fef08a" />
+            <circle cx="16" cy="34" r="1.8" fill="#f43f5e" />
+            <circle cx="104" cy="34" r="1.8" fill="#38bdf8" />
+        </svg>
+    );
+}
+
+// 5. 3D Spelling Bee (Glossy Cute Bumblebee with Translucent Wings & Sparkles)
+export function GraphicLevelBee({ className = "w-28 h-28" }) {
+    return (
+        <svg className={className} viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <linearGradient id="beeBody" x1="30" y1="35" x2="90" y2="90" gradientUnits="userSpaceOnUse">
+                    <stop stopColor="#fef08a" />
+                    <stop offset="0.3" stopColor="#facc15" />
+                    <stop offset="0.75" stopColor="#eab308" />
+                    <stop offset="1" stopColor="#ca8a04" />
+                </linearGradient>
+                <linearGradient id="wingGradLeft" x1="15" y1="20" x2="48" y2="55" gradientUnits="userSpaceOnUse">
+                    <stop stopColor="#ffffff" stopOpacity="0.9" />
+                    <stop offset="0.5" stopColor="#e0f2fe" stopOpacity="0.75" />
+                    <stop offset="1" stopColor="#38bdf8" stopOpacity="0.4" />
+                </linearGradient>
+                <linearGradient id="wingGradRight" x1="105" y1="20" x2="72" y2="55" gradientUnits="userSpaceOnUse">
+                    <stop stopColor="#ffffff" stopOpacity="0.9" />
+                    <stop offset="0.5" stopColor="#e0f2fe" stopOpacity="0.75" />
+                    <stop offset="1" stopColor="#38bdf8" stopOpacity="0.4" />
+                </linearGradient>
+                <linearGradient id="stripeGrad" x1="40" y1="40" x2="80" y2="80" gradientUnits="userSpaceOnUse">
+                    <stop stopColor="#374151" />
+                    <stop offset="1" stopColor="#111827" />
+                </linearGradient>
+            </defs>
+
+            {/* Shadow */}
+            <ellipse cx="60" cy="104" rx="34" ry="6" fill="#000000" fillOpacity="0.2" />
+
+            {/* WINGS (Translucent glossy wings in background) */}
+            <g id="beeWings">
+                {/* Left Wings */}
+                <ellipse cx="36" cy="38" rx="16" ry="24" transform="rotate(-32 36 38)" fill="url(#wingGradLeft)" stroke="#bae6fd" strokeWidth="1.2" />
+                <ellipse cx="28" cy="48" rx="11" ry="16" transform="rotate(-40 28 48)" fill="url(#wingGradLeft)" stroke="#bae6fd" strokeWidth="1" />
+                <path d="M36 30C36 40 38 48 44 54" stroke="#ffffff" strokeWidth="1.2" strokeLinecap="round" opacity="0.8" />
+
+                {/* Right Wings */}
+                <ellipse cx="84" cy="38" rx="16" ry="24" transform="rotate(32 84 38)" fill="url(#wingGradRight)" stroke="#bae6fd" strokeWidth="1.2" />
+                <ellipse cx="92" cy="48" rx="11" ry="16" transform="rotate(40 92 48)" fill="url(#wingGradRight)" stroke="#bae6fd" strokeWidth="1" />
+                <path d="M84 30C84 40 82 48 76 54" stroke="#ffffff" strokeWidth="1.2" strokeLinecap="round" opacity="0.8" />
+            </g>
+
+            {/* BEE BODY */}
+            <g id="beeBodyGroup">
+                {/* Main Body Oval */}
+                <ellipse cx="60" cy="62" rx="28" ry="32" fill="url(#beeBody)" stroke="#ca8a04" strokeWidth="1.5" />
+
+                {/* Black Stripes */}
+                <path d="M34 54C42 51 78 51 86 54C87 59 86 64 85 66C77 63 43 63 35 66C34 62 33 58 34 54Z" fill="url(#stripeGrad)" />
+                <path d="M37 72C44 69 76 69 83 72C80 77 77 82 72 86C68 85 52 85 48 86C43 82 40 77 37 72Z" fill="url(#stripeGrad)" />
+
+                {/* Stinger at bottom */}
+                <path d="M57 93L60 99L63 93Z" fill="#1f2937" />
+
+                {/* Cute Glossy Eyes */}
+                <ellipse cx="50" cy="44" rx="4.5" ry="6" fill="#1f2937" />
+                <circle cx="48.5" cy="42" r="2" fill="#ffffff" />
+                <circle cx="51.5" cy="46" r="0.8" fill="#ffffff" />
+
+                <ellipse cx="70" cy="44" rx="4.5" ry="6" fill="#1f2937" />
+                <circle cx="68.5" cy="42" r="2" fill="#ffffff" />
+                <circle cx="71.5" cy="46" r="0.8" fill="#ffffff" />
+
+                {/* Cheerful Smile & Rosy Cheeks */}
+                <path d="M56 50Q60 54 64 50" stroke="#78350f" strokeWidth="1.8" strokeLinecap="round" fill="none" />
+                <circle cx="43" cy="49" r="2.8" fill="#f43f5e" opacity="0.5" />
+                <circle cx="77" cy="49" r="2.8" fill="#f43f5e" opacity="0.5" />
+
+                {/* Antennae */}
+                <path d="M52 32Q48 20 40 18" stroke="#1f2937" strokeWidth="2" strokeLinecap="round" fill="none" />
+                <circle cx="39" cy="18" r="3.5" fill="#f59e0b" stroke="#78350f" strokeWidth="0.8" />
+
+                <path d="M68 32Q72 20 80 18" stroke="#1f2937" strokeWidth="2" strokeLinecap="round" fill="none" />
+                <circle cx="81" cy="18" r="3.5" fill="#f59e0b" stroke="#78350f" strokeWidth="0.8" />
+
+                {/* Highlights / 3D Specular reflection */}
+                <ellipse cx="44" cy="40" rx="4" ry="8" transform="rotate(-25 44 40)" fill="#ffffff" opacity="0.45" />
+            </g>
+
+            {/* Sparkles */}
+            <path d="M20 24L21.5 27.5L25 29L21.5 30.5L20 34L18.5 30.5L15 29L18.5 27.5L20 24Z" fill="#fef08a" />
+            <path d="M100 24L101.5 27.5L105 29L101.5 30.5L100 34L98.5 30.5L95 29L98.5 27.5L100 24Z" fill="#fef08a" />
+        </svg>
+    );
+}
+
+// 6. 3D Solar System & Orbiting Planets (Saturn with Rings, Orbiting Earth & Mars, Stars)
+export function GraphicLevelPlanets({ className = "w-28 h-28" }) {
+    return (
+        <svg className={className} viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <linearGradient id="saturnBody3D" x1="30" y1="28" x2="90" y2="88" gradientUnits="userSpaceOnUse">
+                    <stop stopColor="#fef08a" />
+                    <stop offset="0.3" stopColor="#f59e0b" />
+                    <stop offset="0.75" stopColor="#ea580c" />
+                    <stop offset="1" stopColor="#9a3412" />
+                </linearGradient>
+                <linearGradient id="saturnRing3D" x1="10" y1="45" x2="110" y2="75" gradientUnits="userSpaceOnUse">
+                    <stop stopColor="#fde68a" />
+                    <stop offset="0.4" stopColor="#fbbf24" />
+                    <stop offset="0.7" stopColor="#d97706" />
+                    <stop offset="1" stopColor="#78350f" />
+                </linearGradient>
+                <linearGradient id="earthBody3D" x1="16" y1="18" x2="36" y2="38" gradientUnits="userSpaceOnUse">
+                    <stop stopColor="#38bdf8" />
+                    <stop offset="0.5" stopColor="#0284c7" />
+                    <stop offset="1" stopColor="#1e3a8a" />
+                </linearGradient>
+                <linearGradient id="marsBody3D" x1="88" y1="78" x2="108" y2="98" gradientUnits="userSpaceOnUse">
+                    <stop stopColor="#f87171" />
+                    <stop offset="0.6" stopColor="#dc2626" />
+                    <stop offset="1" stopColor="#7f1d1d" />
+                </linearGradient>
+            </defs>
+
+            {/* Ambient Shadow */}
+            <ellipse cx="60" cy="106" rx="38" ry="7" fill="#000000" fillOpacity="0.22" />
+
+            {/* Orbit paths (Elliptical Dashed Rings) */}
+            <ellipse cx="60" cy="58" rx="52" ry="24" stroke="#ffffff" strokeWidth="1" strokeDasharray="3 3" opacity="0.35" transform="rotate(-16 60 58)" />
+
+            {/* SATURN RING (BACK HALF) */}
+            <path
+                d="M14 54C18 42 66 32 102 44C108 46 109 50 104 53C96 44 56 38 22 47C16 49 13 52 14 54Z"
+                fill="url(#saturnRing3D)"
+                opacity="0.7"
+                transform="rotate(-18 60 58)"
+            />
+
+            {/* MAIN SATURN GLOBE */}
+            <circle cx="60" cy="58" r="26" fill="url(#saturnBody3D)" stroke="#ca8a04" strokeWidth="0.8" />
+
+            {/* Atmospheric Cloud Bands on Saturn */}
+            <path d="M37 53C47 50 73 50 83 53C81 56 79 58 77 60C69 57 51 57 43 60C41 58 39 56 37 53Z" fill="#fed7aa" opacity="0.45" />
+            <path d="M40 64C48 62 72 62 80 64C78 67 75 70 71 73C65 70 55 70 49 73C45 70 42 67 40 64Z" fill="#7c2d12" opacity="0.35" />
+
+            {/* Specular Highlight on Saturn */}
+            <ellipse cx="50" cy="45" rx="7" ry="4" transform="rotate(-30 50 45)" fill="#ffffff" opacity="0.55" />
+
+            {/* SATURN RING (FRONT HALF) */}
+            <path
+                d="M12 55C18 69 72 78 106 63C111 61 109 56 103 54C75 67 36 62 18 50C13 48 11 52 12 55Z"
+                fill="url(#saturnRing3D)"
+                stroke="#d97706"
+                strokeWidth="0.8"
+                transform="rotate(-18 60 58)"
+            />
+            {/* Ring Shadow on Body */}
+            <path d="M35 56C47 59 73 59 85 56C84 59 83 61 82 62C72 65 48 65 38 62C37 61 36 59 35 56Z" fill="#000000" opacity="0.25" />
+
+            {/* ORBITING EARTH (Mini Planet Top Left) */}
+            <g id="miniEarth" className="drop-shadow-md">
+                <circle cx="26" cy="26" r="10" fill="url(#earthBody3D)" stroke="#38bdf8" strokeWidth="0.8" />
+                <path d="M22 24C24 22 28 23 29 26C27 28 25 29 23 28Z" fill="#22c55e" opacity="0.85" />
+                <path d="M27 30C29 29 32 31 31 33C29 34 27 33 27 30Z" fill="#22c55e" opacity="0.85" />
+                <circle cx="23" cy="23" r="1.5" fill="#ffffff" opacity="0.75" />
+            </g>
+
+            {/* ORBITING MARS (Mini Red Planet Bottom Right) */}
+            <g id="miniMars" className="drop-shadow-md">
+                <circle cx="98" cy="88" r="7.5" fill="url(#marsBody3D)" stroke="#f87171" strokeWidth="0.6" />
+                <circle cx="96" cy="86" r="1.2" fill="#ffffff" opacity="0.75" />
+            </g>
+
+            {/* SPARKLES & STARS */}
+            <path d="M16 48L17.5 51.5L21 53L17.5 54.5L16 58L14.5 54.5L11 53L14.5 51.5L16 48Z" fill="#fef08a" />
+            <path d="M96 22L97.5 25.5L101 27L97.5 28.5L96 32L94.5 28.5L91 27L94.5 25.5L96 22Z" fill="#fef08a" />
+            <circle cx="48" cy="14" r="1.5" fill="#ffffff" opacity="0.9" />
+            <circle cx="82" cy="18" r="2" fill="#fde047" opacity="0.9" />
+            <circle cx="88" cy="40" r="1.2" fill="#ffffff" opacity="0.8" />
+        </svg>
+    );
+}
+
+// 7. 3D Photosynthesis & Botany Plant Sprout (Golden Sun, Emerald Leaves, Dewdrop)
+export function GraphicLevelPlantSprout({ className = "w-28 h-28" }) {
+    return (
+        <svg className={className} viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <linearGradient id="sunGrad3D" x1="60" y1="12" x2="105" y2="58" gradientUnits="userSpaceOnUse">
+                    <stop stopColor="#fef08a" />
+                    <stop offset="0.4" stopColor="#fde047" />
+                    <stop offset="0.8" stopColor="#f59e0b" />
+                    <stop offset="1" stopColor="#d97706" />
+                </linearGradient>
+                <linearGradient id="leafMain3D" x1="30" y1="35" x2="85" y2="95" gradientUnits="userSpaceOnUse">
+                    <stop stopColor="#6ee7b7" />
+                    <stop offset="0.3" stopColor="#10b981" />
+                    <stop offset="0.75" stopColor="#059669" />
+                    <stop offset="1" stopColor="#065f46" />
+                </linearGradient>
+                <linearGradient id="leafSecond3D" x1="18" y1="45" x2="65" y2="95" gradientUnits="userSpaceOnUse">
+                    <stop stopColor="#a7f3d0" />
+                    <stop offset="0.3" stopColor="#34d399" />
+                    <stop offset="0.75" stopColor="#059669" />
+                    <stop offset="1" stopColor="#047857" />
+                </linearGradient>
+                <linearGradient id="stemGrad3D" x1="55" y1="60" x2="68" y2="105" gradientUnits="userSpaceOnUse">
+                    <stop stopColor="#34d399" />
+                    <stop offset="0.5" stopColor="#059669" />
+                    <stop offset="1" stopColor="#064e3b" />
+                </linearGradient>
+                <linearGradient id="dewDropGrad" x1="68" y1="46" x2="78" y2="58" gradientUnits="userSpaceOnUse">
+                    <stop stopColor="#ffffff" />
+                    <stop offset="0.5" stopColor="#bae6fd" />
+                    <stop offset="1" stopColor="#38bdf8" />
+                </linearGradient>
+            </defs>
+
+            {/* Ambient Shadow */}
+            <ellipse cx="60" cy="106" rx="36" ry="6.5" fill="#000000" fillOpacity="0.22" />
+
+            {/* GLOWING BACKGROUND SUN (Photosynthesis Energy Source) */}
+            <g id="sunBackdrop">
+                <circle cx="82" cy="34" r="22" fill="url(#sunGrad3D)" opacity="0.95" />
+                <path d="M82 6V11M82 57V62M54 34H59M105 34H110M62 14L66 18M98 50L102 54M62 54L66 50M98 18L102 14" stroke="#fde047" strokeWidth="2.5" strokeLinecap="round" opacity="0.8" />
+                <circle cx="76" cy="28" r="3.5" fill="#ffffff" opacity="0.6" />
+            </g>
+
+            {/* PLANT STEM */}
+            <path d="M58 104C58 88 56 74 62 62" stroke="url(#stemGrad3D)" strokeWidth="6" strokeLinecap="round" />
+
+            {/* LEFT LEAF */}
+            <g id="leftLeaf">
+                <path d="M60 76C42 74 24 64 22 46C38 44 56 56 60 76Z" fill="url(#leafSecond3D)" stroke="#047857" strokeWidth="1" />
+                <path d="M24 48C34 54 48 64 58 74" stroke="#d1fae5" strokeWidth="1.8" strokeLinecap="round" opacity="0.75" />
+                <path d="M36 55C34 58 32 62 30 64" stroke="#d1fae5" strokeWidth="1" strokeLinecap="round" opacity="0.5" />
+                <path d="M46 62C45 66 43 69 41 72" stroke="#d1fae5" strokeWidth="1" strokeLinecap="round" opacity="0.5" />
+                <path d="M26 47C36 45 48 52 52 60" stroke="#ffffff" strokeWidth="1.5" strokeLinecap="round" opacity="0.65" />
+            </g>
+
+            {/* RIGHT MAIN LEAF WITH MORNING DEWDROP */}
+            <g id="rightLeaf">
+                <path d="M60 68C68 46 88 34 98 42C100 58 82 78 60 68Z" fill="url(#leafMain3D)" stroke="#065f46" strokeWidth="1.2" />
+                <path d="M96 44C86 52 72 60 62 67" stroke="#a7f3d0" strokeWidth="2" strokeLinecap="round" opacity="0.8" />
+                <path d="M86 52C87 56 89 60 91 63" stroke="#a7f3d0" strokeWidth="1.2" strokeLinecap="round" opacity="0.5" />
+                <path d="M76 58C77 62 79 66 81 69" stroke="#a7f3d0" strokeWidth="1.2" strokeLinecap="round" opacity="0.5" />
+                <path d="M88 43C78 43 68 50 64 58" stroke="#ffffff" strokeWidth="2" strokeLinecap="round" opacity="0.7" />
+
+                {/* MORNING DEWDROP */}
+                <circle cx="78" cy="52" r="4.2" fill="url(#dewDropGrad)" stroke="#38bdf8" strokeWidth="0.6" filter="drop-shadow(0 1px 2px rgba(0,0,0,0.15))" />
+                <circle cx="76.8" cy="50.5" r="1.3" fill="#ffffff" />
+            </g>
+
+            {/* PHOTOSYNTHESIS BUBBLES */}
+            <circle cx="48" cy="36" r="3.2" fill="#67e8f9" opacity="0.85" />
+            <circle cx="47" cy="35" r="1" fill="#ffffff" />
+            <circle cx="34" cy="30" r="2.2" fill="#a7f3d0" opacity="0.85" />
+            <circle cx="68" cy="88" r="2.5" fill="#fde047" opacity="0.7" />
+
+            {/* Sparkles */}
+            <path d="M18 26L19.5 29.5L23 31L19.5 32.5L18 36L16.5 32.5L13 31L16.5 29.5L18 26Z" fill="#fef08a" />
+            <path d="M98 76L99.5 79.5L103 81L99.5 82.5L98 86L96.5 82.5L93 81L96.5 79.5L98 76Z" fill="#fef08a" />
+        </svg>
+    );
+}
+
+// 8. 3D Space Rocket (Sleek red/white rocket with thruster flame & stars)
+export function GraphicLevelRocket({ className = "w-28 h-28" }) {
+    return (
+        <svg className={className} viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <linearGradient id="rocketBody3D" x1="45" y1="20" x2="85" y2="75" gradientUnits="userSpaceOnUse">
+                    <stop stopColor="#ffffff" />
+                    <stop offset="0.6" stopColor="#e2e8f0" />
+                    <stop offset="1" stopColor="#94a3b8" />
+                </linearGradient>
+                <linearGradient id="rocketNose3D" x1="50" y1="12" x2="70" y2="35" gradientUnits="userSpaceOnUse">
+                    <stop stopColor="#ff4b6e" />
+                    <stop offset="1" stopColor="#dc2626" />
+                </linearGradient>
+                <linearGradient id="flameGrad3D" x1="45" y1="80" x2="75" y2="110" gradientUnits="userSpaceOnUse">
+                    <stop stopColor="#fef08a" />
+                    <stop offset="0.4" stopColor="#f97316" />
+                    <stop offset="1" stopColor="#dc2626" />
+                </linearGradient>
+            </defs>
+            <ellipse cx="60" cy="106" rx="30" ry="6" fill="#000000" fillOpacity="0.2" />
+            {/* Flames */}
+            <path d="M52 82C48 94 56 108 60 112C64 108 72 94 68 82Z" fill="url(#flameGrad3D)" />
+            <path d="M56 82C54 90 58 98 60 102C62 98 66 90 64 82Z" fill="#fef08a" />
+            {/* Fins */}
+            <path d="M42 66L32 82C40 84 48 78 48 74Z" fill="url(#rocketNose3D)" />
+            <path d="M78 66L88 82C80 84 72 78 72 74Z" fill="url(#rocketNose3D)" />
+            {/* Main Rocket Body */}
+            <path d="M60 14C52 24 46 48 46 82H74C74 48 68 24 60 14Z" fill="url(#rocketBody3D)" stroke="#cbd5e1" strokeWidth="1" />
+            {/* Nose Cone */}
+            <path d="M60 14C56 20 52 30 50 36H70C68 30 64 20 60 14Z" fill="url(#rocketNose3D)" />
+            {/* Porthole Window */}
+            <circle cx="60" cy="50" r="9" fill="#0284c7" stroke="#38bdf8" strokeWidth="2.5" />
+            <circle cx="60" cy="50" r="6.5" fill="#38bdf8" />
+            <circle cx="62" cy="48" r="2" fill="#ffffff" />
+            {/* Sparkles */}
+            <path d="M22 28L23.5 31.5L27 33L23.5 34.5L22 38L20.5 34.5L17 33L20.5 31.5L22 28Z" fill="#fef08a" />
+            <path d="M96 44L97.5 47.5L101 49L97.5 50.5L96 54L94.5 50.5L91 49L94.5 47.5L96 44Z" fill="#fef08a" />
+        </svg>
+    );
+}
+
+// 9. 3D Energy & Physics Lightbulb / Lightning
+export function GraphicLevelEnergy({ className = "w-28 h-28" }) {
+    return (
+        <svg className={className} viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <linearGradient id="energyBulb3D" x1="35" y1="20" x2="85" y2="75" gradientUnits="userSpaceOnUse">
+                    <stop stopColor="#fef08a" />
+                    <stop offset="0.5" stopColor="#facc15" />
+                    <stop offset="1" stopColor="#f59e0b" />
+                </linearGradient>
+            </defs>
+            <ellipse cx="60" cy="106" rx="30" ry="6" fill="#000000" fillOpacity="0.2" />
+            {/* Glow Aura */}
+            <circle cx="60" cy="50" r="34" fill="#fef08a" opacity="0.3" filter="blur(6px)" />
+            {/* Bulb Glass */}
+            <path d="M60 16C42 16 34 32 34 48C34 60 44 70 48 80H72C76 70 86 60 86 48C86 32 78 16 60 16Z" fill="url(#energyBulb3D)" stroke="#eab308" strokeWidth="1.2" />
+            {/* Specular */}
+            <path d="M44 28C50 22 58 20 64 20" stroke="#ffffff" strokeWidth="2.5" strokeLinecap="round" opacity="0.75" />
+            {/* Filament */}
+            <path d="M52 54L58 40L62 48L68 36" stroke="#ffffff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+            {/* Screw Base */}
+            <rect x="50" y="80" width="20" height="5" rx="1.5" fill="#94a3b8" />
+            <rect x="51" y="85" width="18" height="5" rx="1.5" fill="#64748b" />
+            <rect x="52" y="90" width="16" height="5" rx="1.5" fill="#475569" />
+            <path d="M54 95H66L63 100H57L54 95Z" fill="#334155" />
+            {/* Sparkles */}
+            <path d="M18 36L19.5 39.5L23 41L19.5 42.5L18 46L16.5 42.5L13 41L16.5 39.5L18 36Z" fill="#fef08a" />
+            <path d="M100 36L101.5 39.5L105 41L101.5 42.5L100 46L98.5 42.5L95 41L98.5 39.5L100 36Z" fill="#fef08a" />
+        </svg>
+    );
+}
+
+// Helper Pintar: Pilih Ilustrasi 3D Sesuai dengan Tajuk / Kategori / Grafik Pilihan Modul
+export function getTopicIllustration(topic) {
+    const iconKey = (topic?.graphicType || topic?.icon || "").toLowerCase();
+    if (iconKey === "planet" || iconKey === "suria") return <GraphicLevelPlanets className="w-full h-full" />;
+    if (iconKey === "plant" || iconKey === "tumbuhan" || iconKey === "fotosintesis") return <GraphicLevelPlantSprout className="w-full h-full" />;
+    if (iconKey === "rocket" || iconKey === "roket") return <GraphicLevelRocket className="w-full h-full" />;
+    if (iconKey === "energy" || iconKey === "tenaga" || iconKey === "elektrik") return <GraphicLevelEnergy className="w-full h-full" />;
+
+    // Padanan Pintar Mengikut Kandungan Tajuk & Kategori
+    const text = `${topic?.title || ""} ${topic?.shortTitle || ""} ${topic?.category || ""} ${topic?.id || ""}`.toLowerCase();
+    if (text.includes("suria") || text.includes("planet") || text.includes("solar") || text.includes("marikh") || text.includes("bumi") || text.includes("astronomi")) {
+        return <GraphicLevelPlanets className="w-full h-full" />;
+    }
+    if (text.includes("fotosintesis") || text.includes("tumbuhan") || text.includes("alam") || text.includes("pokok") || text.includes("daun") || text.includes("biologi") || text.includes("plant")) {
+        return <GraphicLevelPlantSprout className="w-full h-full" />;
+    }
+    if (text.includes("roket") || text.includes("rocket") || text.includes("angkasa") || text.includes("bulan")) {
+        return <GraphicLevelRocket className="w-full h-full" />;
+    }
+    if (text.includes("tenaga") || text.includes("elektrik") || text.includes("cahaya") || text.includes("fizik") || text.includes("kuasa")) {
+        return <GraphicLevelEnergy className="w-full h-full" />;
+    }
+
+    // Lalai: Buku Sains
+    return <GraphicScienceBook className="w-20 h-20 sm:w-24 sm:h-24" />;
+}
+
+
 

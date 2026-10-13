@@ -3,8 +3,9 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import PlantActivityView from "../../belajar/components/PlantActivityView";
-import { GraphicHomeButton, LanguageToggle } from "../../belajar/components/Graphics";
+import { GraphicHomeButton, LanguageToggle, GraphicCoin } from "../../belajar/components/Graphics";
 import { saveStudentProfile } from "../../../lib/firestoreService";
+import { getLevelFromXP } from "../../../lib/levelService";
 
 export default function PlantActivityPage() {
     const [language, setLanguage] = useState("bm");
@@ -14,6 +15,7 @@ export default function PlantActivityPage() {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [plantScore, setPlantScore] = useState(0);
     const [plantSubmitted, setPlantSubmitted] = useState(false);
+    const [studentCoins, setStudentCoins] = useState(50);
 
     useEffect(() => {
         setIsMounted(true);
@@ -35,6 +37,13 @@ export default function PlantActivityPage() {
                 const st = JSON.parse(rawStats);
                 if (typeof st?.plantScore === "number") setPlantScore(st.plantScore);
                 if (st?.plantSubmitted) setPlantSubmitted(true);
+            }
+
+            const icKey = activeIC || "default";
+            const shopRaw = localStorage.getItem(`exploria_student_${icKey}_shop`);
+            if (shopRaw) {
+                const parsed = JSON.parse(shopRaw);
+                if (typeof parsed?.coins === "number") setStudentCoins(parsed.coins);
             }
         } catch (e) {
             console.error("Error loading saved student session:", e);
@@ -120,7 +129,7 @@ export default function PlantActivityPage() {
             const solar = typeof current1.solarScore === "number" ? current1.solarScore : 0;
             const quiz = typeof current1.quizHighScore === "number" ? current1.quizHighScore : 0;
             const updatedXP = base + read + solar + newScore + quiz;
-            const updatedLevel = updatedXP >= 2000 ? 4 : (updatedXP >= 1200 ? 3 : (updatedXP >= 500 ? 2 : 1));
+            const updatedLevel = getLevelFromXP(updatedXP);
 
             const updated1 = {
                 ...current1,
@@ -141,12 +150,22 @@ export default function PlantActivityPage() {
             localStorage.setItem(key2, JSON.stringify(updated2));
             localStorage.setItem("exploria_student_last_stats", JSON.stringify(updated1));
 
+            // Tambah 20 Koin Bintang ke akaun murid
+            const icKey = activeIC || "default";
+            const shopKey = `exploria_student_${icKey}_shop`;
+            const shopData = JSON.parse(localStorage.getItem(shopKey) || "{}");
+            const currentCoins = typeof shopData.coins === "number" ? shopData.coins : 50;
+            const nextCoins = currentCoins + 20;
+            localStorage.setItem(shopKey, JSON.stringify({ ...shopData, coins: nextCoins }));
+            setStudentCoins(nextCoins);
+
             if (activeIC) {
                 saveStudentProfile(activeIC, {
                     skorTumbuhan: newScore,
                     tumbuhanSelesai: true,
                     mataXP: updatedXP,
                     tahap: updatedLevel,
+                    koinBintang: nextCoins,
                 });
             }
         } catch (e) {
@@ -164,12 +183,16 @@ export default function PlantActivityPage() {
                 className="min-h-screen text-slate-800 flex flex-col items-center justify-center p-4 select-none"
                 style={{
                     fontFamily: "system-ui, -apple-system, sans-serif",
-                    background: "url('/paper-bg.jpg') top center / cover no-repeat fixed",
+                    background: "#ffffff",
                 }}
             >
                 <div className="flex flex-col items-center gap-3 animate-pulse">
-                    <div className="w-16 h-16 rounded-2xl bg-white/80 backdrop-blur-md flex items-center justify-center text-3xl shadow-lg border border-slate-300 text-emerald-600">
-                        🌱
+                    <div className="w-16 h-16 rounded-2xl bg-white/80 backdrop-blur-md flex items-center justify-center shadow-lg border border-slate-300 text-emerald-600">
+                        <svg className="w-8 h-8 text-emerald-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M12 2a10 10 0 0 1 10 10c0 5.52-4.48 10-10 10S2 17.52 2 12A10 10 0 0 1 12 2z"/>
+                            <path d="M7 13.5c2 0 3.5-1.5 5-4.5 1.5 3 3 4.5 5 4.5"/>
+                            <path d="M12 9v12"/>
+                        </svg>
                     </div>
                     <div className="text-xl font-black tracking-wide text-slate-800 drop-shadow-sm">MAKMAL TUMBUHAN STEM</div>
                     <div className="text-xs text-slate-600 font-bold">Menyediakan kebun interaktif...</div>
@@ -183,7 +206,7 @@ export default function PlantActivityPage() {
             className="min-h-screen text-slate-800 flex flex-col items-center justify-start select-none py-6 px-3 sm:px-6 relative overflow-x-hidden"
             style={{
                 fontFamily: "system-ui, -apple-system, sans-serif",
-                background: "url('/paper-bg.jpg') top center / cover no-repeat fixed",
+                background: "#ffffff",
             }}
         >
             {/* Top Navigation Bar */}
@@ -214,10 +237,27 @@ export default function PlantActivityPage() {
                 <div className="flex items-center gap-2">
                     <LanguageToggle language={language} onToggle={toggleLanguage} variant="dark" />
                     <Link
-                        href="/belajar"
-                        className="px-3 py-1.5 bg-white/20 hover:bg-white/30 text-white font-black text-xs rounded-xl transition-all border border-white/30 backdrop-blur-md"
+                        href="/kedai"
+                        onClick={() => playAudioFeedback("tap")}
+                        className="h-8 px-2 sm:px-2.5 rounded-xl bg-white/15 hover:bg-white/25 text-amber-200 border border-white/20 backdrop-blur-md flex items-center gap-1.5 shadow-xs transition-all active:scale-95 cursor-pointer"
+                        title={t(`Kedai Penjelajah • Baki: ${studentCoins} Koin Bintang`, `Explorer Shop • Balance: ${studentCoins} Star Coins`)}
+                        aria-label="Kedai Penjelajah"
                     >
-                        {t("Ke Portal Belajar", "Learning Portal")} ➜
+                        <svg className="w-4 h-4 text-amber-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                            <circle cx="9" cy="20" r="1.5" />
+                            <circle cx="18" cy="20" r="1.5" />
+                            <path d="M1 1h4l2.68 12.89a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
+                        </svg>
+                        <span className="text-xs font-mono font-black text-amber-300 flex items-center gap-1">
+                            <GraphicCoin className="w-3.5 h-3.5 shrink-0" />
+                            <span>{studentCoins}</span>
+                        </span>
+                    </Link>
+                    <Link
+                        href="/belajar"
+                        className="px-3 py-1.5 bg-white/20 hover:bg-white/30 text-white font-bold text-xs rounded-xl transition-all border border-white/30 backdrop-blur-md flex items-center gap-1"
+                    >
+                        <span>{t("Portal Belajar", "Learning Portal")}</span>
                     </Link>
                 </div>
             </header>

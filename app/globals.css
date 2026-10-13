@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 :root {
-  --background: #fdfbf7;
+  --background: #ffffff;
   --foreground: #0f172a;
 }
 
@@ -19,12 +19,7 @@ html {
 }
 
 body {
-  background-color: #fdfbf7;
-  background-image: url("/paper-bg.jpg");
-  background-size: cover;
-  background-position: top center;
-  background-attachment: fixed;
-  background-repeat: no-repeat;
+  background-color: #ffffff;
   color: var(--foreground);
   font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   overflow-x: hidden;
@@ -63,4 +58,62 @@ select {
   ::-webkit-scrollbar-thumb:hover {
     background: rgba(0, 153, 229, 0.6);
   }
+}
+
+/* ==========================================================================
+   UNIFIED 2-COLOR BUTTON SYSTEM (Exploria Design System)
+   - Color 1 (Primary Action): Exploria Ocean/Sky Blue (#0099e5 / #0284c7)
+   - Color 2 (Secondary / Neutral): Crisp Clean White with Slate (#ffffff / #334155)
+   ========================================================================== */
+
+.btn-primary,
+.btn-3d-blue,
+.btn-3d-pink,
+.btn-3d-orange,
+.btn-3d-emerald {
+  background: linear-gradient(180deg, #00b4d8 0%, #0099e5 100%) !important;
+  box-shadow: 0 4px 0 #0077b6, 0 8px 16px -2px rgba(0, 153, 229, 0.3) !important;
+  color: #ffffff !important;
+  transition: all 0.15s ease;
+}
+
+.btn-primary:hover,
+.btn-3d-blue:hover,
+.btn-3d-pink:hover,
+.btn-3d-orange:hover,
+.btn-3d-emerald:hover {
+  transform: translateY(2px);
+  box-shadow: 0 2px 0 #0077b6, 0 4px 8px -2px rgba(0, 153, 229, 0.25) !important;
+}
+
+.btn-primary:active,
+.btn-3d-blue:active,
+.btn-3d-pink:active,
+.btn-3d-orange:active,
+.btn-3d-emerald:active {
+  transform: translateY(4px);
+  box-shadow: 0 0 0 #0077b6 !important;
+}
+
+.btn-secondary,
+.btn-3d-white {
+  background: #ffffff !important;
+  box-shadow: 0 3px 0 #cbd5e1, 0 4px 8px -2px rgba(0, 0, 0, 0.05) !important;
+  color: #334155 !important;
+  border-color: #e2e8f0 !important;
+  transition: all 0.15s ease;
+}
+
+.btn-secondary:hover,
+.btn-3d-white:hover {
+  transform: translateY(2px);
+  box-shadow: 0 1px 0 #cbd5e1, 0 2px 4px -1px rgba(0, 0, 0, 0.05) !important;
+  background-color: #f8fafc !important;
+  color: #0f172a !important;
+}
+
+.btn-secondary:active,
+.btn-3d-white:active {
+  transform: translateY(3px);
+  box-shadow: 0 0 0 #cbd5e1 !important;
 }

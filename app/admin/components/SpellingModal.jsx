@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { SPELLING_THEMES, normalizeDifficulty } from "../../../lib/spellingService";
+import { playSpellingAudio } from "../../../lib/spellingAudioService";
 
 export default function SpellingModal({
     isOpen,
@@ -17,19 +18,14 @@ export default function SpellingModal({
     if (!isOpen) return null;
 
     const playSpeechPreview = () => {
-        if (typeof window === "undefined" || !("speechSynthesis" in window)) return;
-        try {
-            window.speechSynthesis.cancel();
-            const text = (wordData.word || "").trim();
-            if (!text) return;
-            const u = new SpeechSynthesisUtterance(text);
-            u.lang = "en-US";
-            u.rate = 0.88;
-            u.onstart = () => setIsSpeaking(true);
-            u.onend = () => setIsSpeaking(false);
-            u.onerror = () => setIsSpeaking(false);
-            window.speechSynthesis.speak(u);
-        } catch {}
+        const text = (wordData.word || "").trim();
+        if (!text) return;
+        setIsSpeaking(true);
+        playSpellingAudio(text, {
+            onStart: () => setIsSpeaking(true),
+            onEnd: () => setIsSpeaking(false),
+            onError: () => setIsSpeaking(false),
+        });
     };
 
     const autoGenerateHint = () => {

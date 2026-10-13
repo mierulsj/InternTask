@@ -1,7 +1,9 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
+import Link from "next/link";
 import {
+    GraphicBackArrow,
     GraphicHomeButton,
     GraphicSaturnPlanet,
     GraphicNatureLeaf,
@@ -10,6 +12,7 @@ import {
     GraphicSolarSystemBanner,
     GraphicPhotosynthesisBanner,
     LanguageToggle,
+    GraphicCoin,
     SOLAR_PLANETS,
 } from "./components/Graphics";
 import MainMenu from "./components/MainMenu";
@@ -19,12 +22,18 @@ import SolarActivityView from "./components/SolarActivityView";
 import PlantActivityView from "./components/PlantActivityView";
 import SpellingBeeActivity from "./components/SpellingBeeActivity";
 import MathSpeedQuiz from "./components/MathSpeedQuiz";
+import CompetitionView from "./components/CompetitionView";
+import ActivityView from "./components/ActivityView";
 import DashboardView from "./components/DashboardView";
 import RegisterPage from "./Register";
 import LoginPage from "./Login";
 import AuthGatewayView from "./components/AuthGatewayView";
 import { saveStudentProfile, calculateCalendarStreak } from "../../lib/firestoreService";
 import { getCurriculumTopics, INITIAL_CURRICULUM_TOPICS } from "../../lib/curriculumService";
+import { SHOP_CATALOG } from "../../lib/shopService";
+import { getLevelFromXP, getLevelDetails, LEVELS_CONFIG, MAX_EXPLORIA_XP } from "../../lib/levelService";
+
+export { getLevelFromXP, getLevelDetails, LEVELS_CONFIG, MAX_EXPLORIA_XP };
 
 // Formula piawai Exploria: XP dikira berdasarkan markah tertinggi sebenar murid (tiada pertambahan berganda jika diulang)
 export const calculateTotalXP = (stats = {}) => {
@@ -36,13 +45,6 @@ export const calculateTotalXP = (stats = {}) => {
     const math = typeof stats.mathScore === "number" ? stats.mathScore : 0;
     const quiz = typeof stats.quizHighScore === "number" ? stats.quizHighScore : 0;
     return base + read + solar + plant + spelling + math + quiz;
-};
-
-export const getLevelFromXP = (xp = 100) => {
-    if (xp >= 2000) return 4;
-    if (xp >= 1200) return 3;
-    if (xp >= 500) return 2;
-    return 1;
 };
 
 export default function LessonPage() {
@@ -74,6 +76,19 @@ export default function LessonPage() {
     };
 
     const handleNavigate = (view) => {
+        if (view === "shop") {
+            setDashboardActiveTab("shop");
+            setCurrentView("profile");
+            return;
+        }
+        if (view === "competition" || view === "pertandingan") {
+            setCurrentView("competitionList");
+            return;
+        }
+        if (view === "learningList" || view === "notes" || view === "nota") {
+            setCurrentView("menu");
+            return;
+        }
         if ((view === "solarDragDrop" || view === "plantActivity") && !isLoggedIn) {
             triggerGuestNotice("aktiviti");
             return;
@@ -169,11 +184,39 @@ export default function LessonPage() {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [studentName, setStudentName] = useState("");
     const [studentIC, setStudentIC] = useState("");
+    const [studentSchool, setStudentSchool] = useState("");
     const [studentLevel, setStudentLevel] = useState(1);
     const [studentXP, setStudentXP] = useState(100);
     const [studentStreak, setStudentStreak] = useState(1);
     const [readTopics, setReadTopics] = useState([]);
     const [averageQuizSpeed, setAverageQuizSpeed] = useState(null);
+
+    // Game Currency & Shop States (🌟 Koin Bintang & Item Buka Kunci)
+    const [studentCoins, setStudentCoins] = useState(50);
+    const [ownedItems, setOwnedItems] = useState(["title_cadet", "avatar_astro_1"]);
+    const [equippedItems, setEquippedItems] = useState({ title: "title_cadet", avatar: "avatar_astro_1", pet: null });
+
+    const equippedTitleItem = SHOP_CATALOG.find((i) => i.id === equippedItems?.title) || { name: "Kadet STEM", icon: "🎓" };
+    const equippedAvatarItem = SHOP_CATALOG.find((i) => i.id === equippedItems?.avatar) || { name: "Angkasawan Perintis", icon: "🧑‍🚀" };
+    const equippedPetItem = SHOP_CATALOG.find((i) => i.id === equippedItems?.pet);
+
+    // Fungsi Ganjaran Koin Bintang
+    const awardCoins = (amount = 15, reason = "") => {
+        setStudentCoins((prev) => {
+            const next = prev + amount;
+            try {
+                const ic = studentIC || localStorage.getItem("exploria_student_ic") || "default";
+                const key = `exploria_student_${ic}_shop`;
+                const raw = localStorage.getItem(key);
+                const current = raw ? JSON.parse(raw) : { coins: prev, ownedItems };
+                localStorage.setItem(key, JSON.stringify({ ...current, coins: next }));
+                if (studentIC) {
+                    saveStudentProfile(studentIC, { koinBintang: next });
+                }
+            } catch {}
+            return next;
+        });
+    };
 
     // Initial mount effect to safely sync with localStorage on client (prevents SSR hydration error)
     useEffect(() => {
@@ -189,16 +232,24 @@ export default function LessonPage() {
             const isGuest = sessionStorage.getItem("exploria_guest_mode") === "true";
             const name = localStorage.getItem("exploria_student_name") || "";
             const ic = localStorage.getItem("exploria_student_ic") || "";
+            const school = localStorage.getItem("exploria_student_school") || "";
+
+            const targetView = localStorage.getItem("exploria_target_view");
+            if (targetView) {
+                localStorage.removeItem("exploria_target_view");
+            }
 
             if (loggedIn) {
                 setIsLoggedIn(true);
                 setStudentName(name);
                 setStudentIC(ic);
-                setCurrentView("menu");
+                setStudentSchool(school);
+                setCurrentView(targetView || "menu");
             } else if (isGuest) {
                 setIsLoggedIn(false);
                 setStudentName("");
-                setCurrentView("menu");
+                setStudentSchool("");
+                setCurrentView(targetView || "menu");
             } else {
                 setIsLoggedIn(false);
                 setCurrentView("login");
@@ -279,6 +330,7 @@ export default function LessonPage() {
                             localStorage.setItem(`exploria_student_${ic}_stats`, JSON.stringify(stats));
                             localStorage.setItem("exploria_student_last_stats", JSON.stringify(stats));
                         } catch {}
+                        awardCoins(10, "Streak Harian");
                         if (ic && ic !== "default") {
                             saveStudentProfile(ic, {
                                 streakHari: streakRes.streak,
@@ -300,6 +352,23 @@ export default function LessonPage() {
                     });
                     setStudentXP(legitXP);
                     setStudentLevel(getLevelFromXP(legitXP));
+
+                    // Muat status Koin Bintang & Barangan Dimiliki
+                    const rawShop = localStorage.getItem(`exploria_student_${ic}_shop`);
+                    if (rawShop) {
+                        try {
+                            const parsed = JSON.parse(rawShop);
+                            if (typeof parsed.coins === "number") setStudentCoins(parsed.coins);
+                            if (Array.isArray(parsed.ownedItems)) setOwnedItems(parsed.ownedItems);
+                        } catch {}
+                    }
+                    const rawEquipped = localStorage.getItem(`exploria_student_${ic}_equipped`);
+                    if (rawEquipped) {
+                        try {
+                            const parsed = JSON.parse(rawEquipped);
+                            if (parsed && typeof parsed === "object") setEquippedItems(parsed);
+                        } catch {}
+                    }
                 }
             } catch (err) {
                 console.error("Ralat memuatkan profil murid:", err);
@@ -345,16 +414,37 @@ export default function LessonPage() {
     const handleAuthSuccess = (data, isNewRegister = false) => {
         const rawName = data?.nama || data?.name;
         const name = rawName ? rawName.trim() : "Penjelajah STEM";
-        const cleanIC = (data?.ic || "").replace(/\D/g, "");
+        const cleanIC = (data?.ic || (typeof window !== "undefined" ? localStorage.getItem("exploria_student_ic") : "") || "").replace(/\D/g, "");
+        const rawSchool = data?.namaSekolah || data?.sekolah || data?.school || "";
+        const rawSchoolType = data?.jenisSekolah || data?.schoolType || "SK";
+        const rawDistrict = data?.daerah || data?.district || "";
+        const rawState = data?.negeri || data?.state || "";
+        const studentId = data?.studentId || (cleanIC ? `STU-${cleanIC.length >= 5 ? cleanIC.slice(-5) : cleanIC.padStart(5, "0")}` : "");
 
         setStudentName(name);
         setStudentIC(cleanIC);
+        setStudentSchool(rawSchool);
         setIsLoggedIn(true);
 
         try {
             localStorage.setItem("exploria_is_logged_in", "true");
             localStorage.setItem("exploria_student_name", name);
-            if (cleanIC) localStorage.setItem("exploria_student_ic", cleanIC);
+            if (cleanIC) {
+                localStorage.setItem("exploria_student_ic", cleanIC);
+                localStorage.setItem("exploria_active_ic", cleanIC);
+            }
+            if (rawSchool) {
+                localStorage.setItem("exploria_student_school", rawSchool);
+                localStorage.setItem("exploria_student_school_type", rawSchoolType);
+            }
+            localStorage.setItem("exploria_student_session", JSON.stringify({
+                name: name,
+                ic: cleanIC,
+                studentId: studentId,
+                school: rawSchool,
+                schoolType: rawSchoolType,
+                ...data,
+            }));
             sessionStorage.removeItem("exploria_guest_mode");
         } catch {}
 
@@ -363,6 +453,11 @@ export default function LessonPage() {
             const today = new Date();
             const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
             const freshStats = {
+                name: name,
+                school: rawSchool,
+                schoolType: rawSchoolType,
+                district: rawDistrict,
+                state: rawState,
                 level: 1,
                 xp: 100, // Bonus pendaftaran selamat datang
                 streak: 1,
@@ -393,9 +488,15 @@ export default function LessonPage() {
             setReadTopics([]);
             setAverageQuizSpeed(null);
 
+            setStudentCoins(50);
+            setOwnedItems(["title_cadet", "avatar_astro_1"]);
+            setEquippedItems({ title: "title_cadet", avatar: "avatar_astro_1", pet: null });
+
             if (cleanIC) {
                 try {
                     localStorage.setItem(`exploria_student_${cleanIC}_stats`, JSON.stringify(freshStats));
+                    localStorage.setItem(`exploria_student_${cleanIC}_shop`, JSON.stringify({ coins: 50, ownedItems: ["title_cadet", "avatar_astro_1"] }));
+                    localStorage.setItem(`exploria_student_${cleanIC}_equipped`, JSON.stringify({ title: "title_cadet", avatar: "avatar_astro_1", pet: null }));
                 } catch {}
             }
             try {
@@ -477,6 +578,31 @@ export default function LessonPage() {
                     };
                     localStorage.setItem(`exploria_student_${cleanIC}_stats`, JSON.stringify(toSave));
                     localStorage.setItem("exploria_student_last_stats", JSON.stringify(toSave));
+
+                    // Muat status Koin Bintang & Barangan Dimiliki
+                    let shopData = null;
+                    try {
+                        const rawShop = localStorage.getItem(`exploria_student_${cleanIC}_shop`);
+                        if (rawShop) shopData = JSON.parse(rawShop);
+                    } catch {}
+
+                    const coinsVal = typeof data?.koinBintang === "number" ? data.koinBintang : (shopData?.coins ?? 50);
+                    const ownedVal = Array.isArray(data?.barangDimiliki) ? data.barangDimiliki : (shopData?.ownedItems ?? ["title_cadet", "avatar_astro_1"]);
+                    setStudentCoins(coinsVal);
+                    setOwnedItems(ownedVal);
+
+                    let eqData = null;
+                    try {
+                        const rawEq = localStorage.getItem(`exploria_student_${cleanIC}_equipped`);
+                        if (rawEq) eqData = JSON.parse(rawEq);
+                    } catch {}
+
+                    const eqVal = {
+                        title: data?.gelaranDipilih || eqData?.title || "title_cadet",
+                        avatar: data?.avatarDipilih || eqData?.avatar || "avatar_astro_1",
+                        pet: data?.petDipilih || eqData?.pet || null,
+                    };
+                    setEquippedItems(eqVal);
                 } catch {}
             }
         }
@@ -525,6 +651,7 @@ export default function LessonPage() {
         setIsLoggedIn(false);
         setStudentName("");
         setStudentIC("");
+        setStudentSchool("");
         setStudentLevel(1);
         setStudentXP(0);
         setStudentStreak(0);
@@ -543,6 +670,8 @@ export default function LessonPage() {
             localStorage.removeItem("exploria_is_logged_in");
             localStorage.removeItem("exploria_student_name");
             localStorage.removeItem("exploria_student_ic");
+            localStorage.removeItem("exploria_student_school");
+            localStorage.removeItem("exploria_student_school_type");
             sessionStorage.removeItem("exploria_guest_mode");
         } catch {
             // fallback
@@ -552,9 +681,9 @@ export default function LessonPage() {
 
 
 
-    // Latar Belakang Piawai: Tekstur Kertas Graf Grid Buku Latihan (Grid Paper Notebook)
+    // Latar Belakang Piawai: Putih Bersih
     const getBackgroundStyle = () => {
-        return "url('/paper-bg.jpg') top center / cover no-repeat fixed";
+        return "#ffffff";
     };
 
 
@@ -565,10 +694,11 @@ export default function LessonPage() {
             let defaultGraphic = <GraphicScienceBook className="w-10 h-10 shrink-0 text-cyan-600" />;
             let defaultInfographic = null;
 
-            if (item.id === "topic-1") {
+            const itemText = `${item.title || ""} ${item.shortTitle || ""} ${item.category || ""}`.toLowerCase();
+            if (item.id === "topic-1" || item.graphicType === "planet" || itemText.includes("suria") || itemText.includes("planet")) {
                 defaultGraphic = <GraphicSaturnPlanet className="w-10 h-10 shrink-0" />;
                 defaultInfographic = <GraphicSolarSystemBanner language={language} />;
-            } else if (item.id === "topic-2") {
+            } else if (item.id === "topic-2" || item.graphicType === "plant" || itemText.includes("fotosintesis") || itemText.includes("tumbuhan")) {
                 defaultGraphic = <GraphicNatureLeaf className="w-10 h-10 shrink-0" />;
                 defaultInfographic = <GraphicPhotosynthesisBanner language={language} />;
             }
@@ -577,6 +707,7 @@ export default function LessonPage() {
                 id: item.id || `topic-${idx + 1}`,
                 title: item.title,
                 shortTitle: item.shortTitle || item.title,
+                graphicType: item.graphicType || (item.id === "topic-1" ? "planet" : item.id === "topic-2" ? "plant" : "book"),
                 graphic: item.graphic || defaultGraphic,
                 infographic: item.infographic || defaultInfographic,
                 category: item.category || t("Sains & Teknologi", "Science & Technology"),
@@ -986,6 +1117,9 @@ export default function LessonPage() {
                             xp: nextXP,
                             level: nextLevel,
                         });
+                        const totalQuestions = currentTopic?.questions?.length || 5;
+                        const earnedQuizCoins = scoreCount >= totalQuestions ? 25 : scoreCount >= 3 ? 20 : 10;
+                        awardCoins(earnedQuizCoins, "Kuiz Sains 20s Selesai");
                         if (studentIC) {
                             saveStudentProfile(studentIC, {
                                 skorKuiz: nextQuizHigh,
@@ -997,6 +1131,9 @@ export default function LessonPage() {
                         saveCurrentStudentStats({
                             quizHighScore: nextQuizHigh,
                         });
+                        const totalQuestions = currentTopic?.questions?.length || 5;
+                        const earnedQuizCoins = scoreCount >= totalQuestions ? 25 : scoreCount >= 3 ? 20 : 10;
+                        awardCoins(earnedQuizCoins, "Kuiz Sains 20s Selesai");
                     }
 
                     return nextQuizHigh;
@@ -1377,9 +1514,9 @@ export default function LessonPage() {
 
                 text: t(
 
-                    "🪐 Satu planet telah dipilih! Sekarang klik bulatan orbit sasaran anda di atas untuk meletakkannya.",
+                    "🪐 Planet dipilih! Ketuk orbit sasaran di bawah untuk meletakkannya.",
 
-                    "🪐 One planet selected! Now click your target orbit slot above to place it."
+                    "🪐 Planet selected! Tap target orbit below to place."
 
                 )
 
@@ -1418,9 +1555,9 @@ export default function LessonPage() {
 
                 text: language === "en"
 
-                    ? `Orbit '${planetLabel}' is filled. Tap '✕' on the planet to remove it.`
+                    ? `Orbit '${planetLabel}' is filled. Tap '✕' to remove.`
 
-                    : `Orbit '${planetLabel}' telah diisi. Anda boleh tekan ikon '✕' pada planet untuk mengeluarkannya semula.`
+                    : `Orbit '${planetLabel}' telah diisi. Tekan '✕' untuk mengeluarkannya.`
 
             });
 
@@ -1436,9 +1573,9 @@ export default function LessonPage() {
 
             text: language === "en"
 
-                ? `This orbit is for '${planetLabel}'. Select a planet from the tray below and click here to place it!`
+                ? `Orbit '${planetLabel}': Choose a planet from the tray above.`
 
-                : `Orbit ini untuk planet '${planetLabel}'. Pilih satu planet dari rak di bawah dan klik sini untuk meletakkannya!`
+                : `Orbit '${planetLabel}': Pilih planet dari rak di atas.`
 
         });
 
@@ -1611,6 +1748,8 @@ export default function LessonPage() {
                 xp: nextXP,
                 level: nextLevel,
             });
+            const earnedSolarCoins = solarBoardScore >= 800 ? 20 : solarBoardScore >= 500 ? 15 : 10;
+            awardCoins(earnedSolarCoins, "Sistem Suria Selesai");
             if (studentIC) {
                 saveStudentProfile(studentIC, {
                     skorSuria: nextSolarScore,
@@ -1624,6 +1763,8 @@ export default function LessonPage() {
                 solarScore: nextSolarScore,
                 solarSubmitted: true,
             });
+            const earnedSolarCoins = solarBoardScore >= 800 ? 20 : solarBoardScore >= 500 ? 15 : 10;
+            awardCoins(earnedSolarCoins, "Sistem Suria Selesai");
         }
 
         setTimeout(() => {
@@ -1670,6 +1811,7 @@ export default function LessonPage() {
                 xp: nextXP,
                 level: nextLevel,
             });
+            awardCoins(20, "Makmal Tumbuhan Selesai");
             if (studentIC) {
                 saveStudentProfile(studentIC, {
                     skorTumbuhan: nextPlantScore,
@@ -1683,6 +1825,7 @@ export default function LessonPage() {
                 plantScore: nextPlantScore,
                 plantSubmitted: true,
             });
+            awardCoins(20, "Makmal Tumbuhan Selesai");
         }
     };
 
@@ -1714,6 +1857,8 @@ export default function LessonPage() {
                 xp: nextXP,
                 level: nextLevel,
             });
+            const earnedSpellingCoins = score >= 800 ? 20 : score >= 500 ? 15 : 10;
+            awardCoins(earnedSpellingCoins, "Spelling Bee Selesai");
             if (studentIC) {
                 saveStudentProfile(studentIC, {
                     skorSpelling: nextSpellingScore,
@@ -1727,6 +1872,8 @@ export default function LessonPage() {
                 spellingScore: nextSpellingScore,
                 spellingSubmitted: true,
             });
+            const earnedSpellingCoins = score >= 800 ? 20 : score >= 500 ? 15 : 10;
+            awardCoins(earnedSpellingCoins, "Spelling Bee Selesai");
         }
     };
 
@@ -1754,6 +1901,8 @@ export default function LessonPage() {
                 xp: nextXP,
                 level: nextLevel,
             });
+            const earnedMathCoins = score >= 800 ? 20 : score >= 500 ? 15 : 10;
+            awardCoins(earnedMathCoins, "Cabaran Sifir Selesai");
             if (studentIC) {
                 saveStudentProfile(studentIC, {
                     skorSifir: nextMathScore,
@@ -1767,6 +1916,8 @@ export default function LessonPage() {
                 mathScore: nextMathScore,
                 mathSubmitted: true,
             });
+            const earnedMathCoins = score >= 800 ? 20 : score >= 500 ? 15 : 10;
+            awardCoins(earnedMathCoins, "Cabaran Sifir Selesai");
         }
     };
 
@@ -1782,7 +1933,7 @@ export default function LessonPage() {
                 className="min-h-screen text-slate-800 flex flex-col items-center justify-center p-4 select-none"
                 style={{
                     fontFamily: 'system-ui, -apple-system, sans-serif',
-                    background: "url('/paper-bg.jpg') top center / cover no-repeat fixed"
+                    background: "#ffffff"
                 }}
             >
                 <div className="flex flex-col items-center gap-3 animate-pulse">
@@ -1946,142 +2097,50 @@ export default function LessonPage() {
 
 
 
-                /* 3D TACTILE BUTTONS */
-
-                .btn-3d-pink {
-
-                    background: linear-gradient(180deg, #ff2a7a 0%, #e91e63 100%);
-
-                    box-shadow: 0 6px 0 #ad1457, 0 12px 20px -3px rgba(233, 30, 99, 0.45);
-
-                    transition: all 0.15s ease;
-
-                }
-
-                .btn-3d-pink:hover {
-
-                    transform: translateY(2px);
-
-                    box-shadow: 0 4px 0 #ad1457, 0 8px 15px -3px rgba(233, 30, 99, 0.4);
-
-                }
-
-                .btn-3d-pink:active {
-
-                    transform: translateY(6px);
-
-                    box-shadow: 0 0 0 #ad1457, 0 2px 4px rgba(233, 30, 99, 0.3);
-
-                }
-
-
-
-                .btn-3d-blue {
-
-                    background: linear-gradient(180deg, #00b4d8 0%, #0099e5 100%);
-
-                    box-shadow: 0 5px 0 #0077b6, 0 10px 15px -3px rgba(0, 153, 229, 0.35);
-
-                    transition: all 0.15s ease;
-
-                }
-
-                .btn-3d-blue:hover {
-
-                    transform: translateY(2px);
-
-                    box-shadow: 0 3px 0 #0077b6, 0 6px 10px -3px rgba(0, 153, 229, 0.3);
-
-                }
-
-                .btn-3d-blue:active {
-
-                    transform: translateY(5px);
-
-                    box-shadow: 0 0 0 #0077b6;
-
-                }
-
-
-
-                .btn-3d-orange {
-
-                    background: linear-gradient(180deg, #ffa726 0%, #fb8c00 100%);
-
-                    box-shadow: 0 5px 0 #e65100, 0 10px 15px -3px rgba(251, 140, 0, 0.35);
-
-                    transition: all 0.15s ease;
-
-                }
-
-                .btn-3d-orange:hover {
-
-                    transform: translateY(2px);
-
-                    box-shadow: 0 3px 0 #e65100, 0 6px 10px -3px rgba(251, 140, 0, 0.3);
-
-                }
-
-                .btn-3d-orange:active {
-
-                    transform: translateY(5px);
-
-                    box-shadow: 0 0 0 #e65100;
-
-                }
-
+                /* OUTLINED BUTTONS (2-COLOR UNIFIED DESIGN SYSTEM — UXPeak Outlined Style) */
+                .btn-3d-blue,
+                .btn-3d-pink,
+                .btn-3d-orange,
                 .btn-3d-emerald {
-
-                    background: linear-gradient(180deg, #10b981 0%, #059669 100%);
-
-                    box-shadow: 0 5px 0 #047857, 0 10px 15px -3px rgba(16, 185, 129, 0.35);
-
-                    transition: all 0.15s ease;
-
+                    background: transparent;
+                    border: 2.5px solid #0099e5;
+                    color: #0099e5;
+                    box-shadow: none;
+                    transition: all 0.25s ease;
                 }
-
+                .btn-3d-blue:hover,
+                .btn-3d-pink:hover,
+                .btn-3d-orange:hover,
                 .btn-3d-emerald:hover {
-
-                    transform: translateY(2px);
-
-                    box-shadow: 0 3px 0 #047857, 0 6px 10px -3px rgba(16, 185, 129, 0.3);
-
+                    background: #0099e5;
+                    color: #ffffff;
+                    transform: translateY(-1px);
+                    box-shadow: 0 4px 12px -2px rgba(0, 153, 229, 0.35);
                 }
-
+                .btn-3d-blue:active,
+                .btn-3d-pink:active,
+                .btn-3d-orange:active,
                 .btn-3d-emerald:active {
-
-                    transform: translateY(5px);
-
-                    box-shadow: 0 0 0 #047857;
-
+                    transform: translateY(1px);
+                    box-shadow: none;
                 }
-
-
 
                 .btn-3d-white {
-
-                    background: #ffffff;
-
-                    box-shadow: 0 4px 0 #cbd5e1;
-
-                    transition: all 0.15s ease;
-
+                    background: transparent;
+                    color: #334155;
+                    border: 2.5px solid #cbd5e1;
+                    box-shadow: none;
+                    transition: all 0.25s ease;
                 }
-
                 .btn-3d-white:hover {
-
-                    transform: translateY(2px);
-
-                    box-shadow: 0 2px 0 #cbd5e1;
-
+                    background: #f8fafc;
+                    transform: translateY(-1px);
+                    box-shadow: 0 4px 12px -2px rgba(0, 0, 0, 0.08);
+                    color: #0f172a;
                 }
-
                 .btn-3d-white:active {
-
-                    transform: translateY(4px);
-
-                    box-shadow: 0 0 0 #cbd5e1;
-
+                    transform: translateY(1px);
+                    box-shadow: none;
                 }
 
 
@@ -2129,21 +2188,16 @@ export default function LessonPage() {
                     {/* KIRI: BRANDING & LOGO EXPLORIA */}
                     <div
                         onClick={() => { playAudioFeedback("tap"); setCurrentView("menu"); }}
-                        className="flex items-center gap-2 sm:gap-2.5 cursor-pointer group shrink-0"
+                        className="flex flex-col items-center justify-center cursor-pointer group shrink-0 text-center"
                     >
                         <img
                             src="/logoexploria.png"
                             alt="Logo Exploria"
-                            className="h-9 sm:h-11 w-auto object-contain transition-transform duration-200 group-hover:scale-105 drop-shadow-[0_2px_8px_rgba(0,0,0,0.25)]"
+                            className="h-7 sm:h-8.5 w-auto object-contain transition-transform duration-200 group-hover:scale-105 drop-shadow-[0_2px_8px_rgba(0,0,0,0.25)]"
                         />
-                        <div className="hidden min-[440px]:block text-left">
-                            <span className="font-black text-white text-sm sm:text-base tracking-tight leading-tight flex items-center gap-1 drop-shadow-sm">
-                                Exploria <span className="text-amber-300">STEM</span>
-                            </span>
-                            <span className="text-[10px] font-bold text-sky-100/90 uppercase tracking-wider block">
-                                {t("Portal Pembelajaran Murid", "Student Learning Portal")}
-                            </span>
-                        </div>
+                        <span className="text-[9px] sm:text-[10px] font-black text-white uppercase tracking-wider block drop-shadow-sm leading-tight mt-0.5">
+                            {t("Portal Aktiviti", "Activity Portal")}
+                        </span>
                     </div>
 
                     {/* TENGAH: TAB NAVIGASI UTAMA (COMMON DESIGN - DESKTOP & TABLET) */}
@@ -2151,118 +2205,139 @@ export default function LessonPage() {
                         {/* Tab 1: Menu Utama */}
                         <button
                             onClick={() => { playAudioFeedback("tap"); setCurrentView("menu"); }}
-                            className={`px-3.5 py-1.5 rounded-xl text-xs font-black transition-all flex items-center gap-1.5 cursor-pointer ${currentView === "menu"
+                            className={`px-3.5 py-1.5 rounded-xl text-xs font-black transition-all flex items-center justify-center cursor-pointer ${currentView === "menu"
                                 ? "bg-white text-blue-900 shadow-sm"
                                 : "text-white/85 hover:text-white hover:bg-white/15"
                                 }`}
                         >
-                            <span>🏠</span>
-                            <span>{t("Utama", "Home")}</span>
+                            <span>{t("Teroka", "Explore")}</span>
                         </button>
 
-                        {/* Tab 3: Pembelajaran */}
-                        <button
-                            onClick={() => { playAudioFeedback("tap"); setCurrentView("learningList"); }}
-                            className={`px-3.5 py-1.5 rounded-xl text-xs font-black transition-all flex items-center gap-1.5 cursor-pointer ${currentView === "learningList" || currentView === "learningDetail"
-                                ? "bg-white text-blue-900 shadow-sm"
-                                : "text-white/85 hover:text-white hover:bg-white/15"
-                                }`}
-                        >
-                            <span>📖</span>
-                            <span>{t("Nota Sains", "Science Notes")}</span>
-                        </button>
-
-                        {/* Tab 4: Kuiz Pantas */}
-                        <button
-                            onClick={() => { playAudioFeedback("tap"); setCurrentView("quizList"); }}
-                            className={`px-3.5 py-1.5 rounded-xl text-xs font-black transition-all flex items-center gap-1.5 cursor-pointer ${currentView === "quizList" || currentView === "quizRules" || currentView === "quiz"
-                                ? "bg-white text-blue-900 shadow-sm"
-                                : "text-white/85 hover:text-white hover:bg-white/15"
-                                }`}
-                        >
-                            <span>⚡</span>
-                            <span>{t("Kuiz 20s", "20s Quiz")}</span>
-                        </button>
-
-                        {/* Tab 5: Pusat Aktiviti */}
+                        {/* Tab 2: Pusat Aktiviti (Termasuk Kuiz Topik) */}
                         <button
                             onClick={() => { playAudioFeedback("tap"); setCurrentView("activityList"); }}
-                            className={`px-3.5 py-1.5 rounded-xl text-xs font-black transition-all flex items-center gap-1.5 cursor-pointer ${currentView === "activityList" || currentView === "solarDragDrop" || currentView === "plantActivity" || currentView === "spellingBee" || currentView === "mathQuiz"
+                            className={`px-3.5 py-1.5 rounded-xl text-xs font-black transition-all flex items-center justify-center cursor-pointer ${currentView === "activityList" || currentView === "solarDragDrop" || currentView === "plantActivity" || currentView === "quizList" || currentView === "quizRules" || currentView === "quiz"
                                 ? "bg-white text-blue-900 shadow-sm"
                                 : "text-white/85 hover:text-white hover:bg-white/15"
                                 }`}
                         >
-                            <span>🎮</span>
                             <span>{t("Aktiviti", "Activities")}</span>
                         </button>
+
+                        {/* Tab 3: Pusat Pertandingan (Sifir & Spelling Bee) */}
+                        <button
+                            onClick={() => { playAudioFeedback("tap"); setCurrentView("competitionList"); }}
+                            className={`px-3.5 py-1.5 rounded-xl text-xs font-black transition-all flex items-center justify-center cursor-pointer ${currentView === "competitionList" || currentView === "spellingBee" || currentView === "mathQuiz"
+                                ? "bg-white text-blue-900 shadow-sm"
+                                : "text-white/85 hover:text-white hover:bg-white/15"
+                                }`}
+                        >
+                            <span>{t("Pertandingan", "Competitions")}</span>
+                        </button>
+
                     </div>
 
-                    {/* KANAN: PILIHAN BAHASA, TEMA & STATUS PELAJAR */}
+                    {/* KANAN: PILIHAN BAHASA, CART EMOJI KEDAI & STATUS PELAJAR */}
                     <div className="flex items-center gap-1.5 sm:gap-2.5 shrink-0">
                         {/* TOGGLE PILIHAN BAHASA (BM / EN) */}
                         <LanguageToggle language={language} onToggle={toggleLanguage} variant="dark" />
 
+                        {/* BUTANG CART EMOJI KEDAI & DUIT SEMASA (SEBELAH BAHASA) */}
+                        <button
+                            type="button"
+                            onClick={() => { playAudioFeedback("sparkle"); handleNavigate("shop"); }}
+                            className={`h-8 sm:h-9 px-2 sm:px-2.5 rounded-xl sm:rounded-2xl flex items-center gap-1.5 transition-all cursor-pointer shadow-xs active:scale-95 border ${
+                                currentView === "profile" && dashboardActiveTab === "shop"
+                                    ? "bg-amber-300 text-amber-950 border-amber-400 ring-2 ring-amber-300/50 shadow-md"
+                                    : "bg-white/15 hover:bg-white/25 text-amber-200 border-white/20 backdrop-blur-md"
+                            }`}
+                            title={t(`Kedai Penjelajah • Baki: ${studentCoins} Koin Bintang`, `Explorer Shop • Balance: ${studentCoins} Star Coins`)}
+                            aria-label="Kedai Penjelajah"
+                        >
+                            <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                                <circle cx="9" cy="21" r="1"></circle>
+                                <circle cx="20" cy="21" r="1"></circle>
+                                <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                            </svg>
+                            <span className={`text-xs font-mono font-black flex items-center gap-1 ${
+                                currentView === "profile" && dashboardActiveTab === "shop"
+                                    ? "text-amber-950"
+                                    : "text-amber-300"
+                            }`}>
+                                <GraphicCoin className="w-3.5 h-3.5 shrink-0 drop-shadow-xs" />
+                                <span>{studentCoins}</span>
+                            </span>
+                        </button>
+
                         {/* Profile Chip / Trigger Button & Log Masuk */}
                         {isLoggedIn ? (
                             <button
-                                onClick={() => { playAudioFeedback("sparkle"); setCurrentView("profile"); }}
+                                onClick={() => { playAudioFeedback("sparkle"); setDashboardActiveTab("all"); setCurrentView("profile"); }}
                                 className={`flex items-center gap-2 border-2 py-1 px-2 sm:px-3 rounded-2xl shadow-xs cursor-pointer transition-all active:scale-95 group shrink-0 ${currentView === "profile" || currentView === "dashboard"
-                                    ? "bg-amber-400 text-slate-950 border-amber-300 ring-2 ring-amber-300"
+                                    ? "bg-white text-[#0077b6] border-white ring-2 ring-white/50 shadow-md"
                                     : "bg-white/20 hover:bg-white/30 text-white border-white/30 backdrop-blur-md"
                                     }`}
                                 title={t("Buka Profil Murid", "Open Student Profile")}
                             >
-                                <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-amber-400 to-[#0099e5] p-0.5 shadow-xs shrink-0">
+                                <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-sky-400 to-[#0099e5] p-0.5 shadow-xs shrink-0 relative">
                                     <div className="w-full h-full bg-slate-900 rounded-[0.6rem] flex items-center justify-center text-sm">
-                                        🤖
+                                        {equippedAvatarItem?.icon || "🧑‍🚀"}
                                     </div>
+                                    {equippedPetItem && (
+                                        <span className="absolute -bottom-1 -right-1 text-[10px] bg-white rounded-full px-0.5 shadow-2xs border border-slate-200">
+                                            {equippedPetItem.icon}
+                                        </span>
+                                    )}
                                 </div>
                                 <div className="text-left leading-tight hidden min-[520px]:block">
                                     <div className="flex items-center gap-1.5">
-                                        <span className={`text-xs font-black ${currentView === "profile" || currentView === "dashboard" ? "text-slate-950" : "text-white"}`}>{studentName || "Penjelajah"}</span>
-                                        <span className="text-[9px] font-black uppercase bg-amber-400 text-slate-950 px-1.5 py-0.2 rounded-md">
+                                        <span className={`text-xs font-black ${currentView === "profile" || currentView === "dashboard" ? "text-[#0077b6]" : "text-white"}`}>{studentName || "Penjelajah"}</span>
+                                        <span className={`text-[9px] font-black uppercase px-1.5 py-0.2 rounded-md ${currentView === "profile" || currentView === "dashboard" ? "bg-sky-100 text-[#0077b6]" : "bg-white/25 text-white"}`}>
                                             {t("Tahap", "Lv.")} {studentLevel}
                                         </span>
                                     </div>
-                                    <span className={`text-[10px] font-bold block ${currentView === "profile" || currentView === "dashboard" ? "text-slate-800" : "text-sky-100"}`}>
-                                        {studentXP.toLocaleString()} XP • 🔥 {studentStreak}{t("h", "d")}
+                                    <span className={`text-[10px] font-bold flex items-center gap-1 flex-wrap ${currentView === "profile" || currentView === "dashboard" ? "text-slate-600" : "text-sky-100"}`}>
+                                        <span>{studentXP.toLocaleString()} XP</span>
+                                        <span>•</span>
+                                        <span className="inline-flex items-center gap-0.5 text-amber-300">
+                                            <GraphicCoin className="w-3 h-3 shrink-0 inline" />
+                                            <span>{studentCoins}</span>
+                                        </span>
+                                        <span>•</span>
+                                        <span>{studentStreak}{t("h", "d")}</span>
                                     </span>
                                 </div>
-                                <span className="text-xs text-white/80 group-hover:text-white transition-colors hidden sm:inline">
-                                    👤
-                                </span>
                             </button>
                         ) : (
                             <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
                                 <button
                                     onClick={() => { playAudioFeedback("tap"); setCurrentView("login"); }}
-                                    className="px-2.5 sm:px-3 py-1.5 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 text-xs font-black shadow-md cursor-pointer active:scale-95 transition-all flex items-center gap-1.5 shrink-0"
+                                    className="px-2.5 sm:px-3 py-1.5 rounded-xl bg-transparent hover:bg-white/15 text-white text-xs font-black cursor-pointer active:scale-95 transition-all flex items-center gap-1.5 shrink-0 border-2 border-white/60 hover:border-white"
                                     title={t("Log Masuk Murid", "Student Login")}
                                 >
-                                    <span>🔑</span>
                                     <span>{t("Log Masuk", "Login")}</span>
                                 </button>
                                 <button
-                                    onClick={() => { playAudioFeedback("tap"); setCurrentView("profile"); }}
+                                    onClick={() => { playAudioFeedback("tap"); setDashboardActiveTab("all"); setCurrentView("profile"); }}
                                     className={`flex items-center gap-2 border-2 py-1 px-2 sm:px-3 rounded-2xl shadow-xs cursor-pointer transition-all active:scale-95 group shrink-0 ${currentView === "profile" || currentView === "dashboard"
-                                        ? "bg-amber-400 text-slate-950 border-amber-300 ring-2 ring-amber-300"
+                                        ? "bg-white text-[#0077b6] border-white ring-2 ring-white/50 shadow-md"
                                         : "bg-white/15 hover:bg-white/25 text-white border-white/25 backdrop-blur-md"
                                         }`}
                                     title={t("Buka Profil Tetamu", "Open Guest Profile")}
                                 >
-                                    <div className="w-8 h-8 rounded-xl bg-white/20 border border-white/30 flex items-center justify-center text-sm shadow-xs text-white shrink-0">
-                                        👤
+                                    <div className="w-8 h-8 rounded-xl bg-sky-50 border border-sky-100 flex items-center justify-center text-sm shadow-xs text-[#0077b6] shrink-0">
+                                        <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                                            <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path>
+                                            <circle cx="12" cy="7" r="4"></circle>
+                                        </svg>
                                     </div>
                                     <div className="text-left leading-tight hidden min-[520px]:block">
                                         <div className="flex items-center gap-1.5">
-                                            <span className={`text-xs font-black ${currentView === "profile" || currentView === "dashboard" ? "text-slate-950" : "text-white"}`}>{t("Profil", "Profile")}</span>
-                                            <span className="text-[9px] font-black uppercase bg-white/30 text-white px-1.5 py-0.2 rounded-md">
+                                            <span className={`text-xs font-black ${currentView === "profile" || currentView === "dashboard" ? "text-[#0077b6]" : "text-white"}`}>{t("Profil", "Profile")}</span>
+                                            <span className={`text-[9px] font-black uppercase px-1.5 py-0.2 rounded-md ${currentView === "profile" || currentView === "dashboard" ? "bg-sky-100 text-[#0077b6]" : "bg-white/30 text-white"}`}>
                                                 {t("Tetamu", "Guest")}
                                             </span>
                                         </div>
-                                        <span className={`text-[10px] font-semibold block ${currentView === "profile" || currentView === "dashboard" ? "text-slate-800" : "text-sky-100"}`}>
-                                            {t("Ketik utk Profil", "Tap for Profile")}
-                                        </span>
                                     </div>
                                 </button>
                             </div>
@@ -2275,34 +2350,26 @@ export default function LessonPage() {
                 <div className="md:hidden border-t border-white/15 px-3 py-1.5 flex items-center gap-1.5 overflow-x-auto no-scrollbar bg-black/20 backdrop-blur-md">
                     <button
                         onClick={() => { playAudioFeedback("tap"); setCurrentView("menu"); }}
-                        className={`px-3 py-1 rounded-xl text-xs font-black whitespace-nowrap flex items-center gap-1 ${currentView === "menu" ? "bg-white text-blue-900 shadow-xs" : "bg-white/15 text-white border border-white/20"
+                        className={`px-3 py-1 rounded-xl text-xs font-black whitespace-nowrap flex items-center justify-center ${currentView === "menu" ? "bg-white text-blue-900 shadow-xs" : "bg-white/15 text-white border border-white/20"
                             }`}
                     >
-                        🏠 {t("Utama", "Home")}
-                    </button>
-
-                    <button
-                        onClick={() => { playAudioFeedback("tap"); setCurrentView("learningList"); }}
-                        className={`px-3 py-1 rounded-xl text-xs font-black whitespace-nowrap flex items-center gap-1 ${currentView === "learningList" || currentView === "learningDetail" ? "bg-white text-blue-900 shadow-xs" : "bg-white/15 text-white border border-white/20"
-                            }`}
-                    >
-                        📖 {t("Nota", "Notes")}
-                    </button>
-
-                    <button
-                        onClick={() => { playAudioFeedback("tap"); setCurrentView("quizList"); }}
-                        className={`px-3 py-1 rounded-xl text-xs font-black whitespace-nowrap flex items-center gap-1 ${currentView === "quizList" || currentView === "quiz" ? "bg-white text-blue-900 shadow-xs" : "bg-white/15 text-white border border-white/20"
-                            }`}
-                    >
-                        ⚡ {t("Kuiz", "Quiz")}
+                        {t("Teroka", "Explore")}
                     </button>
 
                     <button
                         onClick={() => { playAudioFeedback("tap"); setCurrentView("activityList"); }}
-                        className={`px-3 py-1 rounded-xl text-xs font-black whitespace-nowrap flex items-center gap-1 ${currentView === "activityList" || currentView === "solarDragDrop" || currentView === "plantActivity" || currentView === "spellingBee" || currentView === "mathQuiz" ? "bg-white text-blue-900 shadow-xs" : "bg-white/15 text-white border border-white/20"
+                        className={`px-3 py-1 rounded-xl text-xs font-black whitespace-nowrap flex items-center justify-center ${currentView === "activityList" || currentView === "solarDragDrop" || currentView === "plantActivity" || currentView === "quizList" || currentView === "quizRules" || currentView === "quiz" ? "bg-white text-blue-900 shadow-xs" : "bg-white/15 text-white border border-white/20"
                             }`}
                     >
-                        🎮 {t("Aktiviti", "Activities")}
+                        {t("Aktiviti", "Activities")}
+                    </button>
+
+                    <button
+                        onClick={() => { playAudioFeedback("tap"); setCurrentView("competitionList"); }}
+                        className={`px-3 py-1 rounded-xl text-xs font-black whitespace-nowrap flex items-center justify-center ${currentView === "competitionList" || currentView === "spellingBee" || currentView === "mathQuiz" ? "bg-white text-blue-900 shadow-xs" : "bg-white/15 text-white border border-white/20"
+                            }`}
+                    >
+                        {t("Pertandingan", "Competitions")}
                     </button>
                 </div>
 
@@ -2316,71 +2383,7 @@ export default function LessonPage() {
 
 
 
-                {/* FLOATING AMBIENT BACKGROUND PARTICLES */}
 
-                <div className="absolute inset-0 pointer-events-none overflow-hidden select-none" aria-hidden="true">
-
-                    <div className="absolute top-12 left-10 anim-float-slow opacity-75 hover:opacity-100 drop-shadow-[0_6px_14px_rgba(0,100,200,0.25)]">
-
-                        <GraphicSaturnPlanet className="w-14 h-14" />
-
-                    </div>
-
-                    <div className="absolute top-24 right-12 anim-float opacity-75 hover:opacity-100 drop-shadow-[0_6px_14px_rgba(0,150,100,0.25)]">
-
-                        <GraphicNatureLeaf className="w-12 h-12" />
-
-                    </div>
-
-                    <div className="absolute bottom-20 left-12 anim-float opacity-70 hover:opacity-100 drop-shadow-[0_6px_14px_rgba(0,120,200,0.25)]">
-
-                        <GraphicScienceBook className="w-14 h-14" />
-
-                    </div>
-
-                    <div className="absolute bottom-16 right-10 anim-float-slow opacity-75 hover:opacity-100 drop-shadow-[0_6px_14px_rgba(200,100,0,0.25)]">
-
-                        <GraphicRocketLaunch className="w-12 h-12" />
-
-                    </div>
-
-                </div>
-
-
-
-                {/* LOGO BESAR HANYA KETIKA MENU UTAMA */}
-
-                {currentView === "menu" && (
-
-                    <div className="mb-4 sm:mb-6 text-center relative flex items-center justify-center anim-fade-in">
-
-                        <div
-
-                            className="absolute w-72 sm:w-96 h-20 sm:h-28 bg-gradient-to-r from-sky-300/50 via-yellow-200/50 to-pink-300/50 rounded-full blur-2xl pointer-events-none"
-
-                            aria-hidden="true"
-
-                        />
-
-                        <img
-
-                            src="/logoexploria.png"
-
-                            alt="Logo Exploria"
-
-                            className="relative z-10 h-20 sm:h-28 mx-auto object-contain select-none transition-all duration-300"
-
-                            style={{
-
-                                filter: 'drop-shadow(0 4px 14px rgba(0, 153, 229, 0.45)) drop-shadow(0 0 24px rgba(255, 204, 0, 0.55)) drop-shadow(0 10px 25px rgba(0, 80, 160, 0.2))'
-
-                            }}
-
-                        />
-
-                    </div>
-
-                )}
 
 
 
@@ -2401,29 +2404,27 @@ export default function LessonPage() {
 
 
 
-                        {/* BUTTON MENU UTAMA: HANYA GRAFIK HOME SAHAJA (ICON BUTTON) */}
+                        {/* BUTTON MENU UTAMA: HANYA KETIKA BUKAN MENU, DETAIL LESSON, AKTIVITI, ATAU PERTANDINGAN (YANG DAH ADA BACK SENDIRI) */}
 
-                        {currentView !== "menu" && (
+                        {currentView !== "menu" && currentView !== "learningDetail" && currentView !== "activityList" && currentView !== "competitionList" && currentView !== "competition" && currentView !== "pertandingan" && currentView !== "mathQuiz" && currentView !== "spellingBee" && (
 
-                            <div className="absolute left-3 top-3 sm:left-8 sm:top-8 z-20">
+                            <div className="absolute left-3 top-3 sm:left-6 sm:top-6 z-20">
 
                                 <button
 
                                     onClick={() => { playAudioFeedback("tap"); setCurrentView("menu"); resetQuizState(); resetSolarGame(); }}
 
-                                    title={t("Menu Utama", "Main Menu")}
+                                    title={t("Kembali ke Teroka", "Back to Explore")}
 
-                                    aria-label={t("Menu Utama", "Main Menu")}
+                                    aria-label={t("Kembali ke Teroka", "Back to Explore")}
 
-                                    className="w-10 h-10 sm:w-12 sm:h-12 bg-white/20 hover:bg-white/35 active:scale-90 text-white rounded-2xl transition-all flex items-center justify-center cursor-pointer backdrop-blur-md shadow-md border-2 border-white/35 hover:border-white/60 group"
+                                    className="h-9 sm:h-11 px-3 sm:px-4 bg-white/20 hover:bg-white/35 active:scale-90 text-white rounded-2xl transition-all flex items-center gap-1.5 cursor-pointer backdrop-blur-md shadow-md border-2 border-white/35 hover:border-white/60 group"
 
                                 >
 
-                                    <div className="group-hover:scale-115 transition-transform duration-200">
+                                    <GraphicBackArrow className="w-4 h-4 sm:w-5 sm:h-5 text-white group-hover:-translate-x-1 transition-transform" />
 
-                                        <GraphicHomeButton className="w-5 h-5 sm:w-7 sm:h-7" />
-
-                                    </div>
+                                    <span className="text-xs sm:text-sm font-black text-white">Back</span>
 
                                 </button>
 
@@ -2433,13 +2434,6 @@ export default function LessonPage() {
 
 
 
-                        <span className="bg-[#ffcc00] text-slate-950 text-[11px] sm:text-xs font-black px-3.5 sm:px-4 py-1 sm:py-1.5 rounded-full uppercase tracking-wider shadow-sm inline-flex items-center gap-1.5 mb-2">
-
-                            <span className="w-2 h-2 rounded-full bg-amber-600 animate-ping" />
-
-                            {t("Portal STEM Eksklusif", "Exclusive STEM Portal")}
-
-                        </span>
 
                         <h1 className="text-xl sm:text-2xl md:text-3xl font-black tracking-tight text-white drop-shadow-sm px-2 text-balance leading-tight">
 
@@ -2453,7 +2447,7 @@ export default function LessonPage() {
 
                     <div className="p-3.5 sm:p-7 md:p-10 bg-white flex flex-col items-center justify-center">
 
-                        {/* PAPARAN 1: MENU UTAMA */}
+                        {/* PAPARAN 1: TEROKA / MENU UTAMA */}
                         {currentView === "menu" && (
                             <MainMenu
                                 onNavigate={handleNavigate}
@@ -2464,12 +2458,19 @@ export default function LessonPage() {
                                 studentLevel={studentLevel}
                                 studentXP={studentXP}
                                 studentStreak={studentStreak}
+                                studentCoins={studentCoins}
+                                equippedAvatarIcon={equippedAvatarItem?.icon || "🧑‍🚀"}
+                                equippedTitleName={equippedTitleItem?.name || "Kadet STEM"}
+                                equippedPetIcon={equippedPetItem?.icon || null}
                                 unlockedBadgesCount={1}
+                                curriculumTopics={courseData.topics}
+                                readTopics={readTopics}
+                                setSelectedTopicIndex={handleSelectTopic}
                             />
                         )}
 
-                        {/* PAPARAN 2 & 4: PEMBELAJARAN (SENARAI & DETAIL NOTA) */}
-                        {(currentView === "learningList" || currentView === "learningDetail") && (
+                        {/* PAPARAN: PEMBELAJARAN (DETAIL NOTA TOPIK DARI EXPLORE) */}
+                        {currentView === "learningDetail" && (
                             <LearningView
                                 currentView={currentView}
                                 courseData={courseData}
@@ -2509,8 +2510,26 @@ export default function LessonPage() {
                             />
                         )}
 
-                        {/* PAPARAN: AKTIVITI (SENARAI & PERMAINAN DRAG & DROP SISTEM SURIA) */}
-                        {(currentView === "activityList" || currentView === "solarDragDrop") && (
+                        {/* PAPARAN: PUSAT AKTIVITI INTERAKTIF (KUIZ DI ATAS SEKALI, SISTEM SURIA & TUMBUHAN) */}
+                        {currentView === "activityList" && (
+                            <ActivityView
+                                onNavigate={handleNavigate}
+                                t={t}
+                                playAudioFeedback={playAudioFeedback}
+                                studentName={studentName}
+                                isLoggedIn={isLoggedIn}
+                                studentCoins={studentCoins}
+                                equippedAvatarIcon={equippedAvatarItem?.icon || "🧑‍🚀"}
+                                quizHighScore={quizHighScore}
+                                solarSubmitted={solarSubmitted || isSolarBoardFinished}
+                                plantSubmitted={plantSubmitted}
+                                onResetSolarGame={resetSolarGame}
+                                onBlockedAction={() => triggerGuestNotice("aktiviti")}
+                            />
+                        )}
+
+                        {/* PAPARAN: AKTIVITI PERMAINAN DRAG & DROP SISTEM SURIA */}
+                        {currentView === "solarDragDrop" && (
                             <SolarActivityView
                                 currentView={currentView}
                                 placedPlanets={placedPlanets}
@@ -2582,6 +2601,24 @@ export default function LessonPage() {
                             />
                         )}
 
+                        {/* PAPARAN: PUSAT PERTANDINGAN STEM (SIFIR & SPELLING BEE) */}
+                        {(currentView === "competitionList" || currentView === "competition" || currentView === "pertandingan") && (
+                            <CompetitionView
+                                onNavigate={handleNavigate}
+                                t={t}
+                                playAudioFeedback={playAudioFeedback}
+                                studentName={studentName}
+                                isLoggedIn={isLoggedIn}
+                                studentCoins={studentCoins}
+                                equippedAvatarIcon={equippedAvatarItem?.icon || "🧑‍🚀"}
+                                mathScore={mathScore}
+                                mathSubmitted={mathSubmitted}
+                                spellingScore={spellingScore}
+                                spellingSubmitted={spellingSubmitted}
+                                onBlockedAction={() => triggerGuestNotice("aktiviti")}
+                            />
+                        )}
+
                         {/* PAPARAN: PROFIL & PRESTASI STEM PELAJAR */}
                         {(currentView === "profile" || currentView === "dashboard") && (
                             <DashboardView
@@ -2606,7 +2643,14 @@ export default function LessonPage() {
                                 spellingSubmitted={spellingSubmitted}
                                 mathScore={mathScore}
                                 mathSubmitted={mathSubmitted}
+                                studentCoins={studentCoins}
+                                setStudentCoins={setStudentCoins}
+                                ownedItems={ownedItems}
+                                setOwnedItems={setOwnedItems}
+                                equippedItems={equippedItems}
+                                setEquippedItems={setEquippedItems}
                                 studentIC={studentIC}
+                                studentSchool={studentSchool}
                                 studentLevel={studentLevel}
                                 studentXP={studentXP}
                                 studentStreak={studentStreak}
@@ -2719,7 +2763,7 @@ export default function LessonPage() {
                                     setShowGuestAuthModal(false);
                                     setCurrentView("login");
                                 }}
-                                className="w-full py-3.5 bg-gradient-to-r from-[#0088cc] to-[#0099e5] hover:from-[#0077b6] hover:to-[#0088cc] text-white font-black text-xs sm:text-sm rounded-xl shadow-md flex items-center justify-center gap-2 cursor-pointer transition-all active:scale-98"
+                                className="w-full py-3.5 bg-transparent border-2 border-[#0099e5] hover:bg-[#0099e5]/10 text-[#0099e5] font-black text-xs sm:text-sm rounded-xl flex items-center justify-center gap-2 cursor-pointer transition-all active:scale-98"
                             >
                                 <span>🔑</span>
                                 <span>Log Masuk Akaun Sedia Ada</span>
@@ -2733,7 +2777,7 @@ export default function LessonPage() {
                                     setShowGuestAuthModal(false);
                                     setCurrentView("register");
                                 }}
-                                className="w-full py-3.5 bg-gradient-to-r from-amber-400 via-orange-400 to-amber-500 hover:from-amber-300 hover:to-orange-300 text-slate-950 font-black text-xs sm:text-sm rounded-xl shadow-md flex items-center justify-center gap-2 cursor-pointer transition-all active:scale-98"
+                                className="w-full py-3.5 bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 font-bold text-xs sm:text-sm rounded-xl shadow-xs flex items-center justify-center gap-2 cursor-pointer transition-all active:scale-98"
                             >
                                 <span>📝</span>
                                 <span>Daftar Akaun Percuma (Murid Baharu)</span>

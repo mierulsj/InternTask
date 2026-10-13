@@ -844,8 +844,8 @@ export default function PlantActivityView({
     return (
         <div className="space-y-6 w-full max-w-3xl anim-fade-in relative text-slate-800">
             {/* Top Navigation & Sub-Header */}
-            <div className="flex flex-col sm:flex-row items-center justify-between gap-3 w-full border-b border-slate-100 pb-3">
-                <div className="flex items-center gap-3 w-full sm:w-auto">
+            <div className="flex items-center justify-between gap-3 w-full border-b border-slate-100 pb-3">
+                <div className="flex items-center gap-2.5">
                     <button
                         type="button"
                         onClick={() => {
@@ -856,112 +856,171 @@ export default function PlantActivityView({
                                 onNavigate("activityList");
                             }
                         }}
-                        className="px-3.5 py-2 btn-3d-white text-slate-700 font-black rounded-xl text-xs cursor-pointer flex items-center gap-1.5 border border-slate-200 shrink-0 hover:bg-rose-50 hover:text-rose-700 transition-colors"
-                        title={translate("Kembali ke Senarai Aktiviti", "Back to Activities List")}
+                        className="px-3 py-2 btn-3d-white text-slate-700 font-black rounded-xl text-xs cursor-pointer flex items-center gap-1.5 border border-slate-200 shrink-0 hover:bg-rose-50 hover:text-rose-700 transition-colors"
+                        title="Back"
                     >
                         <GraphicBackArrow className="w-4 h-4 text-slate-600" />
-                        <span>{translate("Pusat Aktiviti", "Activity Hub")}</span>
+                        <span>Back</span>
                     </button>
-                    <div className="text-left">
-                        <div className="flex items-center gap-2">
-                            <span className="text-[10px] font-black uppercase text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded-full border border-emerald-300">
-                                🌿 STEM Sains Hayat
-                            </span>
-                            <span className="text-[10px] font-bold text-sky-700 bg-sky-100 px-2 py-0.5 rounded-full border border-sky-200">
-                                800 XP Maks
-                            </span>
-                        </div>
-                        <h2 className="text-lg sm:text-xl font-black text-emerald-800 leading-tight mt-0.5">
-                            {translate("Makmal Tumbuhan & Kebun Fotosintesis", "Plant Lab & Photosynthesis Garden")}
+                    <div>
+                        <h2 className="text-base sm:text-lg font-black text-emerald-800 leading-tight">
+                            {translate("Kebun Fotosintesis", "Photosynthesis Garden")}
                         </h2>
+                        <span className="text-[11px] font-bold text-slate-500">
+                            {translate("Lengkapkan 4 bahan fotosintesis", "Provide all 4 photosynthesis elements")}
+                        </span>
                     </div>
                 </div>
 
-                {/* Score Chip */}
-                <div className="flex items-center gap-2 w-full sm:w-auto justify-end">
-                    <div className="px-3.5 py-1.5 bg-emerald-50 border-2 border-emerald-300 rounded-2xl flex items-center gap-2 shadow-xs">
-                        <span className="text-base">⭐</span>
-                        <div className="text-left leading-none">
-                            <span className="text-[9px] font-black uppercase text-emerald-600 block">
-                                {translate("Skor Anda", "Your Score")}
-                            </span>
-                            <span className="text-sm font-black text-emerald-800">
-                                {totalCalculatedScore} / 800
-                            </span>
-                        </div>
+                {/* Score & Reset */}
+                <div className="flex items-center gap-2">
+                    {(growthStage > 1 || hasWater || hasSunlight || hasCO2 || hasNutrients) && !growthGameFinished && (
+                        <button
+                            type="button"
+                            onClick={handleResetGrowth}
+                            className="px-2.5 py-1.5 text-xs font-bold text-slate-600 hover:text-emerald-700 bg-slate-100 hover:bg-emerald-50 rounded-xl transition-all cursor-pointer flex items-center gap-1"
+                            title={translate("Mula Semula", "Restart")}
+                        >
+                            <GraphicRefresh className="w-3.5 h-3.5" />
+                            <span className="hidden sm:inline">{translate("Reset", "Reset")}</span>
+                        </button>
+                    )}
+                    <div className="px-3 py-1.5 bg-emerald-50 border border-emerald-300 rounded-xl flex items-center gap-1.5 shadow-xs">
+                        <span className="text-xs font-black text-emerald-800">
+                            {totalCalculatedScore} / 800 XP
+                        </span>
                     </div>
                 </div>
             </div>
 
             {/* ==============================================================
-                MAIN GAME: MAKMAL FOTOSINTESIS & SIMULATOR TUMBESARAN POKOK
+                MAIN GAME CONTAINER
                 ============================================================== */}
-            <div className="space-y-4 w-full anim-fade-in">
-                {/* Mission Header Banner (Statik) */}
-                <div className="bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-700 text-white p-3.5 sm:p-4 rounded-3xl shadow-md border-2 border-emerald-400 relative overflow-hidden flex items-center justify-between gap-3 text-left">
-                    <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 sm:w-12 sm:h-12 bg-white/20 backdrop-blur-md rounded-2xl flex items-center justify-center text-2xl shrink-0 border border-white/30">
-                            {growthGameFinished ? "🌻" : "🎯"}
-                        </div>
-                        <div>
+            <div className="space-y-3.5 w-full anim-fade-in">
+                {/* ==============================================================
+                    RAK BAHAN FOTOSINTESIS (TOP DOCK - MUDAH DIGAPAI OLEH USER)
+                    Letak di atas kanvas supaya pengguna tidak perlu tarik dari jauh!
+                    ============================================================== */}
+                {!growthGameFinished && (
+                    <div className="bg-white/95 backdrop-blur-md p-3 sm:p-4 rounded-3xl border-2 border-emerald-200 shadow-sm space-y-2.5">
+                        <div className="flex items-center justify-between gap-2 px-1">
                             <div className="flex items-center gap-2">
-                                <span className="text-[10px] font-black uppercase tracking-wider bg-amber-400 text-slate-950 px-2 py-0.5 rounded-full">
-                                    {growthGameFinished
-                                        ? translate("Selesai 100%!", "100% Done!")
-                                        : translate(`Langkah ${elementsFulfilledCount + 1} daripada 4`, `Step ${elementsFulfilledCount + 1} of 4`)}
+                                <span className="text-xs font-black uppercase tracking-wider text-emerald-950 flex items-center gap-1.5">
+                                    <span>{translate("Bahan Fotosintesis", "Photosynthesis Materials")}</span>
                                 </span>
-                                <span className="text-[11px] font-bold text-emerald-200">
-                                    {growthGameFinished
-                                        ? translate("Pokok Subur & Sihat!", "Lush & Healthy Plant!")
-                                        : growthStage === 1
-                                        ? translate("Biji Benih", "Seed Stage")
-                                        : growthStage === 2
-                                        ? translate("Anak Benih Bertunas", "Sprout Stage")
-                                        : translate("Pokok Rimbun", "Vegetative Stage")}
+                                <span className="text-[10px] text-slate-500 font-semibold hidden sm:inline">
+                                    • {translate("Tarik ke bawah atau ketik bahan", "Drag down or tap material")}
                                 </span>
                             </div>
-                            <h3 className="text-xs sm:text-sm font-black text-white mt-1 leading-snug">
-                                {translate(currentMission.textBM, currentMission.textEN)}
-                            </h3>
+                            <div className="flex items-center gap-2">
+                                <span className="text-[11px] font-black text-emerald-800 bg-emerald-100 px-2.5 py-0.5 rounded-full border border-emerald-300">
+                                    {elementsFulfilledCount}/4 {translate("Lengkap", "Ready")}
+                                </span>
+                            </div>
                         </div>
-                    </div>
 
-                    <div className="hidden sm:flex flex-col items-end shrink-0">
-                        <span className="text-[10px] font-bold text-emerald-200 uppercase">
-                            {translate("Fotosintesis", "Photosynthesis")}
-                        </span>
-                        <span className="text-base font-black text-amber-300">
-                            {photosynthesisPercent}%
-                        </span>
+                        {/* 4 Material Cards in a clean, accessible top row */}
+                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+                            {TOOLS_CONFIG.map((tool) => {
+                                const ToolGraphic = tool.Graphic;
+                                const isHeld = selectedToolToApply === tool.id || draggedTool === tool.id;
+                                const isAlreadyProvided =
+                                    (tool.id === "water" && hasWater) ||
+                                    (tool.id === "sun" && hasSunlight) ||
+                                    (tool.id === "co2" && hasCO2) ||
+                                    (tool.id === "nutrients" && hasNutrients);
+                                const isTargetLeaves = tool.targetZone === "foliage";
+
+                                return (
+                                    <div
+                                        key={tool.id}
+                                        draggable={!isAlreadyProvided}
+                                        onDragStart={(e) => !isAlreadyProvided && handleDragStartTool(e, tool.id)}
+                                        onDragEnd={handleDragEndTool}
+                                        onClick={() => {
+                                            if (isAlreadyProvided) return;
+                                            if (selectedToolToApply === tool.id) {
+                                                setSelectedToolToApply(null);
+                                            } else {
+                                                setSelectedToolToApply(tool.id);
+                                                playAudioFeedback?.("pick");
+                                            }
+                                        }}
+                                        className={`relative p-2.5 sm:p-3 rounded-2xl border-2 transition-all flex flex-col items-center justify-between text-center select-none ${
+                                            isAlreadyProvided
+                                                ? "bg-slate-50 border-slate-200 opacity-60 cursor-default"
+                                                : isHeld
+                                                ? "scale-105 border-emerald-500 ring-4 ring-emerald-300 bg-emerald-50 shadow-md animate-pulse cursor-pointer"
+                                                : `${tool.bgGradient} ${tool.colorBorder} cursor-grab active:cursor-grabbing hover:-translate-y-0.5 hover:shadow-xs`
+                                        }`}
+                                    >
+                                        {/* Status Header */}
+                                        <div className="w-full flex items-center justify-between mb-1">
+                                            <span className="text-[11px] font-black text-slate-800">
+                                                {tool.badge}
+                                            </span>
+                                            {isAlreadyProvided ? (
+                                                <span className="text-[9px] font-black text-emerald-700 bg-emerald-100 px-1.5 py-0.5 rounded-full border border-emerald-300">
+                                                    ✓ {translate("Siap", "Done")}
+                                                </span>
+                                            ) : isHeld ? (
+                                                <span className="text-[9px] font-black text-amber-900 bg-amber-300 px-1.5 py-0.5 rounded-full border border-amber-400 animate-bounce">
+                                                    {translate("Pilih", "Held")}
+                                                </span>
+                                            ) : (
+                                                <span className="text-[9px] font-bold text-slate-400 bg-white/80 px-1.5 py-0.5 rounded-full">
+                                                    {translate("Tarik / Ketik", "Drag / Tap")}
+                                                </span>
+                                            )}
+                                        </div>
+
+                                        {/* Graphic */}
+                                        <div className="w-12 h-12 sm:w-14 sm:h-14 flex items-center justify-center my-0.5 transition-transform group-hover:scale-105">
+                                            <ToolGraphic className="w-full h-full drop-shadow-xs" />
+                                        </div>
+
+                                        {/* Name & Target Destination */}
+                                        <div className="w-full mt-1">
+                                            <span className="text-xs font-black text-slate-800 block truncate">
+                                                {translate(tool.nameBM, tool.nameEN)}
+                                            </span>
+                                            <span className={`text-[10px] font-black block mt-0.5 px-1.5 py-0.5 rounded-md ${
+                                                isTargetLeaves
+                                                    ? "bg-emerald-100 text-emerald-900 border border-emerald-300"
+                                                    : "bg-amber-100 text-amber-950 border border-amber-300"
+                                            }`}>
+                                                ➔ {isTargetLeaves ? translate("Zon Daun 🌿", "Leaves 🌿") : translate("Zon Pasu 🪴", "Pot 🪴")}
+                                            </span>
+                                        </div>
+                                    </div>
+                                );
+                            })}
+                        </div>
+
+                        {/* Interactive hint when tool is active */}
+                        {selectedToolToApply && (
+                            <div className="bg-amber-400 text-slate-950 text-xs font-black px-3 py-1.5 rounded-xl border border-amber-500 text-center animate-bounce shadow-xs">
+                                👉 {translate("Bahan dipegang! Sekarang ketik zon sasaran di pokok bawah.", "Material held! Now tap the target zone on the plant below.")}
+                            </div>
+                        )}
                     </div>
-                </div>
+                )}
 
                 {/* ==============================================================
-                    THE GARDEN CANVAS (POKOK SENTIASA KELIHATAN & MEMBESAR SUBUR)
+                    THE GARDEN CANVAS (POKOK MEMBESAR SECARA REAL-TIME)
                     ============================================================== */}
-                <div className="bg-gradient-to-b from-sky-100 via-emerald-50 to-amber-50/50 rounded-3xl p-4 sm:p-5 shadow-inner relative overflow-hidden border-3 border-emerald-300">
-                    {/* Status Bar */}
-                    <div className="bg-white/95 backdrop-blur-md p-2.5 sm:p-3 rounded-2xl border border-emerald-200 shadow-xs mb-3">
-                        <div className="flex items-center justify-between text-[11px] font-black mb-1.5">
-                            <span className="flex items-center gap-1.5 text-emerald-800">
-                                <span>⚡</span>
-                                <span>{translate("Tolok Kuasa Fotosintesis:", "Photosynthesis Power Gauge:")}</span>
-                            </span>
-                            <span className="text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded-md text-[10px]">
-                                {elementsFulfilledCount} / 4 {translate("Keperluan Lengkap", "Supplies Ready")}
-                            </span>
-                        </div>
-                        <div className="w-full bg-slate-200 h-3.5 rounded-full overflow-hidden p-0.5">
-                            <div
-                                className="bg-gradient-to-r from-emerald-500 via-teal-400 to-amber-400 h-full rounded-full transition-all duration-500 shadow-xs"
-                                style={{ width: `${photosynthesisPercent}%` }}
-                            />
-                        </div>
+                <div className="bg-gradient-to-b from-sky-100 via-emerald-50 to-amber-50/50 rounded-3xl p-3 sm:p-4 shadow-inner relative overflow-hidden border-3 border-emerald-300">
+                    {/* Compact Power Gauge Bar */}
+                    <div className="w-full bg-slate-200 h-2.5 rounded-full overflow-hidden mb-2">
+                        <div
+                            className="bg-gradient-to-r from-emerald-500 via-teal-400 to-amber-400 h-full rounded-full transition-all duration-500"
+                            style={{ width: `${photosynthesisPercent}%` }}
+                        />
                     </div>
 
                     {/* Interactive Plant Canvas */}
-                    <div className="relative w-full flex items-center justify-center">
-                        {/* If game is still in progress, show the 2 drop target zones */}
+                    <div className="relative w-full flex items-center justify-center min-h-[300px] sm:min-h-[340px]">
+                        {/* Drop Zones */}
                         {!growthGameFinished && (
                             <>
                                 {/* TARGET ZONE 1: DEDAUN (Upper Half for Sunlight & CO2) */}
@@ -974,23 +1033,21 @@ export default function PlantActivityView({
                                     onDragLeave={() => setActiveHoverZone(null)}
                                     onDrop={(e) => handleDropOnZone(e, "foliage")}
                                     onClick={() => handleZoneClick("foliage")}
-                                    className={`absolute top-2 inset-x-4 sm:inset-x-12 h-36 rounded-3xl z-20 transition-all flex flex-col items-center justify-start pt-2 cursor-pointer ${
+                                    className={`absolute top-1 inset-x-2 sm:inset-x-8 h-36 rounded-3xl z-20 transition-all flex flex-col items-center justify-start pt-2 cursor-pointer ${
                                         activeHoverZone === "foliage"
-                                            ? "border-4 border-dashed border-amber-500 bg-amber-200/50 ring-4 ring-amber-300 scale-102"
+                                            ? "border-3 border-dashed border-emerald-500 bg-emerald-200/50 ring-4 ring-emerald-300 scale-101"
                                             : draggedTool === "sun" || draggedTool === "co2" || selectedToolToApply === "sun" || selectedToolToApply === "co2"
-                                            ? "border-3 border-dashed border-amber-400 bg-amber-100/40 animate-pulse ring-2 ring-amber-300"
-                                            : "border-2 border-dashed border-emerald-300/40 hover:border-emerald-400/80 bg-white/10"
+                                            ? "border-2 border-dashed border-amber-500 bg-amber-100/40 animate-pulse ring-2 ring-amber-300"
+                                            : "border border-dashed border-emerald-300/40 hover:border-emerald-400 bg-white/10"
                                     }`}
                                 >
-                                    <div className="flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider shadow-xs transition-all bg-white/90 text-emerald-900 border border-emerald-300">
-                                        <span>🌿</span>
-                                        <span>{translate("Zon Dedaun (Cahaya ☀️ & CO₂ 💨)", "Foliage Zone (Light ☀️ & CO₂ 💨)")}</span>
+                                    <div className="flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider shadow-xs bg-white/95 text-emerald-900 border border-emerald-300">
+                                        <span>🌿 {translate("Zon Daun (☀️ Cahaya / 💨 CO₂)", "Leaves Zone (☀️ Light / 💨 CO₂)")}</span>
                                     </div>
 
                                     {(activeHoverZone === "foliage" || draggedTool === "sun" || draggedTool === "co2" || selectedToolToApply === "sun" || selectedToolToApply === "co2") && (
-                                        <div className="mt-2 bg-amber-500 text-white font-black text-xs px-3 py-1 rounded-xl shadow-md anim-pop flex items-center gap-1.5">
-                                            <span>👇</span>
-                                            <span>{translate("Lepaskan Sini untuk Dedaun!", "Drop Here for Leaves!")}</span>
+                                        <div className="mt-1.5 bg-amber-500 text-white font-black text-[11px] px-2.5 py-0.5 rounded-lg shadow-sm anim-pop">
+                                            👇 {translate("Lepaskan di sini!", "Drop here!")}
                                         </div>
                                     )}
                                 </div>
@@ -1005,24 +1062,22 @@ export default function PlantActivityView({
                                     onDragLeave={() => setActiveHoverZone(null)}
                                     onDrop={(e) => handleDropOnZone(e, "soil")}
                                     onClick={() => handleZoneClick("soil")}
-                                    className={`absolute bottom-2 inset-x-6 sm:inset-x-16 h-36 rounded-3xl z-20 transition-all flex flex-col items-center justify-end pb-3 cursor-pointer ${
+                                    className={`absolute bottom-1 inset-x-4 sm:inset-x-12 h-36 rounded-3xl z-20 transition-all flex flex-col items-center justify-end pb-2 cursor-pointer ${
                                         activeHoverZone === "soil"
-                                            ? "border-4 border-dashed border-sky-500 bg-sky-200/50 ring-4 ring-sky-300 scale-102"
+                                            ? "border-3 border-dashed border-sky-500 bg-sky-200/50 ring-4 ring-sky-300 scale-101"
                                             : draggedTool === "water" || draggedTool === "nutrients" || selectedToolToApply === "water" || selectedToolToApply === "nutrients"
-                                            ? "border-3 border-dashed border-sky-400 bg-sky-100/40 animate-pulse ring-2 ring-sky-300"
-                                            : "border-2 border-dashed border-amber-600/30 hover:border-amber-600/70 bg-white/10"
+                                            ? "border-2 border-dashed border-sky-500 bg-sky-100/40 animate-pulse ring-2 ring-sky-300"
+                                            : "border border-dashed border-amber-600/30 hover:border-amber-500 bg-white/10"
                                     }`}
                                 >
                                     {(activeHoverZone === "soil" || draggedTool === "water" || draggedTool === "nutrients" || selectedToolToApply === "water" || selectedToolToApply === "nutrients") && (
-                                        <div className="mb-2 bg-sky-600 text-white font-black text-xs px-3 py-1 rounded-xl shadow-md anim-pop flex items-center gap-1.5">
-                                            <span>👇</span>
-                                            <span>{translate("Lepaskan Sini ke dalam Tanah!", "Drop Here into Soil!")}</span>
+                                        <div className="mb-1.5 bg-sky-600 text-white font-black text-[11px] px-2.5 py-0.5 rounded-lg shadow-sm anim-pop">
+                                            👇 {translate("Lepaskan di sini!", "Drop here!")}
                                         </div>
                                     )}
 
-                                    <div className="flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider shadow-xs transition-all bg-white/90 text-amber-950 border border-amber-300">
-                                        <span>🪴</span>
-                                        <span>{translate("Zon Pasu & Tanah (Air 💧 & Baja 🧪)", "Pot & Soil Zone (Water 💧 & Fertilizer 🧪)")}</span>
+                                    <div className="flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider shadow-xs bg-white/95 text-amber-950 border border-amber-300">
+                                        <span>🪴 {translate("Zon Pasu & Tanah (💧 Air / 🧪 Baja)", "Pot & Soil Zone (💧 Water / 🧪 Fertilizer)")}</span>
                                     </div>
                                 </div>
                             </>
@@ -1032,7 +1087,7 @@ export default function PlantActivityView({
                         {growthGameFinished && (
                             <div className="absolute top-2 z-30 bg-emerald-600 text-white font-black text-xs sm:text-sm px-4 py-1.5 rounded-full border-2 border-white shadow-lg anim-pop flex items-center gap-2">
                                 <span>🌟</span>
-                                <span>{translate("POKOK SUBUR & SIHAT (100% MEKAR)!", "LUSH & HEALTHY PLANT (100% BLOOM)!")}</span>
+                                <span>{translate("POKOK SUBUR & SIHAT!", "LUSH & HEALTHY PLANT!")}</span>
                                 <span>🌻</span>
                             </div>
                         )}
@@ -1047,81 +1102,14 @@ export default function PlantActivityView({
                             hasNutrients={hasNutrients}
                         />
 
-                        {/* Live Pouring / Lighting Action Overlay */}
+                        {/* Live Action Overlay */}
                         <GraphicActionOverlay tool={activeActionOverlay} />
-                    </div>
-
-                    {/* Real-time Status of the 4 Essential Elements */}
-                    <div className="mt-3 grid grid-cols-2 sm:grid-cols-4 gap-2 text-center text-xs">
-                        <div
-                            className={`p-2.5 rounded-2xl border transition-all ${
-                                hasWater
-                                    ? "bg-sky-100 text-sky-900 border-sky-400 font-black shadow-xs"
-                                    : "bg-white text-slate-500 border-slate-200"
-                            }`}
-                        >
-                            <div className="text-xl mb-0.5">💧</div>
-                            <span className="text-[11px] font-black block">{translate("Air (H₂O)", "Water")}</span>
-                            <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full inline-block mt-1 ${
-                                hasWater ? "bg-sky-200 text-sky-900" : "bg-slate-100 text-slate-400"
-                            }`}>
-                                {hasWater ? "✓ Lengkap" : "+ Perlu"}
-                            </span>
-                        </div>
-
-                        <div
-                            className={`p-2.5 rounded-2xl border transition-all ${
-                                hasSunlight
-                                    ? "bg-amber-100 text-amber-900 border-amber-400 font-black shadow-xs"
-                                    : "bg-white text-slate-500 border-slate-200"
-                            }`}
-                        >
-                            <div className="text-xl mb-0.5">☀️</div>
-                            <span className="text-[11px] font-black block">{translate("Cahaya Mentari", "Sunlight")}</span>
-                            <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full inline-block mt-1 ${
-                                hasSunlight ? "bg-amber-200 text-amber-900" : "bg-slate-100 text-slate-400"
-                            }`}>
-                                {hasSunlight ? "✓ Lengkap" : "+ Perlu"}
-                            </span>
-                        </div>
-
-                        <div
-                            className={`p-2.5 rounded-2xl border transition-all ${
-                                hasCO2
-                                    ? "bg-purple-100 text-purple-900 border-purple-400 font-black shadow-xs"
-                                    : "bg-white text-slate-500 border-slate-200"
-                            }`}
-                        >
-                            <div className="text-xl mb-0.5">💨</div>
-                            <span className="text-[11px] font-black block">{translate("Gas CO₂", "CO₂ Gas")}</span>
-                            <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full inline-block mt-1 ${
-                                hasCO2 ? "bg-purple-200 text-purple-900" : "bg-slate-100 text-slate-400"
-                            }`}>
-                                {hasCO2 ? "✓ Lengkap" : "+ Perlu"}
-                            </span>
-                        </div>
-
-                        <div
-                            className={`p-2.5 rounded-2xl border transition-all ${
-                                hasNutrients
-                                    ? "bg-emerald-100 text-emerald-900 border-emerald-400 font-black shadow-xs"
-                                    : "bg-white text-slate-500 border-slate-200"
-                            }`}
-                        >
-                            <div className="text-xl mb-0.5">🧪</div>
-                            <span className="text-[11px] font-black block">{translate("Baja Nutrien", "Nutrients")}</span>
-                            <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full inline-block mt-1 ${
-                                hasNutrients ? "bg-emerald-200 text-emerald-900" : "bg-slate-100 text-slate-400"
-                            }`}>
-                                {hasNutrients ? "✓ Lengkap" : "+ Perlu"}
-                            </span>
-                        </div>
                     </div>
                 </div>
 
                 {/* Did You Know? Science Fact Banner */}
                 {scienceFactBanner && !growthGameFinished && (
-                    <div className="p-3 bg-emerald-50 border-2 border-emerald-300 text-emerald-900 rounded-2xl text-xs font-bold text-center anim-pop flex items-center justify-between gap-2 shadow-xs">
+                    <div className="p-2.5 bg-emerald-50 border border-emerald-300 text-emerald-900 rounded-2xl text-xs font-bold text-center anim-pop flex items-center justify-between gap-2 shadow-xs">
                         <div className="flex items-center gap-2 text-left">
                             <span className="text-base">💡</span>
                             <span>{scienceFactBanner}</span>
@@ -1137,40 +1125,45 @@ export default function PlantActivityView({
                 )}
 
                 {/* ==============================================================
-                    WHEN FINISHED: CELEBRATION CARD WITH THE 2 REQUESTED BUTTONS!
+                    WHEN FINISHED: COMPACT VICTORY CARD WITH COINS & BUTTONS
                     ============================================================== */}
-                {growthGameFinished ? (
-                    <div className="bg-gradient-to-r from-emerald-50 via-teal-50 to-emerald-100 p-5 sm:p-6 rounded-3xl border-3 border-emerald-400 shadow-xl text-center space-y-4 anim-pop">
-                        <div className="space-y-1.5">
+                {growthGameFinished && (
+                    <div className="bg-gradient-to-r from-emerald-50 via-teal-50 to-emerald-100 p-5 sm:p-6 rounded-3xl border-3 border-emerald-400 shadow-xl text-center space-y-3.5 anim-pop">
+                        <div className="space-y-1">
                             <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-200 text-emerald-900 font-black text-xs border border-emerald-400">
                                 <span>🌟</span>
-                                <span>{translate("Fotosintesis Selesai & Berjaya!", "Photosynthesis Complete & Successful!")}</span>
+                                <span>{translate("Fotosintesis Selesai & Berjaya!", "Photosynthesis Complete!")}</span>
                             </div>
                             <h3 className="text-xl sm:text-2xl font-black text-emerald-950">
-                                {translate("Pokok Anda Telah Tumbuh Sangat Subur & Sihat! 🌻", "Your Plant Has Grown Lush & Healthy! 🌻")}
+                                {translate("Pokok Membesar Subur & Sihat! 🌻", "Plant Is Lush & Blooming! 🌻")}
                             </h3>
-                            <p className="text-xs sm:text-sm text-slate-600 max-w-lg mx-auto font-medium leading-relaxed">
-                                {translate(
-                                    "Air 💧, Cahaya Mentari ☀️, Gas CO₂ 💨 dan Baja Nutrien 🧪 diserap dengan sempurna. Pokok kini membesar mekar, menghasilkan glukosa dan membebaskan gas oksigen bersih untuk hidupan bernafas!",
-                                    "Water 💧, Sunlight ☀️, CO₂ 💨 and Nutrients 🧪 were absorbed in harmony. The plant bloomed, producing glucose and releasing clean oxygen!"
-                                )}
-                            </p>
                         </div>
 
-                        {/* Score Chip */}
-                        <div className="inline-flex items-center gap-3 bg-white px-5 py-2.5 rounded-2xl border-2 border-emerald-300 shadow-sm">
-                            <span className="text-2xl">⭐</span>
-                            <div className="text-left leading-tight">
-                                <span className="text-[10px] font-black uppercase text-emerald-600 block">
-                                    {translate("Markah Aktiviti", "Activity Score")}
-                                </span>
-                                <span className="text-base font-black text-emerald-900">800 / 800 XP</span>
+                        {/* Score & Coins Chips */}
+                        <div className="flex flex-wrap items-center justify-center gap-3">
+                            <div className="inline-flex items-center gap-2.5 bg-white px-4 py-2 rounded-2xl border-2 border-emerald-300 shadow-xs">
+                                <span className="text-2xl">⭐</span>
+                                <div className="text-left leading-tight">
+                                    <span className="text-[9px] font-black uppercase text-emerald-600 block">
+                                        {translate("Markah", "Score")}
+                                    </span>
+                                    <span className="text-sm sm:text-base font-black text-emerald-900">800 / 800 XP</span>
+                                </div>
+                            </div>
+
+                            <div className="inline-flex items-center gap-2.5 bg-gradient-to-r from-amber-400 via-yellow-300 to-amber-400 px-4 py-2 rounded-2xl border-2 border-white shadow-sm text-amber-950 anim-pop">
+                                <span className="text-2xl">🌟</span>
+                                <div className="text-left leading-tight">
+                                    <span className="text-[9px] font-black uppercase text-amber-900 block">
+                                        {translate("Ganjaran Koin", "Coin Reward")}
+                                    </span>
+                                    <span className="text-sm sm:text-base font-black text-slate-950">+20 🌟 Koin</span>
+                                </div>
                             </div>
                         </div>
 
-                        {/* THE REQUIRED BUTTONS: "SELESAI", "MAIN SEMULA", "PUSAT AKTIVITI" */}
-                        <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
-                            {/* Button 1: Selesai (Bawa ke Page Tumbuhan) */}
+                        {/* 3 Action Buttons */}
+                        <div className="flex flex-col sm:flex-row items-center justify-center gap-2.5 pt-1">
                             <button
                                 type="button"
                                 onClick={() => {
@@ -1178,128 +1171,27 @@ export default function PlantActivityView({
                                     if (onSubmitPlantGame) onSubmitPlantGame(800);
                                     handleResetGrowth();
                                 }}
-                                className="w-full sm:w-auto px-7 py-3.5 bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-700 hover:from-emerald-500 hover:to-teal-500 text-white font-black text-sm rounded-2xl shadow-lg shadow-emerald-600/30 active:scale-95 transition-all cursor-pointer flex items-center justify-center gap-2 border-2 border-emerald-300"
+                                className="w-full sm:w-auto px-6 py-3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-black text-xs sm:text-sm rounded-xl shadow-md active:scale-95 transition-all cursor-pointer flex items-center justify-center gap-2 border border-emerald-300"
                             >
-                                <span>✅</span>
                                 <span>{translate("Selesai", "Done")}</span>
                             </button>
 
-                            {/* Button 2: Main Semula */}
                             <button
                                 type="button"
                                 onClick={handleResetGrowth}
-                                className="w-full sm:w-auto px-6 py-3.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-900 font-black text-sm rounded-2xl shadow-xs border-2 border-emerald-200 active:scale-95 transition-all cursor-pointer flex items-center justify-center gap-2"
+                                className="w-full sm:w-auto px-5 py-3 bg-emerald-50 hover:bg-emerald-100 text-emerald-900 font-black text-xs sm:text-sm rounded-xl shadow-xs border border-emerald-200 active:scale-95 transition-all cursor-pointer flex items-center justify-center gap-2"
                             >
                                 <GraphicRefresh className="w-4 h-4 text-emerald-700" />
                                 <span>{translate("Main Semula", "Play Again")}</span>
                             </button>
 
-                            {/* Button 3: Pusat Aktiviti */}
                             <button
                                 type="button"
                                 onClick={handleFinishAndNext}
-                                className="w-full sm:w-auto px-6 py-3.5 bg-white hover:bg-slate-50 text-slate-700 hover:text-slate-900 font-black text-sm rounded-2xl shadow-xs border-2 border-slate-300 hover:border-slate-400 active:scale-95 transition-all cursor-pointer flex items-center justify-center gap-2"
+                                className="w-full sm:w-auto px-5 py-3 bg-white hover:bg-slate-50 text-slate-700 hover:text-slate-900 font-black text-xs sm:text-sm rounded-xl shadow-xs border border-slate-300 active:scale-95 transition-all cursor-pointer flex items-center justify-center gap-2"
                             >
-                                <span>🏠</span>
                                 <span>{translate("Pusat Aktiviti", "Activity Hub")}</span>
                             </button>
-                        </div>
-                    </div>
-                ) : (
-                    /* ==============================================================
-                        WHILE PLAYING: TOOLS TRAY AT THE BOTTOM
-                        ============================================================== */
-                    <div className="space-y-3 text-left bg-gradient-to-r from-emerald-50/70 via-slate-50 to-teal-50/70 p-4 sm:p-5 rounded-3xl border-2 border-emerald-200 shadow-sm">
-                        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
-                            <div>
-                                <div className="flex items-center gap-2">
-                                    <span className="text-xs font-black uppercase text-slate-800 tracking-wider">
-                                        🛠️ {translate("Kotak Alatan Penjagaan Pokok:", "Botanical Care Tools:")}
-                                    </span>
-                                    <span className="text-[10px] font-black uppercase bg-emerald-200 text-emerald-900 px-2 py-0.5 rounded-full">
-                                        🖐️ Seret ATAU Ketik Alatan
-                                    </span>
-                                </div>
-                                <p className="text-[11px] text-slate-500 mt-0.5 font-medium">
-                                    {translate(
-                                        "Seret alatan ke zon sasaran di atas, ATAU ketik alatan lalu ketik zon pokok untuk menggunakannya!",
-                                        "Drag the tool to target zone above, OR tap the tool then tap the plant zone to apply!"
-                                    )}
-                                </p>
-                            </div>
-
-                            {selectedToolToApply && (
-                                <div className="bg-amber-400 text-slate-950 px-3 py-1 rounded-xl text-[11px] font-black border border-amber-500 animate-bounce shrink-0 shadow-xs">
-                                    {translate("👉 Alatan Dipegang! Sekarang ketik zon pokok di atas.", "👉 Tool in hand! Now tap the plant zone above.")}
-                                </div>
-                            )}
-                        </div>
-
-                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-1">
-                            {TOOLS_CONFIG.map((tool) => {
-                                const ToolGraphic = tool.Graphic;
-                                const isHeld = selectedToolToApply === tool.id || draggedTool === tool.id;
-                                const isRecommendedNext = currentMission.toolId === tool.id;
-                                const isAlreadyProvided =
-                                    (tool.id === "water" && hasWater) ||
-                                    (tool.id === "sun" && hasSunlight) ||
-                                    (tool.id === "co2" && hasCO2) ||
-                                    (tool.id === "nutrients" && hasNutrients);
-
-                                return (
-                                    <div
-                                        key={tool.id}
-                                        draggable={true}
-                                        onDragStart={(e) => handleDragStartTool(e, tool.id)}
-                                        onDragEnd={handleDragEndTool}
-                                        onClick={() => {
-                                            if (selectedToolToApply === tool.id) {
-                                                setSelectedToolToApply(null);
-                                            } else {
-                                                setSelectedToolToApply(tool.id);
-                                                playAudioFeedback?.("pick");
-                                            }
-                                        }}
-                                        title={translate(tool.hintBM, tool.hintEN)}
-                                        className={`p-3.5 rounded-2xl border-2 transition-all duration-200 flex flex-col items-center justify-between text-center cursor-grab active:cursor-grabbing select-none group relative shadow-xs hover:shadow-md hover:-translate-y-1 ${
-                                            isHeld
-                                                ? "scale-105 border-amber-500 ring-4 ring-amber-300 bg-amber-50 shadow-lg animate-bounce"
-                                                : isRecommendedNext
-                                                ? `${tool.bgGradient} border-amber-400 ring-2 ring-amber-300/80`
-                                                : isAlreadyProvided
-                                                ? "bg-slate-50 border-emerald-300 opacity-80"
-                                                : `${tool.bgGradient} ${tool.colorBorder}`
-                                        }`}
-                                    >
-                                        {isAlreadyProvided ? (
-                                            <span className="text-[9px] font-black uppercase text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded-full mb-1 border border-emerald-300">
-                                                ✓ {translate("Selesai", "Ready")}
-                                            </span>
-                                        ) : isRecommendedNext ? (
-                                            <span className="text-[9px] font-black uppercase text-amber-950 bg-amber-300 px-2 py-0.5 rounded-full mb-1 border border-amber-400 animate-pulse">
-                                                👉 {translate("Perlu!", "Next!")}
-                                            </span>
-                                        ) : (
-                                            <span className="text-[9px] font-black uppercase text-slate-500 bg-white/90 px-2 py-0.5 rounded-full mb-1 border border-slate-200">
-                                                {translate("Seret / Ketik", "Drag / Tap")}
-                                            </span>
-                                        )}
-
-                                        <div className="w-14 h-14 flex items-center justify-center my-1 group-hover:scale-115 group-hover:rotate-3 transition-transform">
-                                            <ToolGraphic className="w-full h-full drop-shadow-sm" />
-                                        </div>
-
-                                        <div className="w-full">
-                                            <h4 className="text-xs font-black text-slate-800 leading-tight">
-                                                {translate(tool.nameBM, tool.nameEN)}
-                                            </h4>
-                                            <span className="text-[9px] text-slate-500 block mt-0.5 font-bold">
-                                                ➔ {translate(tool.targetZoneLabelBM, tool.targetZoneLabelEN)}
-                                            </span>
-                                        </div>
-                                    </div>
-                                );
-                            })}
                         </div>
                     </div>
                 )}
@@ -1339,7 +1231,7 @@ export default function PlantActivityView({
                                 onClick={() => {
                                     playAudioFeedback?.("tap");
                                     setShowExitConfirm(false);
-                                    onNavigate("activityList");
+                                    onNavigate("menu");
                                 }}
                                 className="flex-1 py-3 bg-rose-50 hover:bg-rose-100 text-rose-700 font-black rounded-xl text-xs border border-rose-200 active:scale-95 transition-all cursor-pointer"
                             >

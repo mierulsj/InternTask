@@ -29,7 +29,16 @@ export default function LearningView({
         return (
             <div className="space-y-6 w-full max-w-lg anim-fade-in">
 
-                                <div className="flex items-center justify-between w-full border-b border-slate-100 pb-3">
+                                <div className="flex items-center gap-3 w-full border-b border-slate-100 pb-3">
+
+                                    <button
+                                        onClick={() => { playAudioFeedback?.("tap"); onNavigate("menu"); }}
+                                        className="px-3.5 py-2 bg-white hover:bg-slate-50 text-slate-700 font-bold rounded-xl text-xs cursor-pointer shrink-0 flex items-center gap-1.5 border border-slate-200 shadow-xs active:scale-95 transition-all group"
+                                        title={t("Kembali ke Teroka", "Back to Explore")}
+                                    >
+                                        <GraphicBackArrow className="w-4 h-4 text-slate-600 group-hover:-translate-x-0.5 transition-transform" />
+                                        <span>Back</span>
+                                    </button>
 
                                     <div>
 
@@ -46,20 +55,6 @@ export default function LearningView({
                                         </p>
 
                                     </div>
-
-                                    <button
-
-                                        onClick={() => { playAudioFeedback?.("tap"); onNavigate("menu"); }}
-
-                                        className="px-4 py-2.5 btn-3d-white text-slate-700 font-black rounded-xl text-xs cursor-pointer flex items-center gap-2 border border-slate-200"
-
-                                    >
-
-                                        <GraphicBackArrow className="w-4 h-4 text-slate-600" />
-
-                                        <span>{t("Kembali", "Back")}</span>
-
-                                    </button>
 
                                 </div>
 
@@ -106,19 +101,12 @@ export default function LearningView({
                                             </div>
 
                                             <button
-
                                                 onClick={() => { playAudioFeedback?.("tap"); setSelectedTopicIndex(idx); onNavigate("learningDetail"); resetQuizState(); }}
-
-                                                className="w-full sm:w-auto px-5 py-2.5 btn-3d-blue text-white font-black rounded-xl cursor-pointer text-xs whitespace-nowrap flex items-center justify-center gap-2"
-
+                                                className="w-full sm:w-auto min-h-[44px] px-5 py-2.5 bg-transparent border-2 border-[#0099e5] text-[#0099e5] group-hover:bg-[#0099e5] group-hover:text-white text-xs sm:text-sm font-black rounded-xl transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer whitespace-nowrap shadow-xs active:scale-95"
                                             >
-
                                                 <GraphicBookOpen className="w-4 h-4" />
-
                                                 <span>{t("Mula Belajar", "Start Learning")}</span>
-
                                                 <GraphicArrowRight className="w-3.5 h-3.5" />
-
                                             </button>
 
                                         </div>
@@ -135,9 +123,18 @@ export default function LearningView({
         return (
             <div className="space-y-6 w-full max-w-lg anim-fade-in">
 
-                                <div className="flex items-center justify-between border-b border-[#0099e5]/20 pb-3 w-full">
+                                <div className="flex items-center gap-3 border-b border-[#0099e5]/20 pb-3 w-full">
 
-                                    <div className="flex items-center gap-2.5 truncate mr-2">
+                                    <button
+                                        onClick={() => { playAudioFeedback?.("tap"); onNavigate("menu"); }}
+                                        className="px-3.5 py-2 bg-white hover:bg-slate-50 text-slate-700 font-bold rounded-xl text-xs cursor-pointer shrink-0 border border-slate-200 flex items-center gap-1.5 shadow-xs active:scale-95 transition-all group"
+                                        title={t("Kembali ke Teroka", "Back to Explore")}
+                                    >
+                                        <GraphicBackArrow className="w-4 h-4 text-slate-600 group-hover:-translate-x-0.5 transition-transform" />
+                                        <span>Back</span>
+                                    </button>
+
+                                    <div className="flex items-center gap-2.5 truncate">
 
                                         <div className="w-8 h-8 shrink-0 flex items-center justify-center">
 
@@ -152,20 +149,6 @@ export default function LearningView({
                                         </h2>
 
                                     </div>
-
-                                    <button
-
-                                        onClick={() => { playAudioFeedback?.("tap"); onNavigate("learningList"); }}
-
-                                        className="px-3.5 py-2 btn-3d-white text-slate-700 font-bold rounded-xl text-xs cursor-pointer shrink-0 border border-slate-200 flex items-center gap-1.5"
-
-                                    >
-
-                                        <GraphicTopicList className="w-4 h-4 text-slate-600" />
-
-                                        <span>{t("Senarai Topik", "Topic List")}</span>
-
-                                    </button>
 
                                 </div>
 
@@ -213,7 +196,7 @@ export default function LearningView({
 
                                     >
 
-                                        {t("🔗 Buka Video Ini Terus di YouTube ↗", "🔗 Open This Video Directly on YouTube ↗")}
+                                        {t("Tonton di YouTube ↗", "Watch on YouTube ↗")}
 
                                     </a>
 
@@ -250,38 +233,17 @@ export default function LearningView({
                                     />
                                 )}
 
-                                {/* Bottom actions */}
+                                {/* Bottom actions: Hanya satu butang aksi utama untuk mula kuiz */}
 
-                                <div className="flex flex-col sm:flex-row justify-between items-center gap-3 pt-2 w-full">
-
-                                    <button
-
-                                        onClick={() => { playAudioFeedback?.("tap"); onNavigate("learningList"); }}
-
-                                        className="w-full sm:w-auto px-4 py-2.5 btn-3d-white text-slate-700 font-bold rounded-xl text-xs cursor-pointer border border-slate-200 flex items-center justify-center gap-2"
-
-                                    >
-
-                                        <GraphicBackArrow className="w-4 h-4 text-slate-600" />
-
-                                        <span>{t("Topik Lain", "Other Topics")}</span>
-
-                                    </button>
+                                <div className="pt-2 w-full">
 
                                     <button
-
                                         onClick={() => { playAudioFeedback?.("start"); onStartQuiz(selectedTopicIndex); }}
-
-                                        className="w-full sm:w-auto px-6 py-3 btn-3d-pink text-white font-black rounded-xl text-sm cursor-pointer flex items-center justify-center gap-2"
-
+                                        className="w-full py-3 bg-[#0099e5] hover:bg-[#0080bf] text-white font-black rounded-xl text-xs sm:text-sm cursor-pointer flex items-center justify-center gap-2 transition-all duration-300 shadow-sm active:scale-95"
                                     >
-
-                                        <GraphicRocketLaunch className="w-5 h-5" />
-
+                                        <GraphicRocketLaunch className="w-4 h-4" />
                                         <span>{t("Selesai Belajar, Jom Kuiz!", "Finished Learning, Take Quiz!")}</span>
-
-                                        <GraphicArrowRight className="w-4 h-4" />
-
+                                        <GraphicArrowRight className="w-3.5 h-3.5" />
                                     </button>
 
                                 </div>

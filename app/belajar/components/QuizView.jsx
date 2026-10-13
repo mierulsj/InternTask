@@ -48,7 +48,15 @@ export default function QuizView({
         return (
             <div className="space-y-6 w-full max-w-lg anim-fade-in">
 
-                                <div className="flex items-center justify-between w-full border-b border-slate-100 pb-3">
+                                <div className="flex items-center gap-3 w-full border-b border-slate-100 pb-3">
+
+                                    <button
+                                        onClick={() => { playAudioFeedback?.("tap"); onNavigate("activityList"); }}
+                                        className="px-3.5 py-2 bg-white hover:bg-slate-50 text-slate-700 font-bold rounded-xl text-xs cursor-pointer shrink-0 flex items-center gap-1.5 border border-slate-200 shadow-xs active:scale-95 transition-all group"
+                                    >
+                                        <GraphicBackArrow className="w-4 h-4 text-slate-600 group-hover:-translate-x-0.5 transition-transform" />
+                                        <span>Back</span>
+                                    </button>
 
                                     <div>
 
@@ -65,20 +73,6 @@ export default function QuizView({
                                         </p>
 
                                     </div>
-
-                                    <button
-
-                                        onClick={() => { playAudioFeedback?.("tap"); onNavigate("menu"); }}
-
-                                        className="px-4 py-2.5 btn-3d-white text-slate-700 font-black rounded-xl text-xs cursor-pointer flex items-center gap-2 border border-slate-200"
-
-                                    >
-
-                                        <GraphicBackArrow className="w-4 h-4 text-slate-600" />
-
-                                        <span>{t("Kembali", "Back")}</span>
-
-                                    </button>
 
                                 </div>
 
@@ -137,19 +131,12 @@ export default function QuizView({
                                             </div>
 
                                             <button
-
                                                 onClick={() => onSelectTopic(idx)}
-
-                                                className="w-full sm:w-auto px-5 py-2.5 btn-3d-orange text-slate-950 font-black rounded-xl cursor-pointer text-xs whitespace-nowrap flex items-center justify-center gap-2"
-
+                                                className="w-full sm:w-auto px-4 py-2 bg-transparent border-2 border-[#0099e5] text-[#0099e5] group-hover:bg-[#0099e5] group-hover:text-white text-xs font-black rounded-xl transition-all duration-300 flex items-center justify-center gap-1.5 cursor-pointer whitespace-nowrap shadow-xs active:scale-95"
                                             >
-
-                                                <GraphicLightningBolt className="w-4 h-4" />
-
+                                                <GraphicLightningBolt className="w-3.5 h-3.5" />
                                                 <span>{t("Pilih Kuiz", "Start Quiz")}</span>
-
-                                                <GraphicArrowRight className="w-3.5 h-3.5" />
-
+                                                <GraphicArrowRight className="w-3 h-3" />
                                             </button>
 
                                         </div>
@@ -163,318 +150,88 @@ export default function QuizView({
     }
 
     if (currentView === "quizRules") {
+        const totalQuestions = currentTopic?.questions?.length || 5;
+
         return (
-            <div className="space-y-6 w-full max-w-lg text-center">
-
-
-
-                                {/* Top Badge & Maskot Robot */}
-
-                                <div className="flex items-center justify-center gap-3 bg-gradient-to-r from-amber-50 to-orange-50 p-4 rounded-3xl border-2 border-amber-200 shadow-sm cursor-default select-none">
-
-                                    <div className="shrink-0">
-
-                                        <GraphicMascotRobot className="w-14 h-14" />
-
-                                    </div>
-
-                                    <div className="text-left">
-
-                                        <span className="text-[10px] font-black uppercase text-[#e65100] bg-amber-100 px-2.5 py-0.5 rounded-full border border-amber-300">
-
-                                            {t("Panduan Kuiz", "Quiz Guide")}
-
-                                        </span>
-
-                                        <p className="text-xs sm:text-sm font-bold text-slate-700 mt-1">
-
-                                            {t(
-
-                                                "“Kekal tenang! Fikir pantas kerana anda ada 20 saat untuk setiap soalan!”",
-
-                                                "“Stay calm! Think fast because you have 20 seconds for each question!”"
-
-                                            )}
-
-                                        </p>
-
-                                    </div>
-
-                                </div>
-
-
-
-                                <div className="space-y-1">
-
-                                    <h2 className="text-2xl sm:text-3xl font-black text-[#0099e5]">
-
-                                        {t("Bersedia Untuk Kuiz?", "Ready For The Quiz?")}
-
-                                    </h2>
-
-                                    <p className="text-xs sm:text-sm text-slate-600">
-
-                                        {t(
-
-                                            "Sila baca peraturan kuiz di bawah sebelum melancarkan misi anda!",
-
-                                            "Please read the quiz rules below before launching your mission!"
-
-                                        )}
-
-                                    </p>
-
-                                </div>
-
-
-
-                                {/* Selected Topic Pill */}
-
-                                <div className="bg-[#0099e5]/10 border-2 border-[#0099e5]/30 p-3.5 rounded-2xl flex items-center justify-center gap-3 shadow-inner cursor-default select-none">
-
-                                    <div className="w-8 h-8 flex items-center justify-center">
-
-                                        {currentTopic.graphic}
-
-                                    </div>
-
-                                    <span className="font-black text-[#007bb8] text-sm sm:text-base">
-
-                                        {currentTopic.title}
-
-                                    </span>
-
-                                </div>
-
-
-
-                                {/* Rules Cards Grid (Statik & Tidak Nampak Boleh Ditekan) */}
-
-                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 text-left cursor-default select-none">
-
-                                    <div className="bg-white p-4 rounded-2xl border-2 border-slate-200/90 shadow-xs flex items-start gap-3">
-
-                                        <div className="w-11 h-11 rounded-xl bg-sky-50 border border-sky-200 flex items-center justify-center shrink-0">
-
-                                            <GraphicStopwatch className="w-7 h-7" />
-
-                                        </div>
-
-                                        <div>
-
-                                            <h4 className="text-xs font-black text-sky-800 uppercase tracking-wide flex items-center gap-1.5">
-
-                                                <span>{t("Masa 20 Saat", "20 Seconds Time")}</span>
-
-                                                <span className="bg-sky-100 text-sky-700 text-[9px] px-1.5 py-0.2 rounded-full font-black">20s</span>
-
-                                            </h4>
-
-                                            <p className="text-xs text-slate-600 mt-0.5 leading-relaxed">
-
-                                                {t(
-
-                                                    "Setiap soalan diberikan masa 20 saat sahaja. Masa anda menentukan bonus kelajuan!",
-
-                                                    "Each question is given only 20 seconds. Your remaining time determines the speed bonus!"
-
-                                                )}
-
-                                            </p>
-
-                                        </div>
-
-                                    </div>
-
-
-
-                                    <div className="bg-white p-4 rounded-2xl border-2 border-slate-200/90 shadow-xs flex items-start gap-3">
-
-                                        <div className="w-11 h-11 rounded-xl bg-amber-50 border border-amber-200 flex items-center justify-center shrink-0">
-
-                                            <GraphicTarget className="w-7 h-7" />
-
-                                        </div>
-
-                                        <div>
-
-                                            <h4 className="text-xs font-black text-amber-800 uppercase tracking-wide">
-
-                                                {t("1 Percubaan", "1 Attempt")}
-
-                                            </h4>
-
-                                            <p className="text-xs text-slate-600 mt-0.5 leading-relaxed">
-
-                                                {t(
-
-                                                    "Pilih 1 jawapan sahaja. Pilihan dikunci sebaik ditekan.",
-
-                                                    "Choose 1 answer only. Selection is locked once clicked."
-
-                                                )}
-
-                                            </p>
-
-                                        </div>
-
-                                    </div>
-
-
-
-                                    <div className="bg-white p-4 rounded-2xl border-2 border-slate-200/90 shadow-xs flex items-start gap-3">
-
-                                        <div className="w-11 h-11 rounded-xl bg-emerald-50 border border-emerald-200 flex items-center justify-center shrink-0">
-
-                                            <GraphicGrandTrophy className="w-7 h-7" />
-
-                                        </div>
-
-                                        <div>
-
-                                            <h4 className="text-xs font-black text-emerald-800 uppercase tracking-wide flex items-center gap-1.5">
-
-                                                <span>{t("Skor Ikut Kelajuan", "Speed-Based Score")}</span>
-
-                                                <span className="bg-emerald-100 text-emerald-800 text-[9px] px-1.5 py-0.2 rounded-full font-black">Maks 1,500</span>
-
-                                            </h4>
-
-                                            <p className="text-xs text-slate-600 mt-0.5 leading-relaxed">
-
-                                                {t(
-
-                                                    "Makin cepat anda jawab, makin banyak mata! Asas 100 mata + Bonus pantas sehingga 200 mata per soalan!",
-
-                                                    "The faster you answer, the more points! Base 100 points + Speed bonus up to 200 points per question!"
-
-                                                )}
-
-                                            </p>
-
-                                        </div>
-
-                                    </div>
-
-
-
-                                    <div className="bg-white p-4 rounded-2xl border-2 border-slate-200/90 shadow-xs flex items-start gap-3">
-
-                                        <div className="w-11 h-11 rounded-xl bg-purple-50 border border-purple-200 flex items-center justify-center shrink-0">
-
-                                            <GraphicLightbulb className="w-7 h-7" />
-
-                                        </div>
-
-                                        <div>
-
-                                            <h4 className="text-xs font-black text-purple-800 uppercase tracking-wide">
-
-                                                {t("Semakan Jawapan", "Answer Review")}
-
-                                            </h4>
-
-                                            <p className="text-xs text-slate-600 mt-0.5 leading-relaxed">
-
-                                                {t(
-
-                                                    "Semakan jawapan betul dan skor kelajuan disediakan di akhir kuiz.",
-
-                                                    "Review of correct answers and speed score is provided at the end."
-
-                                                )}
-
-                                            </p>
-
-                                        </div>
-
-                                    </div>
-
-                                </div>
-
-
-
-                                {/* Banner Formula Skor Kelajuan (Statik) */}
-
-                                <div className="bg-gradient-to-r from-amber-50 to-orange-50 border-2 border-amber-200/90 p-3 sm:p-3.5 rounded-2xl text-left flex flex-col sm:flex-row sm:items-center justify-between gap-2 shadow-xs cursor-default select-none">
-
-                                    <div className="flex items-center gap-2">
-
-                                        <span className="text-xl">⚡</span>
-
-                                        <div>
-
-                                            <span className="text-xs font-black text-amber-950 block">
-
-                                                {t("Formula Kiraan Skor:", "Score Calculation Formula:")}
-
-                                            </span>
-
-                                            <span className="text-[11px] text-amber-800 font-bold">
-
-                                                {t("100 Mata Asas + (Masa Baki × 10 Bonus Mata)", "100 Base Points + (Remaining Seconds × 10 Bonus Points)")}
-
-                                            </span>
-
-                                        </div>
-
-                                    </div>
-
-                                    <span className="bg-amber-400 text-slate-950 font-black text-xs px-2.5 py-1 rounded-xl shadow-xs self-start sm:self-center whitespace-nowrap">
-
-                                        {t("Sehingga 300 Mata / Soalan", "Up to 300 Pts / Question")}
-
-                                    </span>
-
-                                </div>
-
-
-
-                                {/* BUTTON MULA KUIZ DENGAN GRAFIK MENARIK & 3D TACTILE FEEL */}
-
-                                <div className="pt-2 space-y-3">
-
-                                    <button
-
-                                        onClick={onStartQuiz}
-
-                                        className="w-full relative overflow-hidden py-4 px-6 btn-3d-pink text-white font-black text-base sm:text-lg rounded-2xl cursor-pointer flex items-center justify-center gap-3 border-t-2 border-white/40 group"
-
-                                    >
-
-                                        <div className="w-8 h-8 flex items-center justify-center group-hover:scale-110 transition-transform duration-200">
-
-                                            <GraphicRocketLaunch className="w-8 h-8" />
-
-                                        </div>
-
-                                        <span className="tracking-wide">{t("MULA KUIZ SEKARANG!", "START QUIZ NOW!")}</span>
-
-                                        <GraphicArrowRight className="w-5 h-5 group-hover:translate-x-1.5 transition-transform" />
-
-                                    </button>
-
-
-
-                                    <button
-
-                                        onClick={() => { playAudioFeedback?.("tap"); onNavigate("quizList"); }}
-
-                                        className="px-4 py-2 text-xs font-bold text-slate-600 hover:text-slate-900 bg-slate-100 hover:bg-slate-200 rounded-xl transition-all cursor-pointer flex items-center justify-center gap-2 mx-auto border border-slate-200 shadow-sm"
-
-                                    >
-
-                                        <GraphicBackArrow className="w-3.5 h-3.5" />
-
-                                        <span>{t("Pilih Topik Lain", "Choose Other Topic")}</span>
-
-                                    </button>
-
-                                </div>
-
-
-
-                            </div>
+            <div className="space-y-5 w-full max-w-md mx-auto anim-fade-in text-center">
+
+                {/* 1. Header Ringkas dengan Butang Back di Kiri */}
+                <div className="flex items-center gap-3 border-b border-slate-100 pb-3 w-full">
+                    <button
+                        type="button"
+                        onClick={() => { playAudioFeedback?.("tap"); onNavigate("menu"); }}
+                        className="px-3.5 py-2 bg-white hover:bg-slate-50 text-slate-700 font-bold rounded-xl text-xs cursor-pointer shrink-0 flex items-center gap-1.5 border border-slate-200 shadow-xs active:scale-95 transition-all group"
+                        title={t("Kembali", "Back")}
+                    >
+                        <GraphicBackArrow className="w-4 h-4 text-slate-600 group-hover:-translate-x-0.5 transition-transform" />
+                        <span>Back</span>
+                    </button>
+                    <div className="flex items-center gap-2 truncate">
+                        <div className="w-7 h-7 shrink-0 flex items-center justify-center">
+                            {currentTopic?.graphic}
+                        </div>
+                        <h2 className="text-base sm:text-lg font-black text-slate-800 truncate text-left">
+                            {currentTopic?.title}
+                        </h2>
+                    </div>
+                </div>
+
+                {/* 2. Visual & Tajuk Kuiz Ringkas */}
+                <div className="py-2">
+                    <div className="w-16 h-16 sm:w-20 sm:h-20 mx-auto rounded-3xl bg-gradient-to-tr from-amber-400 to-orange-500 p-0.5 shadow-lg flex items-center justify-center mb-3">
+                        <div className="w-full h-full bg-white rounded-[22px] flex items-center justify-center">
+                            <GraphicStopwatch className="w-9 h-9 sm:w-11 sm:h-11 text-amber-500" />
+                        </div>
+                    </div>
+                    <h2 className="text-2xl font-black text-slate-800 tracking-tight">
+                        {t("Kuiz Pantas 20 Saat", "20-Second Speed Quiz")}
+                    </h2>
+                    <p className="text-xs text-slate-400 font-semibold mt-0.5">
+                        {t("Jawab pantas untuk skor maksimum!", "Answer fast for maximum score!")}
+                    </p>
+                </div>
+
+                {/* 3. Tiga Kad Info Ringkas (Minimal Teks, Fokus Nombor & Ikon) */}
+                <div className="grid grid-cols-3 gap-2.5">
+                    {/* Kad 1: Masa */}
+                    <div className="bg-sky-50/80 border border-sky-200 rounded-2xl p-3 text-center">
+                        <span className="text-lg font-mono font-black text-sky-700 block">20s</span>
+                        <span className="text-[11px] font-bold text-sky-900 mt-0.5 block">
+                            {t("Masa/Soalan", "Time/Question")}
+                        </span>
+                    </div>
+
+                    {/* Kad 2: Bilangan Soalan */}
+                    <div className="bg-purple-50/80 border border-purple-200 rounded-2xl p-3 text-center">
+                        <span className="text-lg font-mono font-black text-purple-700 block">{totalQuestions}</span>
+                        <span className="text-[11px] font-bold text-purple-900 mt-0.5 block">
+                            {t("Soalan", "Questions")}
+                        </span>
+                    </div>
+
+                    {/* Kad 3: Bonus Kelajuan */}
+                    <div className="bg-amber-50/80 border border-amber-200 rounded-2xl p-3 text-center">
+                        <span className="text-lg font-mono font-black text-amber-700 block">+Bonus</span>
+                        <span className="text-[11px] font-bold text-amber-900 mt-0.5 block">
+                            {t("Kelajuan", "Speed")}
+                        </span>
+                    </div>
+                </div>
+
+                {/* 4. Butang Mula Kuiz */}
+                <div className="pt-2">
+                    <button
+                        type="button"
+                        onClick={onStartQuiz}
+                        className="w-full py-3.5 px-6 bg-gradient-to-r from-[#0099e5] to-blue-600 hover:from-[#0088cc] hover:to-blue-700 text-white font-black text-sm sm:text-base rounded-2xl cursor-pointer flex items-center justify-center gap-2.5 transition-all shadow-md hover:shadow-lg active:scale-98"
+                    >
+                        <GraphicRocketLaunch className="w-5 h-5" />
+                        <span>{t("Mula Kuiz Sekarang", "Start Quiz Now")}</span>
+                        <GraphicArrowRight className="w-4 h-4 ml-1" />
+                    </button>
+                </div>
+
+            </div>
         );
     }
 
@@ -526,329 +283,128 @@ export default function QuizView({
 
                                 {currentQuestionIndex === "finished" ? (
 
-                                    <div className="space-y-6 w-full anim-fade-in relative">
-
-
+                                    <div className="space-y-5 w-full anim-fade-in relative">
 
                                         {/* Confetti Particles */}
-
                                         <div className="absolute inset-0 pointer-events-none overflow-hidden" aria-hidden="true">
-
                                             <div className="absolute top-2 left-6 w-3 h-3 bg-amber-400 rounded-sm" style={{ animation: "confettiShower 2s ease-out infinite" }} />
-
                                             <div className="absolute top-0 left-1/4 w-2 h-4 bg-sky-400 rotate-45" style={{ animation: "confettiShower 2.5s ease-out infinite 0.2s" }} />
-
                                             <div className="absolute top-2 left-1/2 w-3 h-2 bg-pink-500 rounded-full" style={{ animation: "confettiShower 2.2s ease-out infinite 0.5s" }} />
-
                                             <div className="absolute top-0 right-1/4 w-3 h-3 bg-emerald-400 rotate-12" style={{ animation: "confettiShower 2.4s ease-out infinite 0.3s" }} />
-
                                             <div className="absolute top-3 right-8 w-2 h-3 bg-yellow-400 rounded-sm" style={{ animation: "confettiShower 2.1s ease-out infinite 0.7s" }} />
-
                                         </div>
 
+                                        {/* Score Card — Compact */}
+                                        <div className="text-center py-6 px-5 bg-gradient-to-b from-[#00acc1]/10 via-[#00acc1]/20 to-white rounded-3xl border-3 border-[#00acc1] shadow-lg relative overflow-hidden">
 
-
-                                        {/* Trophy & Score Card */}
-
-                                        <div className="text-center py-8 px-6 space-y-3 bg-gradient-to-b from-[#00acc1]/10 via-[#00acc1]/20 to-white rounded-3xl border-3 border-[#00acc1] shadow-lg relative overflow-hidden">
-
-
-
-                                            <div className="flex justify-center items-center gap-3 anim-float">
-
-                                                <GraphicMascotRobot className="w-16 h-16" expression="celebrate" />
-
-                                                <GraphicGrandTrophy className="w-24 h-24" />
-
+                                            <div className="flex justify-center items-center gap-2 anim-float mb-2">
+                                                <GraphicGrandTrophy className="w-20 h-20" />
                                             </div>
 
-
-
-                                            <div className="inline-block bg-[#00acc1] text-white text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-wider shadow-sm">
-
+                                            <div className="inline-block bg-[#00acc1] text-white text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-wider shadow-sm mb-1">
                                                 {t("Misi Selesai!", "Mission Complete!")}
-
                                             </div>
 
-
-
-                                            <h3 className="text-2xl sm:text-3xl font-black text-[#00838f]">
-
-                                                {t("Tahniah! Anda Selesai!", "Congratulations! You Finished!")}
-
-                                            </h3>
-
-
-
-                                            {/* Grand Speed Score Badge */}
-
-                                            <div className="py-2 space-y-2">
-
-                                                <div className="inline-flex flex-col items-center justify-center bg-white px-8 py-3.5 rounded-3xl shadow-md border-3 border-[#00acc1]">
-
-                                                    <div className="flex items-baseline gap-2">
-
-                                                        <span className="text-4xl sm:text-5xl font-black bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600 bg-clip-text text-transparent">
-
-                                                            {quizTotalPoints}
-
-                                                        </span>
-
-                                                        <span className="text-xs sm:text-sm font-black text-slate-400 uppercase">
-
-                                                            / 1,500 PTS
-
-                                                        </span>
-
-                                                    </div>
-
-                                                    <span className="text-[11px] font-extrabold text-[#00838f] uppercase tracking-wider">
-
-                                                        {t("Skor Kelajuan STEM", "STEM Speed Score")}
-
+                                            {/* Score Display */}
+                                            <div className="inline-flex flex-col items-center justify-center bg-white px-8 py-3 rounded-2xl shadow-md border-2 border-[#00acc1] mt-2">
+                                                <div className="flex items-baseline gap-2">
+                                                    <span className="text-4xl sm:text-5xl font-black bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600 bg-clip-text text-transparent">
+                                                        {quizTotalPoints}
                                                     </span>
-
+                                                    <span className="text-xs font-black text-slate-400 uppercase">
+                                                        / 1,500 PTS
+                                                    </span>
                                                 </div>
-
-
-
-                                                {/* Accuracy & Breakdown Pills */}
-
-                                                <div className="flex flex-wrap items-center justify-center gap-2 pt-1">
-
-                                                    <span className="text-xs font-black bg-sky-100 text-sky-800 px-3 py-1 rounded-xl border border-sky-200 flex items-center gap-1.5 shadow-xs">
-
-                                                        <span>🎯</span>
-
-                                                        <span>{scoreCount} / {currentTopic.questions.length} {t("Betul", "Correct")} ({scorePercentage}%)</span>
-
-                                                    </span>
-
-                                                    <span className="text-xs font-black bg-amber-100 text-amber-900 px-3 py-1 rounded-xl border border-amber-200 flex items-center gap-1.5 shadow-xs">
-
-                                                        <span>⚡</span>
-
-                                                        <span>{t("Bonus Pantas:", "Speed Bonus:")} +{Math.max(0, quizTotalPoints - (scoreCount * 100))} PTS</span>
-
-                                                    </span>
-
-                                                </div>
-
                                             </div>
 
-
-
-                                            <p className="text-slate-700 font-bold text-sm">
-
-                                                {quizTotalPoints >= 1350
-
-                                                    ? t("⚡ Refleks Kilat! Anda menjawab dengan sepantas kilat dan sangat tepat! Genius STEM Sejati!", "⚡ Lightning Reflexes! You answered with lightning speed and great precision! True STEM Genius!")
-
-                                                    : quizTotalPoints >= 1000
-
-                                                        ? t("🚀 Fikiran Pantas! Skor kelajuan anda sangat mengagumkan! Calon Juara STEM!", "🚀 Speed Thinker! Your speed score is impressive! STEM Champion Candidate!")
-
-                                                        : scoreCount >= 3
-
-                                                            ? t("👏 Pencapaian cemerlang! Cuba jawab lebih pantas lagi untuk kumpul markah maksimum!", "👏 Outstanding achievement! Try answering even faster to collect maximum marks!")
-
-                                                            : t("💪 Jangan berputus asa! Ulangkaji semula nota dan uji ketangkasan minda anda sekali lagi!", "💪 Don't give up! Review the notes and test your mental agility once more!")}
-
-                                            </p>
-
-                                        </div>
-
-
-
-                                        {/* Detailed Answer Review with Speed Points */}
-
-                                        <div className="space-y-3 w-full text-left">
-
-                                            <h4 className="font-black text-slate-700 text-sm flex items-center justify-between">
-
-                                                <span>{t("Semakan Jawapan & Mata Kelajuan:", "Answer Review & Speed Points:")}</span>
-
-                                                <span className="text-xs text-slate-500 font-normal">
-
-                                                    {t(`${scoreCount} daripada ${currentTopic.questions.length} betul`, `${scoreCount} of ${currentTopic.questions.length} correct`)}
-
+                                            {/* Stats Pills — Compact Row */}
+                                            <div className="flex flex-wrap items-center justify-center gap-2 mt-3">
+                                                <span className="text-xs font-black bg-sky-100 text-sky-800 px-3 py-1 rounded-xl border border-sky-200 flex items-center gap-1 shadow-xs">
+                                                    🎯 {scoreCount}/{currentTopic.questions.length} ({scorePercentage}%)
                                                 </span>
-
-                                            </h4>
-
-
-
-                                            {currentTopic.questions.map((q, idx) => {
-
-                                                const userAns = selectedAnswers[idx];
-
-                                                const isCorrect = userAns === q.correctAnswer;
-
-                                                const wasTimeout = userAns === "__TIMEOUT__";
-
-                                                const reward = questionRewards[idx] || { pointsEarned: 0, speedBonus: 0, timeLeft: 0, timeSpent: 20 };
-
-
-
-                                                return (
-
-                                                    <div
-
-                                                        key={idx}
-
-                                                        className={`p-4 rounded-2xl border-2 transition-all shadow-sm ${isCorrect
-
-                                                            ? "bg-emerald-50/80 border-emerald-300 text-emerald-950"
-
-                                                            : wasTimeout
-
-                                                                ? "bg-amber-50/80 border-amber-300 text-amber-950"
-
-                                                                : "bg-rose-50/80 border-rose-300 text-rose-950"
-
-                                                            }`}
-
-                                                    >
-
-                                                        <div className="flex items-start justify-between gap-2">
-
-                                                            <p className="font-black text-sm mb-1">
-
-                                                                {idx + 1}. {q.question}
-
-                                                            </p>
-
-                                                            <div className="flex items-center gap-1.5 shrink-0">
-
-                                                                {isCorrect ? (
-
-                                                                    <span className="bg-emerald-200 text-emerald-900 font-black text-xs px-2.5 py-0.5 rounded-full flex items-center gap-1 shadow-xs">
-
-                                                                        <span>⚡</span>
-
-                                                                        <span>+{reward.pointsEarned} PTS</span>
-
-                                                                    </span>
-
-                                                                ) : (
-
-                                                                    <span className="bg-slate-200 text-slate-700 font-bold text-xs px-2 py-0.5 rounded-full">
-
-                                                                        0 PTS
-
-                                                                    </span>
-
-                                                                )}
-
-                                                                <span className="text-base font-bold">
-
-                                                                    {isCorrect ? "✓" : wasTimeout ? "⏱️" : "✕"}
-
-                                                                </span>
-
-                                                            </div>
-
-                                                        </div>
-
-
-
-                                                        <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs mt-1">
-
-                                                            <p>
-
-                                                                {t("Jawapan anda:", "Your answer:")}{" "}
-
-                                                                <span className="font-bold">
-
-                                                                    {wasTimeout ? t("Masa Tamat (Tiada Jawapan)", "Time's Up (No Answer)") : userAns || t("Tiada", "None")}
-
-                                                                </span>
-
-                                                            </p>
-
-                                                            {isCorrect && (
-
-                                                                <span className="text-emerald-800 font-bold">
-
-                                                                    • {t(`Dijawab dalam ${reward.timeSpent || (20 - reward.timeLeft)}s (+${reward.speedBonus} bonus pantas)`, `Answered in ${reward.timeSpent || (20 - reward.timeLeft)}s (+${reward.speedBonus} speed bonus)`)}
-
-                                                                </span>
-
-                                                            )}
-
-                                                        </div>
-
-
-
-                                                        {!isCorrect && (
-
-                                                            <p className="text-xs mt-1 text-emerald-800 font-bold bg-white/70 p-2 rounded-xl inline-block border border-emerald-200">
-
-                                                                {t("Jawapan Betul:", "Correct Answer:")} {q.correctAnswer}
-
-                                                            </p>
-
-                                                        )}
-
-                                                    </div>
-
-                                                );
-
-                                            })}
+                                                <span className="text-xs font-black bg-amber-100 text-amber-900 px-3 py-1 rounded-xl border border-amber-200 flex items-center gap-1 shadow-xs">
+                                                    ⚡ +{Math.max(0, quizTotalPoints - (scoreCount * 100))} PTS
+                                                </span>
+                                                <span className="text-xs font-black bg-gradient-to-r from-amber-400 to-yellow-400 text-amber-950 px-3 py-1 rounded-xl border border-amber-300 flex items-center gap-1 shadow-xs anim-pop">
+                                                    🌟 +{scoreCount === currentTopic.questions.length ? 25 : scoreCount >= 3 ? 20 : 10} {t("Koin", "Coins")}
+                                                </span>
+                                            </div>
 
                                         </div>
 
+                                        {/* Collapsible Answer Review */}
+                                        <details className="w-full group">
+                                            <summary className="cursor-pointer list-none flex items-center justify-between bg-white rounded-2xl px-4 py-3 border-2 border-slate-200 shadow-sm hover:border-[#00acc1] transition-all">
+                                                <span className="font-black text-slate-700 text-sm flex items-center gap-2">
+                                                    📋 {t("Semakan Jawapan", "Answer Review")}
+                                                </span>
+                                                <span className="text-xs text-slate-400 font-bold group-open:rotate-180 transition-transform">▼</span>
+                                            </summary>
+                                            <div className="space-y-2 mt-3">
+                                                {currentTopic.questions.map((q, idx) => {
+                                                    const userAns = selectedAnswers[idx];
+                                                    const isCorrect = userAns === q.correctAnswer;
+                                                    const wasTimeout = userAns === "__TIMEOUT__";
+                                                    const reward = questionRewards[idx] || { pointsEarned: 0, speedBonus: 0, timeLeft: 0, timeSpent: 20 };
+                                                    return (
+                                                        <div
+                                                            key={idx}
+                                                            className={`p-3 rounded-xl border-2 ${isCorrect
+                                                                ? "bg-emerald-50/80 border-emerald-300"
+                                                                : wasTimeout
+                                                                    ? "bg-amber-50/80 border-amber-300"
+                                                                    : "bg-rose-50/80 border-rose-300"
+                                                                }`}
+                                                        >
+                                                            <div className="flex items-center justify-between gap-2">
+                                                                <p className="font-bold text-xs">
+                                                                    {idx + 1}. {q.question}
+                                                                </p>
+                                                                <div className="flex items-center gap-1 shrink-0">
+                                                                    {isCorrect ? (
+                                                                        <span className="bg-emerald-200 text-emerald-900 font-black text-[10px] px-2 py-0.5 rounded-full">
+                                                                            +{reward.pointsEarned}
+                                                                        </span>
+                                                                    ) : null}
+                                                                    <span className="text-sm font-bold">
+                                                                        {isCorrect ? "✓" : wasTimeout ? "⏱️" : "✕"}
+                                                                    </span>
+                                                                </div>
+                                                            </div>
+                                                            {!isCorrect && (
+                                                                <p className="text-[10px] mt-1 text-emerald-800 font-bold bg-white/70 px-2 py-1 rounded-lg inline-block border border-emerald-200">
+                                                                    ✅ {q.correctAnswer}
+                                                                </p>
+                                                            )}
+                                                        </div>
+                                                    );
+                                                })}
+                                            </div>
+                                        </details>
 
-
-                                        {/* Actions with 3D tactile buttons */}
-                                        <div className="flex flex-col sm:flex-row justify-center gap-3 pt-2">
+                                        {/* Action Buttons — Clean */}
+                                        <div className="grid grid-cols-2 gap-2.5 pt-1">
                                             <button
-                                                onClick={() => { onResetQuiz(); onNavigate("quizRules"); }}
-                                                className="px-5 py-3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-black rounded-xl text-xs sm:text-sm flex items-center justify-center gap-2 cursor-pointer shadow-md active:scale-95 transition-all"
+                                                onClick={() => { playAudioFeedback?.("tap"); onResetQuiz(); onNavigate("quizRules"); }}
+                                                className="col-span-2 px-5 py-3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-black rounded-xl text-sm flex items-center justify-center gap-2 cursor-pointer shadow-md active:scale-95 transition-all"
                                             >
-                                                <span>✅</span>
-                                                <span>{t("Selesai", "Done")}</span>
-                                            </button>
-
-                                            <button
-                                                onClick={() => { onResetQuiz(); onNavigate("quizRules"); }}
-                                                className="px-5 py-3 btn-3d-blue text-white font-black rounded-xl text-xs sm:text-sm flex items-center justify-center gap-2 cursor-pointer"
-                                            >
-
                                                 <GraphicRefresh className="w-4 h-4" />
-
-                                                <span>{t("Cuba Kuiz Semula", "Retake Quiz")}</span>
-
+                                                <span>{t("Cuba Lagi", "Try Again")}</span>
                                             </button>
-
                                             <button
-
-                                                onClick={() => { onResetQuiz(); onNavigate("learningDetail"); }}
-
-                                                className="px-5 py-3 btn-3d-orange text-slate-950 font-black rounded-xl text-xs sm:text-sm flex items-center justify-center gap-2 cursor-pointer"
-
+                                                onClick={() => { playAudioFeedback?.("tap"); onResetQuiz(); onNavigate("learningDetail"); }}
+                                                className="px-4 py-2 bg-transparent border-2 border-[#0099e5] text-[#0099e5] hover:bg-[#0099e5] hover:text-white font-black rounded-xl text-xs flex items-center justify-center gap-1.5 cursor-pointer transition-all duration-300 active:scale-95"
                                             >
-
-                                                <GraphicScienceBook className="w-4 h-4" />
-
-                                                <span>{t("Ulangkaji Nota", "Review Notes")}</span>
-
+                                                <GraphicScienceBook className="w-3.5 h-3.5" />
+                                                <span>{t("Nota", "Notes")}</span>
                                             </button>
-
                                             <button
-
-                                                onClick={() => { onResetQuiz(); onNavigate("menu"); }}
-
-                                                className="px-5 py-3 btn-3d-white text-slate-700 font-black rounded-xl text-xs sm:text-sm flex items-center justify-center gap-2 cursor-pointer border border-slate-200"
-
+                                                onClick={() => { playAudioFeedback?.("tap"); onResetQuiz(); onNavigate("menu"); }}
+                                                className="px-4 py-2 bg-white hover:bg-slate-50 text-slate-700 font-bold rounded-xl text-xs flex items-center justify-center gap-1.5 cursor-pointer border border-slate-200 shadow-xs active:scale-95 transition-all"
                                             >
-
-                                                <GraphicHomeButton className="w-4 h-4" />
-
-                                                <span>{t("Menu Utama", "Main Menu")}</span>
-
+                                                <GraphicHomeButton className="w-3.5 h-3.5" />
+                                                <span>{t("Menu", "Menu")}</span>
                                             </button>
-
                                         </div>
 
                                     </div>

@@ -39,6 +39,8 @@ export default function StudentsTab({
                     <thead className="bg-slate-50">
                         <tr className="border-b border-slate-200 text-slate-600 text-[10px] uppercase font-black tracking-wider">
                             <th className="py-2.5 px-3">Nama</th>
+                            <th className="py-2.5 px-3">Sekolah</th>
+                            <th className="py-2.5 px-3">ID Pelajar</th>
                             <th className="py-2.5 px-3">No. IC</th>
                             <th className="py-2.5 px-3">Tahap</th>
                             <th className="py-2.5 px-3">Mata XP</th>
@@ -53,7 +55,7 @@ export default function StudentsTab({
                     <tbody className="divide-y divide-slate-100 font-medium">
                         {filteredStudents.length === 0 ? (
                             <tr>
-                                <td colSpan={10} className="py-8 text-center text-slate-400">
+                                <td colSpan={12} className="py-8 text-center text-slate-400">
                                     {isLoadingStudents ? "Memuatkan data murid..." : "Tiada rekod murid dijumpai."}
                                 </td>
                             </tr>
@@ -61,6 +63,16 @@ export default function StudentsTab({
                             filteredStudents.map((st) => (
                                 <tr key={st.ic} className="hover:bg-slate-50/80 transition-colors">
                                     <td className="py-2.5 px-3 font-bold text-slate-900">{st.name}</td>
+                                    <td className="py-2.5 px-3 text-slate-700 font-medium whitespace-nowrap">
+                                        <span className="px-2 py-0.5 bg-slate-100 text-slate-700 rounded text-[11px] font-bold">
+                                            {st.school && st.school !== "-" ? st.school : "Tiada Sekolah"}
+                                        </span>
+                                    </td>
+                                    <td className="py-2.5 px-3 font-mono font-bold text-sky-700">
+                                        <span className="px-2 py-0.5 bg-sky-50 text-sky-700 border border-sky-200 rounded font-bold text-[10px]">
+                                            {st.studentId || `STU-${st.ic.slice(-5)}`}
+                                        </span>
+                                    </td>
                                     <td className="py-2.5 px-3 font-mono text-slate-600">{st.ic}</td>
                                     <td className="py-2.5 px-3">
                                         <span className="px-2 py-0.5 bg-amber-50 text-amber-800 border border-amber-200 rounded font-bold text-[10px]">

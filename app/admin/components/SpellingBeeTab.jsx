@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { SPELLING_THEMES, normalizeDifficulty } from "../../../lib/spellingService";
+import { playSpellingAudio } from "../../../lib/spellingAudioService";
 
 export default function SpellingBeeTab({
     words = [],
@@ -17,17 +18,14 @@ export default function SpellingBeeTab({
     const [speakingWordId, setSpeakingWordId] = useState(null);
 
     const playWordAudio = (wordItem) => {
-        if (typeof window === "undefined" || !("speechSynthesis" in window)) return;
-        try {
-            window.speechSynthesis.cancel();
-            const u = new SpeechSynthesisUtterance(wordItem.word);
-            u.lang = "en-US";
-            u.rate = 0.88;
-            u.onstart = () => setSpeakingWordId(wordItem.id || wordItem.word);
-            u.onend = () => setSpeakingWordId(null);
-            u.onerror = () => setSpeakingWordId(null);
-            window.speechSynthesis.speak(u);
-        } catch {}
+        if (!wordItem?.word) return;
+        const id = wordItem.id || wordItem.word;
+        setSpeakingWordId(id);
+        playSpellingAudio(wordItem.word, {
+            onStart: () => setSpeakingWordId(id),
+            onEnd: () => setSpeakingWordId(null),
+            onError: () => setSpeakingWordId(null),
+        });
     };
 
     const filteredWords = words.filter((w) => {

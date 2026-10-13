@@ -3,79 +3,37 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 
 /* =========================================================================
-   VECTOR SVG GRAPHICS FOR MATH SPEED QUIZ (EXPLORIA SIFIR KILAT)
+   VECTOR SVG GRAPHICS FOR MATH SPEED QUIZ (SIFIR KILAT)
    ========================================================================= */
 
-function GraphicMathMascot({ mood = "happy", className = "w-20 h-20" }) {
+function GraphicMathMascot({ className = "w-16 h-16" }) {
     return (
         <svg className={className} viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
             <defs>
                 <linearGradient id="calcGrad" x1="10" y1="10" x2="90" y2="90" gradientUnits="userSpaceOnUse">
-                    <stop stopColor="#6366f1" />
-                    <stop offset="0.5" stopColor="#4f46e5" />
-                    <stop offset="1" stopColor="#3730a3" />
-                </linearGradient>
-                <linearGradient id="screenGrad" x1="20" y1="20" x2="80" y2="40" gradientUnits="userSpaceOnUse">
-                    <stop stopColor="#a7f3d0" />
-                    <stop offset="1" stopColor="#34d399" />
+                    <stop stopColor="#0099e5" />
+                    <stop offset="1" stopColor="#0077b6" />
                 </linearGradient>
             </defs>
-
-            {/* Robot Calculator Body */}
-            <rect x="20" y="16" width="60" height="72" rx="14" fill="url(#calcGrad)" stroke="#312e81" strokeWidth="2.5" />
-            
-            {/* Screen */}
-            <rect x="28" y="24" width="44" height="20" rx="6" fill="url(#screenGrad)" stroke="#065f46" strokeWidth="1.5" />
-            
-            {/* Mascot Eyes on Screen */}
-            {mood === "happy" && (
-                <>
-                    <circle cx="42" cy="34" r="3.5" fill="#064e3b" />
-                    <circle cx="43.2" cy="32.8" r="1.2" fill="#ffffff" />
-                    <circle cx="58" cy="34" r="3.5" fill="#064e3b" />
-                    <circle cx="59.2" cy="32.8" r="1.2" fill="#ffffff" />
-                    <path d="M47 38C48.5 40.5 51.5 40.5 53 38" stroke="#064e3b" strokeWidth="1.8" strokeLinecap="round" />
-                </>
-            )}
-            {mood === "wrong" && (
-                <>
-                    <path d="M39 31L45 37M45 31L39 37" stroke="#064e3b" strokeWidth="2" strokeLinecap="round" />
-                    <path d="M55 31L61 37M61 31L55 37" stroke="#064e3b" strokeWidth="2" strokeLinecap="round" />
-                    <path d="M47 39C48.5 37.5 51.5 37.5 53 39" stroke="#064e3b" strokeWidth="1.8" strokeLinecap="round" />
-                </>
-            )}
-            {mood === "thinking" && (
-                <>
-                    <circle cx="42" cy="33" r="3.5" fill="#064e3b" />
-                    <circle cx="58" cy="33" r="3.5" fill="#064e3b" />
-                    <line x1="47" y1="38" x2="53" y2="38" stroke="#064e3b" strokeWidth="2" strokeLinecap="round" />
-                </>
-            )}
-
-            {/* Cute Antenna */}
-            <path d="M50 16V9" stroke="#fbbf24" strokeWidth="3" strokeLinecap="round" />
-            <circle cx="50" cy="7" r="4" fill="#f59e0b" stroke="#b45309" strokeWidth="1.5" />
-
-            {/* Calculator Buttons Grid */}
-            <rect x="28" y="50" width="12" height="9" rx="3" fill="#e0e7ff" />
-            <text x="34" y="57" fontSize="7" fontWeight="bold" fill="#3730a3" textAnchor="middle">+</text>
-
-            <rect x="44" y="50" width="12" height="9" rx="3" fill="#e0e7ff" />
-            <text x="50" y="57" fontSize="7" fontWeight="bold" fill="#3730a3" textAnchor="middle">-</text>
-
-            <rect x="60" y="50" width="12" height="9" rx="3" fill="#fef08a" />
-            <text x="66" y="57" fontSize="7" fontWeight="bold" fill="#854d0e" textAnchor="middle">×</text>
-
-            <rect x="28" y="63" width="12" height="9" rx="3" fill="#e0e7ff" />
-            <text x="34" y="70" fontSize="7" fontWeight="bold" fill="#3730a3" textAnchor="middle">÷</text>
-
-            <rect x="44" y="63" width="12" height="9" rx="3" fill="#e0e7ff" />
-            <text x="50" y="70" fontSize="7" fontWeight="bold" fill="#3730a3" textAnchor="middle">=</text>
-
-            <rect x="60" y="63" width="12" height="9" rx="3" fill="#fb7185" />
-            <text x="66" y="70" fontSize="6" fontWeight="bold" fill="#ffffff" textAnchor="middle">%</text>
-
-            <rect x="28" y="75" width="44" height="7" rx="3" fill="#818cf8" opacity="0.6" />
+            <rect x="20" y="16" width="60" height="72" rx="14" fill="url(#calcGrad)" stroke="#005b8e" strokeWidth="2" />
+            <rect x="28" y="24" width="44" height="20" rx="6" fill="#e0f2fe" stroke="#0284c7" strokeWidth="1.5" />
+            <circle cx="42" cy="34" r="3.5" fill="#0369a1" />
+            <circle cx="58" cy="34" r="3.5" fill="#0369a1" />
+            <path d="M47 38C48.5 40.5 51.5 40.5 53 38" stroke="#0369a1" strokeWidth="2" strokeLinecap="round" />
+            <path d="M50 16V9" stroke="#38bdf8" strokeWidth="3" strokeLinecap="round" />
+            <circle cx="50" cy="7" r="4" fill="#0284c7" />
+            <rect x="28" y="50" width="12" height="9" rx="3" fill="#ffffff" />
+            <text x="34" y="57" fontSize="7" fontWeight="bold" fill="#0369a1" textAnchor="middle">+</text>
+            <rect x="44" y="50" width="12" height="9" rx="3" fill="#ffffff" />
+            <text x="50" y="57" fontSize="7" fontWeight="bold" fill="#0369a1" textAnchor="middle">-</text>
+            <rect x="60" y="50" width="12" height="9" rx="3" fill="#ffffff" />
+            <text x="66" y="57" fontSize="7" fontWeight="bold" fill="#0369a1" textAnchor="middle">×</text>
+            <rect x="28" y="63" width="12" height="9" rx="3" fill="#ffffff" />
+            <text x="34" y="70" fontSize="7" fontWeight="bold" fill="#0369a1" textAnchor="middle">÷</text>
+            <rect x="44" y="63" width="12" height="9" rx="3" fill="#ffffff" />
+            <text x="50" y="70" fontSize="7" fontWeight="bold" fill="#0369a1" textAnchor="middle">=</text>
+            <rect x="60" y="63" width="12" height="9" rx="3" fill="#ffffff" />
+            <text x="66" y="70" fontSize="6" fontWeight="bold" fill="#0369a1" textAnchor="middle">%</text>
         </svg>
     );
 }
@@ -101,7 +59,7 @@ function GraphicTrophy({ className = "w-16 h-16" }) {
     );
 }
 
-function GraphicTimer({ className = "w-5 h-5" }) {
+function GraphicTimer({ className = "w-4 h-4" }) {
     return (
         <svg className={className} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
             <circle cx="12" cy="13" r="8" stroke="currentColor" strokeWidth="2" />
@@ -120,33 +78,30 @@ function GraphicBackArrow({ className = "w-4 h-4" }) {
 }
 
 /* =========================================================================
-   HELPER: QUESTION GENERATOR WITH SMART DISTRACTORS
+   QUESTION GENERATOR FOR MULTIPLICATION (1 - 12)
    ========================================================================= */
 
-function generateMathQuestion(selectedTables = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]) {
-    const validTables = selectedTables.length > 0 ? selectedTables : [2, 3, 4, 5];
+export function generateMathQuestion(allowedTables = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]) {
+    const validTables = Array.isArray(allowedTables) && allowedTables.length > 0
+        ? allowedTables
+        : [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
+
     const table = validTables[Math.floor(Math.random() * validTables.length)];
     const multiplier = Math.floor(Math.random() * 12) + 1;
     const answer = table * multiplier;
 
-    // Generate logical and close distractors
     const pool = new Set();
     const candidates = [
-        table * (multiplier + 1),
-        table * (multiplier - 1),
-        answer + 1,
-        answer - 1,
-        answer + 2,
-        answer - 2,
         answer + table,
         answer - table,
-        (table + 1) * multiplier,
-        (table - 1) * multiplier,
+        answer + 1,
+        answer - 1,
         answer + 10,
         answer - 10,
-    ].filter((val) => val > 0 && val !== answer);
+        table * (multiplier + 2),
+        table * (multiplier - 2),
+    ].filter((v) => v > 0 && v !== answer);
 
-    candidates.sort(() => 0.5 - Math.random());
     for (const val of candidates) {
         if (pool.size < 3) pool.add(val);
     }
@@ -170,7 +125,7 @@ function generateMathQuestion(selectedTables = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 1
 }
 
 /* =========================================================================
-   MAIN COMPONENT: MATH SPEED QUIZ (PERTANDINGAN SIFIR)
+   MAIN COMPONENT: MATH SPEED QUIZ (FORMAT PERTANDINGAN)
    ========================================================================= */
 
 export default function MathSpeedQuiz({
@@ -183,9 +138,6 @@ export default function MathSpeedQuiz({
     t = null,
     language = "bm",
 }) {
-    // -------------------------------------------------------------
-    // AUDIO FEEDBACK SYNTHESIZER
-    // -------------------------------------------------------------
     const playLocalSound = useCallback((type) => {
         if (typeof playAudioFeedback === "function") {
             try {
@@ -199,7 +151,19 @@ export default function MathSpeedQuiz({
             const ctx = new AudioCtx();
             const now = ctx.currentTime;
 
-            if (type === "correct" || type === "victory") {
+            if (type === "tap" || type === "pop") {
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.type = "sine";
+                osc.frequency.setValueAtTime(450, now);
+                osc.frequency.exponentialRampToValueAtTime(750, now + 0.05);
+                gain.gain.setValueAtTime(0.15, now);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.start(now);
+                osc.stop(now + 0.08);
+            } else if (type === "victory") {
                 const freqs = [523.25, 659.25, 783.99, 1046.5];
                 freqs.forEach((f, i) => {
                     const osc = ctx.createOscillator();
@@ -213,30 +177,6 @@ export default function MathSpeedQuiz({
                     osc.start(now + i * 0.07);
                     osc.stop(now + i * 0.07 + 0.2);
                 });
-            } else if (type === "wrong" || type === "buzzer" || type === "timeout") {
-                const osc = ctx.createOscillator();
-                const gain = ctx.createGain();
-                osc.type = "sawtooth";
-                osc.frequency.setValueAtTime(160, now);
-                osc.frequency.linearRampToValueAtTime(100, now + 0.25);
-                gain.gain.setValueAtTime(0.25, now);
-                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
-                osc.connect(gain);
-                gain.connect(ctx.destination);
-                osc.start(now);
-                osc.stop(now + 0.25);
-            } else if (type === "tap" || type === "pop") {
-                const osc = ctx.createOscillator();
-                const gain = ctx.createGain();
-                osc.type = "sine";
-                osc.frequency.setValueAtTime(450, now);
-                osc.frequency.exponentialRampToValueAtTime(750, now + 0.05);
-                gain.gain.setValueAtTime(0.15, now);
-                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
-                osc.connect(gain);
-                gain.connect(ctx.destination);
-                osc.start(now);
-                osc.stop(now + 0.08);
             } else if (type === "tick") {
                 const osc = ctx.createOscillator();
                 const gain = ctx.createGain();
@@ -252,30 +192,18 @@ export default function MathSpeedQuiz({
         } catch (e) {}
     }, [playAudioFeedback]);
 
-    // -------------------------------------------------------------
-    // GAME STATES & SETUP CONFIGURATION
-    // -------------------------------------------------------------
-    const [gameState, setGameState] = useState("setup"); // "setup" | "playing" | "result"
-    
-    // Sifir selection: Array of selected tables 1 to 12
+    // Game state: "setup" | "playing" | "result"
+    const [gameState, setGameState] = useState("setup");
     const [selectedTables, setSelectedTables] = useState([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]);
-    
-    // Game mode: "timed60" (60s countdown) or "sprint10" (10 quick questions)
-    const [gameMode, setGameMode] = useState("timed60");
+    const [gameMode, setGameMode] = useState("timed60"); // "timed60" | "sprint10"
 
-    // In-game dynamic question state
     const [currentQuestion, setCurrentQuestion] = useState(null);
-    const [questionIndex, setQuestionIndex] = useState(0); // For sprint10 mode (0 to 9)
+    const [questionIndex, setQuestionIndex] = useState(0);
     const [selectedAnswer, setSelectedAnswer] = useState(null);
     const [isAnswerLocked, setIsAnswerLocked] = useState(false);
 
-    // Scoring & Statistics
-    const [score, setScore] = useState(0);
-    const [correctCount, setCorrectCount] = useState(0);
-    const [wrongCount, setWrongCount] = useState(0);
+    // Scoring & History
     const [history, setHistory] = useState([]);
-
-    // Timers
     const [timeLeft60, setTimeLeft60] = useState(60);
     const [sprintTime, setSprintTime] = useState(0);
     const [questionStartTime, setQuestionStartTime] = useState(Date.now());
@@ -283,14 +211,11 @@ export default function MathSpeedQuiz({
 
     const isRunningRef = useRef(false);
 
-    // -------------------------------------------------------------
-    // TOGGLE SIFIR SELECTION
-    // -------------------------------------------------------------
     const toggleTable = (num) => {
         playLocalSound("tap");
         setSelectedTables((prev) => {
             if (prev.includes(num)) {
-                if (prev.length === 1) return prev; // Keep at least one selected
+                if (prev.length === 1) return prev;
                 return prev.filter((n) => n !== num);
             } else {
                 return [...prev, num].sort((a, b) => a - b);
@@ -303,16 +228,6 @@ export default function MathSpeedQuiz({
         setSelectedTables([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]);
     };
 
-    const selectPreset = (type) => {
-        playLocalSound("tap");
-        if (type === "basic") setSelectedTables([2, 5, 10]);
-        if (type === "intermediate") setSelectedTables([3, 4, 6]);
-        if (type === "advanced") setSelectedTables([7, 8, 9, 12]);
-    };
-
-    // -------------------------------------------------------------
-    // START NEW GAME
-    // -------------------------------------------------------------
     const startQuiz = () => {
         if (!isLoggedIn && onBlockedAction) {
             onBlockedAction();
@@ -320,10 +235,6 @@ export default function MathSpeedQuiz({
         }
 
         playLocalSound("tap");
-
-        setScore(0);
-        setCorrectCount(0);
-        setWrongCount(0);
         setHistory([]);
         setQuestionIndex(0);
         setSelectedAnswer(null);
@@ -340,9 +251,7 @@ export default function MathSpeedQuiz({
         isRunningRef.current = true;
     };
 
-    // -------------------------------------------------------------
-    // TIMER EFFECTS (PAUSES AUTOMATICALLY WHEN EXIT POPUP IS OPEN)
-    // -------------------------------------------------------------
+    // Countdown / Sprint timer
     useEffect(() => {
         let timer = null;
         if (gameState === "playing" && isRunningRef.current && !showExitConfirm) {
@@ -372,29 +281,22 @@ export default function MathSpeedQuiz({
         };
     }, [gameState, gameMode, playLocalSound]);
 
-    // -------------------------------------------------------------
-    // HANDLE ANSWER SELECTION
-    // -------------------------------------------------------------
+    // Handle answer selection (FORMAT PERTANDINGAN: NO INSTANT REVEAL!)
     const handleSelectAnswer = (option) => {
         if (isAnswerLocked || !currentQuestion) return;
 
         setIsAnswerLocked(true);
         setSelectedAnswer(option);
+        playLocalSound("tap");
 
         const isCorrect = option === currentQuestion.answer;
         const timeTakenForQ = +((Date.now() - questionStartTime) / 1000).toFixed(1);
 
+        // Calculate points
         let pointsAwarded = 0;
         if (isCorrect) {
-            playLocalSound("correct");
-            // Base 10 points + bonus for answering under 2.5s
             const speedBonus = timeTakenForQ <= 2.0 ? 5 : timeTakenForQ <= 3.5 ? 2 : 0;
             pointsAwarded = 10 + speedBonus;
-            setScore((prev) => prev + pointsAwarded);
-            setCorrectCount((prev) => prev + 1);
-        } else {
-            playLocalSound("wrong");
-            setWrongCount((prev) => prev + 1);
         }
 
         const record = {
@@ -408,16 +310,14 @@ export default function MathSpeedQuiz({
 
         setHistory((prev) => [...prev, record]);
 
-        // Auto advance after brief visual feedback (380ms)
+        // Immediate advance without revealing whether right or wrong (150ms neutral tap feedback)
         setTimeout(() => {
             if (!isRunningRef.current) return;
 
             if (gameMode === "sprint10" && questionIndex + 1 >= 10) {
-                // Sprint 10 finished!
                 isRunningRef.current = false;
                 finishQuiz();
             } else {
-                // Next question
                 const nextQ = generateMathQuestion(selectedTables);
                 setCurrentQuestion(nextQ);
                 setQuestionIndex((prev) => prev + 1);
@@ -425,120 +325,117 @@ export default function MathSpeedQuiz({
                 setIsAnswerLocked(false);
                 setQuestionStartTime(Date.now());
             }
-        }, 380);
+        }, 150);
     };
 
-    // -------------------------------------------------------------
-    // FINISH QUIZ & RESULT CALCULATIONS
-    // -------------------------------------------------------------
     const finishQuiz = useCallback(() => {
         isRunningRef.current = false;
         playLocalSound("victory");
         setGameState("result");
+    }, [playLocalSound]);
 
-        if (typeof onSubmitMathQuiz === "function") {
-            onSubmitMathQuiz(score);
+    // When moving to result, calculate final score, submit, and record for Parent Dashboard
+    useEffect(() => {
+        if (gameState === "result" && history.length > 0) {
+            const totalScore = history.reduce((sum, h) => sum + (h.points || 0), 0);
+            const totalAns = history.length;
+            const avgSpeedCalc = totalAns > 0
+                ? +(history.reduce((acc, h) => acc + h.timeTaken, 0) / totalAns).toFixed(1)
+                : 0;
+
+            // Simpan analisis matematik untuk Paparan Ibu Bapa
+            try {
+                const activeIC = typeof window !== "undefined"
+                    ? (localStorage.getItem("exploria_active_ic") || localStorage.getItem("exploria_student_ic"))
+                    : null;
+                const stuId = activeIC ? `STU-${activeIC.slice(-5)}` : "STU-15542";
+                const mathKey = `exploria_math_history_${activeIC || stuId}`;
+                const prev = JSON.parse(localStorage.getItem(mathKey) || "{}");
+
+                const fastest = prev.fastestTime ? Math.min(prev.fastestTime, avgSpeedCalc) : avgSpeedCalc;
+                const bestScore = Math.max(prev.highScore || 0, totalScore);
+                const tableStats = prev.tableStats || {};
+
+                history.forEach((h) => {
+                    const tbl = h.table || 2;
+                    if (!tableStats[tbl]) tableStats[tbl] = { correct: 0, total: 0 };
+                    tableStats[tbl].total += 1;
+                    if (h.isCorrect) tableStats[tbl].correct += 1;
+                });
+
+                localStorage.setItem(mathKey, JSON.stringify({
+                    fastestTime: fastest,
+                    highScore: bestScore,
+                    lastPlayed: new Date().toISOString(),
+                    tableStats,
+                }));
+            } catch (err) {
+                console.warn("Ralat merekod data matematik ibu bapa:", err);
+            }
+
+            if (typeof onSubmitMathQuiz === "function") {
+                onSubmitMathQuiz(totalScore);
+            }
         }
-    }, [playLocalSound, onSubmitMathQuiz, score]);
+    }, [gameState]);
 
-    // Summary calculations
-    const totalQuestions = correctCount + wrongCount;
-    const accuracy = totalQuestions > 0 ? Math.round((correctCount / totalQuestions) * 100) : 0;
-    const avgSpeed = history.length > 0
-        ? +(history.reduce((acc, h) => acc + h.timeTaken, 0) / history.length).toFixed(1)
+    // Calculations for Result Screen
+    const totalAnswered = history.length;
+    const correctCount = history.filter((h) => h.isCorrect).length;
+    const wrongCount = totalAnswered - correctCount;
+    const finalScore = history.reduce((sum, h) => sum + (h.points || 0), 0);
+    const accuracy = totalAnswered > 0 ? Math.round((correctCount / totalAnswered) * 100) : 0;
+    const avgSpeed = totalAnswered > 0
+        ? +(history.reduce((acc, h) => acc + h.timeTaken, 0) / totalAnswered).toFixed(1)
         : 0;
 
     /* =========================================================================
-       VIEW 1: SETUP SCREEN (SELECT MULTIPLICATION TABLES & GAME MODE)
+       VIEW 1: SETUP SCREEN (MINIMAL TEXT, 1-2 BUTTON COLORS)
        ========================================================================= */
     if (gameState === "setup") {
         return (
-            <div className="w-full max-w-xl mx-auto space-y-4 text-left">
-                {/* Header with Back button */}
-                <div className="flex items-center justify-between border-b border-indigo-200 pb-3">
-                    <div>
-                        <div className="flex items-center gap-2">
-                            <span className="text-2xl">🔢</span>
-                            <h2 className="text-xl sm:text-2xl font-black text-indigo-950 tracking-tight">
-                                Pertandingan Sifir Kilat
-                            </h2>
-                        </div>
-                        <p className="text-xs text-indigo-700 mt-0.5 font-semibold">
-                            Uji kepantasan congak pendaraban matematik anda!
-                        </p>
-                    </div>
+            <div className="w-full max-w-xl mx-auto space-y-4 anim-fade-in text-left">
+                {/* Header: Butang Back di kiri & Tajuk */}
+                <div className="flex items-center gap-3 border-b border-slate-100 pb-3 text-left">
                     <button
                         type="button"
                         onClick={() => {
                             playLocalSound("tap");
-                            onNavigate("activityList");
+                            if (typeof onNavigate === "function") {
+                                onNavigate("competitionList");
+                            }
                         }}
-                        className="px-3.5 py-2 bg-white hover:bg-slate-50 text-slate-700 font-black rounded-xl text-xs flex items-center gap-1.5 border border-slate-200 shadow-xs cursor-pointer transition-all active:scale-95"
+                        className="px-3.5 py-2 bg-white hover:bg-slate-50 text-slate-700 font-bold rounded-xl text-xs flex items-center gap-1.5 border border-slate-200 shadow-xs cursor-pointer active:scale-95 transition-all group shrink-0"
                     >
-                        <GraphicBackArrow className="w-4 h-4 text-slate-600" />
-                        <span>Aktiviti</span>
+                        <GraphicBackArrow className="w-4 h-4 text-slate-600 group-hover:-translate-x-0.5 transition-transform" />
+                        <span>Back</span>
                     </button>
-                </div>
-
-                {/* Hero Mascot Banner (Statik) */}
-                <div className="bg-gradient-to-br from-indigo-500 via-indigo-600 to-purple-600 rounded-3xl p-5 border-3 border-indigo-400 text-white shadow-md flex items-center gap-4">
-                    <div className="shrink-0">
-                        <GraphicMathMascot mood="happy" className="w-20 h-20 drop-shadow-md" />
-                    </div>
-                    <div className="space-y-1">
-                        <div className="inline-block bg-white/20 backdrop-blur-xs px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider">
-                            Matematik Pantas • Speed Challenge
-                        </div>
-                        <h3 className="text-base sm:text-lg font-black leading-tight">
-                            Asah Minda & Kuasai Sifir!
-                        </h3>
-                        <p className="text-xs text-indigo-100 font-medium">
-                            Pilih sifir kegemaran, tekan jawapan pantas, dan kumpul mata XP tertinggi!
+                    <div>
+                        <h2 className="text-xl sm:text-2xl font-black text-slate-800">
+                            {t ? t("Pertandingan Sifir Kilat", "Speed Math Challenge") : "Pertandingan Sifir Kilat"}
+                        </h2>
+                        <p className="text-xs text-slate-500 mt-0.5">
+                            {t ? t("Pilih sifir dan mulakan pertandingan.", "Choose tables and start the competition.") : "Pilih sifir dan mulakan pertandingan."}
                         </p>
                     </div>
                 </div>
 
-                {/* 1. Sifir Range Selector */}
-                <div className="bg-white rounded-3xl p-4 sm:p-5 border-2 border-indigo-200 shadow-xs space-y-3">
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                        <label className="text-xs sm:text-sm font-black text-slate-800 flex items-center gap-1.5">
-                            <span>🎯</span>
-                            <span>Pilih Julat Sifir:</span>
-                        </label>
-                        <div className="flex items-center gap-1.5 flex-wrap">
-                            <button
-                                type="button"
-                                onClick={() => selectPreset("basic")}
-                                className="px-2.5 py-1 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 rounded-lg text-[11px] font-bold border border-indigo-200 cursor-pointer"
-                            >
-                                Asas (2,5,10)
-                            </button>
-                            <button
-                                type="button"
-                                onClick={() => selectPreset("intermediate")}
-                                className="px-2.5 py-1 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 rounded-lg text-[11px] font-bold border border-indigo-200 cursor-pointer"
-                            >
-                                Sederhana (3,4,6)
-                            </button>
-                            <button
-                                type="button"
-                                onClick={() => selectPreset("advanced")}
-                                className="px-2.5 py-1 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 rounded-lg text-[11px] font-bold border border-indigo-200 cursor-pointer"
-                            >
-                                Cabaran (7,8,9,12)
-                            </button>
-                            <button
-                                type="button"
-                                onClick={selectAllTables}
-                                className="px-2.5 py-1 bg-purple-100 hover:bg-purple-200 text-purple-900 rounded-lg text-[11px] font-black border border-purple-300 cursor-pointer"
-                            >
-                                Semua (1-12)
-                            </button>
-                        </div>
+                {/* Sifir 1-12 Selector */}
+                <div className="bg-white rounded-3xl p-5 border-2 border-slate-200 shadow-xs space-y-3">
+                    <div className="flex items-center justify-between">
+                        <span className="text-xs font-black text-slate-800 uppercase tracking-wide">
+                            Pilihan Sifir (1 - 12):
+                        </span>
+                        <button
+                            type="button"
+                            onClick={selectAllTables}
+                            className="text-xs text-[#0099e5] hover:underline font-bold cursor-pointer"
+                        >
+                            Pilih Semua
+                        </button>
                     </div>
 
-                    {/* Sifir 1 to 12 Buttons Grid */}
-                    <div className="grid grid-cols-4 sm:grid-cols-6 gap-2 pt-1">
+                    <div className="grid grid-cols-4 sm:grid-cols-6 gap-2">
                         {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((num) => {
                             const isSelected = selectedTables.includes(num);
                             return (
@@ -546,103 +443,75 @@ export default function MathSpeedQuiz({
                                     key={num}
                                     type="button"
                                     onClick={() => toggleTable(num)}
-                                    className={`py-2.5 rounded-2xl text-xs font-black transition-colors cursor-pointer border-2 outline-none focus:outline-none flex flex-col items-center justify-center gap-0.5 shadow-2xs ${
+                                    className={`py-2.5 rounded-xl font-black text-sm border-2 transition-all cursor-pointer ${
                                         isSelected
-                                            ? "bg-gradient-to-b from-indigo-500 to-indigo-600 text-white border-indigo-500 shadow-sm"
-                                            : "bg-slate-50 text-slate-600 border-slate-200 hover:bg-indigo-50/50"
+                                            ? "bg-[#0099e5] text-white border-[#0088cc] shadow-xs scale-102"
+                                            : "bg-slate-50 text-slate-600 border-slate-200 hover:border-slate-300"
                                     }`}
                                 >
-                                    <span className="text-[10px] opacity-80 uppercase">Sifir</span>
-                                    <span className="text-sm sm:text-base">{num}</span>
+                                    Sifir {num}
                                 </button>
                             );
                         })}
                     </div>
-                    <p className="text-[11px] text-slate-400 font-medium text-center pt-1">
-                        {selectedTables.length === 12
-                            ? "Semua sifir 1 hingga 12 dipilih secara rawak."
-                            : `${selectedTables.length} sifir dipilih: Sifir ${selectedTables.join(", ")}`}
-                    </p>
                 </div>
 
-                {/* 2. Game Mode Selector */}
-                <div className="bg-white rounded-3xl p-4 sm:p-5 border-2 border-indigo-200 shadow-xs space-y-3">
-                    <label className="text-xs sm:text-sm font-black text-slate-800 flex items-center gap-1.5">
-                        <span>⚡</span>
-                        <span>Pilih Mod Permainan:</span>
-                    </label>
-
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                {/* Mod Pertandingan: 60s vs 10 Soalan */}
+                <div className="bg-white rounded-3xl p-5 border-2 border-slate-200 shadow-xs space-y-3">
+                    <span className="text-xs font-black text-slate-800 uppercase tracking-wide block">
+                        Mod Masa:
+                    </span>
+                    <div className="grid grid-cols-2 gap-3">
                         <button
                             type="button"
                             onClick={() => {
                                 playLocalSound("tap");
                                 setGameMode("timed60");
                             }}
-                            className={`p-4 rounded-2xl text-left border-2 border-slate-200 outline-none focus:outline-none focus:ring-0 transition-colors flex items-start gap-3 ${
+                            className={`p-3.5 rounded-2xl border-2 text-left transition-all cursor-pointer ${
                                 gameMode === "timed60"
-                                    ? "bg-indigo-50/70"
-                                    : "bg-slate-50 hover:bg-slate-100/60"
+                                    ? "bg-sky-50/80 border-[#0099e5] shadow-xs"
+                                    : "bg-slate-50 border-slate-200 hover:border-slate-300"
                             }`}
                         >
-                            <span className="text-3xl">⏱️</span>
-                            <div>
-                                <span className="block font-black text-slate-900 text-sm">
-                                    Cabaran 60 Saat
-                                </span>
-                                <span className="text-[11px] text-slate-500 leading-snug block mt-0.5">
-                                    Jawab sebanyak mungkin soalan dalam masa 1 minit. Uji kepantasan minda!
-                                </span>
-                            </div>
+                            <span className="text-xs font-black block text-slate-800">⏱️ Cabaran 60 Saat</span>
+                            <span className="text-[11px] text-slate-500 font-medium">Jawab sebanyak mungkin</span>
                         </button>
-
                         <button
                             type="button"
                             onClick={() => {
                                 playLocalSound("tap");
                                 setGameMode("sprint10");
                             }}
-                            className={`p-4 rounded-2xl text-left border-2 border-slate-200 outline-none focus:outline-none focus:ring-0 transition-colors flex items-start gap-3 ${
+                            className={`p-3.5 rounded-2xl border-2 text-left transition-all cursor-pointer ${
                                 gameMode === "sprint10"
-                                    ? "bg-indigo-50/70"
-                                    : "bg-slate-50 hover:bg-slate-100/60"
+                                    ? "bg-sky-50/80 border-[#0099e5] shadow-xs"
+                                    : "bg-slate-50 border-slate-200 hover:border-slate-300"
                             }`}
                         >
-                            <span className="text-3xl">⚡</span>
-                            <div>
-                                <span className="block font-black text-slate-900 text-sm">
-                                    10 Soalan Pantas
-                                </span>
-                                <span className="text-[11px] text-slate-500 leading-snug block mt-0.5">
-                                    Habiskan 10 soalan sepantas kilat. Catatkan rekod masa paling minimum!
-                                </span>
-                            </div>
+                            <span className="text-xs font-black block text-slate-800">⚡ 10 Soalan Pantas</span>
+                            <span className="text-[11px] text-slate-500 font-medium">Uji kepantasan minit</span>
                         </button>
                     </div>
                 </div>
 
-                {/* Best Record Pill */}
+                {/* Rekod Terbaik */}
                 {mathScore > 0 && (
-                    <div className="bg-emerald-50 border-2 border-emerald-300 p-3 rounded-2xl flex items-center justify-between">
-                        <div className="flex items-center gap-2">
-                            <span className="text-xl">🏆</span>
-                            <span className="text-xs font-black text-emerald-950">
-                                Rekod Skor Sifir: {mathScore} XP
-                            </span>
-                        </div>
-                        <span className="text-[11px] font-bold text-emerald-700 bg-emerald-100 px-2.5 py-0.5 rounded-full border border-emerald-200">
-                            Tercapai
+                    <div className="bg-sky-50 border border-sky-200 p-3 rounded-2xl flex items-center justify-between text-xs font-bold text-slate-700">
+                        <span>🏆 Rekod Terbaik: {mathScore} XP</span>
+                        <span className="text-[10px] uppercase font-black text-[#0099e5] bg-white px-2 py-0.5 rounded-md border border-sky-200">
+                            Tercatat
                         </span>
                     </div>
                 )}
 
-                {/* Big Action Start Button */}
+                {/* BUTTON 1: PRIMARY BLUE */}
                 <button
                     type="button"
                     onClick={startQuiz}
-                    className="w-full py-4 bg-gradient-to-r from-indigo-600 via-purple-600 to-indigo-600 hover:from-indigo-700 hover:to-purple-700 text-white font-black text-base rounded-2xl shadow-lg border-b-4 border-indigo-900 active:translate-y-1 transition-all cursor-pointer flex items-center justify-center gap-2"
+                    className="w-full py-4 bg-gradient-to-r from-[#0088cc] to-[#0099e5] hover:from-[#0077b6] hover:to-[#0088cc] text-white font-black text-base rounded-2xl shadow-md cursor-pointer transition-all active:scale-98 flex items-center justify-center gap-2"
                 >
-                    <span>Mula Bertanding</span>
+                    <span>Mula Pertandingan</span>
                     <span>🚀</span>
                 </button>
             </div>
@@ -650,119 +519,81 @@ export default function MathSpeedQuiz({
     }
 
     /* =========================================================================
-       VIEW 2: PLAYING SCREEN (INTERACTIVE FLASH QUESTIONS & 4 BIG BUTTONS)
+       VIEW 2: PLAYING SCREEN (FORMAT PERTANDINGAN: TIADA REVEAL / BETUL / SALAH)
        ========================================================================= */
     if (gameState === "playing" && currentQuestion) {
         const isUrgent = gameMode === "timed60" && timeLeft60 <= 10;
         const timerPercent = gameMode === "timed60" ? (timeLeft60 / 60) * 100 : ((10 - questionIndex) / 10) * 100;
 
         return (
-            <div className="w-full max-w-xl mx-auto space-y-3.5 anim-fade-in text-left">
+            <div className="w-full max-w-xl mx-auto space-y-4 anim-fade-in text-left">
                 {/* Top Status Bar */}
-                <div className="flex items-center justify-between bg-white px-3.5 py-2.5 rounded-2xl border-2 border-indigo-200 shadow-xs">
+                <div className="flex items-center justify-between bg-white px-4 py-2.5 rounded-2xl border-2 border-slate-200 shadow-xs">
+                    {/* BUTTON 2: SECONDARY WHITE */}
                     <button
                         type="button"
                         onClick={() => {
                             playLocalSound("tap");
                             setShowExitConfirm(true);
                         }}
-                        className="px-2.5 py-1 bg-slate-50 hover:bg-rose-50 text-slate-600 hover:text-rose-600 font-bold rounded-xl text-xs flex items-center gap-1 border border-slate-200 cursor-pointer transition-colors"
-                        title="Keluar dari Kuiz Sifir"
+                        className="px-3 py-1 bg-white hover:bg-slate-50 text-slate-600 font-bold rounded-xl text-xs flex items-center gap-1 border border-slate-200 cursor-pointer"
                     >
-                        <GraphicBackArrow className="w-3.5 h-3.5" />
+                        <GraphicBackArrow className="w-3.5 h-3.5 text-slate-500" />
                         <span>Keluar</span>
                     </button>
 
-                    {/* Mode Progress */}
-                    <div className="flex items-center gap-2">
+                    {/* Progress Info */}
+                    <div className="text-xs font-black text-slate-700 bg-slate-100 px-3 py-1 rounded-full border border-slate-200">
                         {gameMode === "timed60" ? (
-                            <span className="text-xs font-black text-indigo-950 bg-indigo-100 px-3 py-1 rounded-full border border-indigo-300">
-                                Selesai: {correctCount + wrongCount} soalan
-                            </span>
+                            <span>Soalan Ke-{history.length + 1}</span>
                         ) : (
-                            <span className="text-xs font-black text-indigo-950 bg-indigo-100 px-3 py-1 rounded-full border border-indigo-300">
-                                Soalan {questionIndex + 1} / 10
-                            </span>
+                            <span>Soalan {questionIndex + 1} / 10</span>
                         )}
                     </div>
 
-                    {/* Live score indicator */}
-                    <div className="text-xs font-black text-amber-700 flex items-center gap-1 bg-amber-50 px-3 py-1 rounded-full border border-amber-200">
-                        <span>⭐</span>
-                        <span>{score} Mata</span>
+                    {/* Timer Indicator */}
+                    <div className="flex items-center gap-1.5 text-xs font-black">
+                        <GraphicTimer className={`w-4 h-4 ${isUrgent ? "text-rose-600 animate-bounce" : "text-[#0099e5]"}`} />
+                        <span className={isUrgent ? "text-rose-600 animate-pulse font-black" : "text-slate-800"}>
+                            {gameMode === "timed60" ? `${timeLeft60}s` : `${sprintTime}s`}
+                        </span>
                     </div>
                 </div>
 
                 {/* Main Interactive Stage */}
-                <div className="bg-white rounded-3xl p-5 border-3 border-indigo-300 shadow-xl space-y-4 relative">
-                    {/* Timer Bar */}
-                    <div className="space-y-1">
-                        <div className="flex items-center justify-between text-xs font-bold text-slate-500">
-                            <span className="flex items-center gap-1">
-                                <GraphicTimer className={`w-4 h-4 ${isUrgent ? "text-rose-600 animate-bounce" : "text-indigo-600"}`} />
-                                {gameMode === "timed60" ? (
-                                    <span className={isUrgent ? "text-rose-600 font-black animate-pulse" : "text-slate-700 font-black"}>
-                                        Baki Masa: {timeLeft60}s
-                                    </span>
-                                ) : (
-                                    <span className="text-slate-700 font-black">
-                                        Masa: {sprintTime}s
-                                    </span>
-                                )}
-                            </span>
-                            <span className="text-[11px] font-bold text-slate-400">
-                                {gameMode === "timed60" ? "Had: 60 Saat" : "Pecutan 10 Soalan"}
-                            </span>
-                        </div>
-                        <div className="w-full h-2.5 bg-slate-100 rounded-full overflow-hidden p-0.5 border border-slate-200">
-                            <div
-                                className={`h-full rounded-full transition-all duration-300 ${
-                                    isUrgent
-                                        ? "bg-rose-500 animate-pulse"
-                                        : "bg-gradient-to-r from-indigo-500 to-purple-500"
-                                }`}
-                                style={{ width: `${timerPercent}%` }}
-                            />
-                        </div>
+                <div className="bg-white rounded-3xl p-6 border-2 border-slate-200 shadow-md space-y-5 relative">
+                    {/* Progress Timer Bar */}
+                    <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden border border-slate-200">
+                        <div
+                            className={`h-full rounded-full transition-all duration-300 ${
+                                isUrgent ? "bg-rose-500" : "bg-[#0099e5]"
+                            }`}
+                            style={{ width: `${timerPercent}%` }}
+                        />
                     </div>
 
-                    {/* Giant Multiplication Card */}
-                    <div className="bg-gradient-to-b from-indigo-50/80 via-white to-purple-50/50 p-6 sm:p-8 rounded-3xl border-2 border-indigo-200 text-center space-y-2 relative overflow-hidden shadow-inner">
-                        <div className="inline-block bg-indigo-100 text-indigo-900 px-3 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider mb-1">
+                    {/* Multiplication Card */}
+                    <div className="bg-slate-50 p-6 sm:p-8 rounded-2xl border-2 border-slate-200 text-center space-y-2">
+                        <span className="inline-block bg-white text-slate-700 border border-slate-200 px-3 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider">
                             Sifir {currentQuestion.table}
-                        </div>
+                        </span>
 
-                        {/* Equation Typography */}
-                        <div className="text-4xl sm:text-6xl font-black text-slate-900 tracking-tight font-mono select-none drop-shadow-xs">
+                        <div className="text-5xl sm:text-6xl font-black text-slate-900 tracking-tight font-mono select-none">
                             <span>{currentQuestion.table}</span>
-                            <span className="text-indigo-600 mx-2 sm:mx-3">×</span>
+                            <span className="text-[#0099e5] mx-3">×</span>
                             <span>{currentQuestion.multiplier}</span>
-                            <span className="text-slate-400 mx-2 sm:mx-3">=</span>
-                            <span className="text-purple-600">?</span>
+                            <span className="text-slate-400 mx-3">=</span>
+                            <span className="text-[#0099e5]">?</span>
                         </div>
-
-                        <p className="text-xs text-slate-400 font-semibold">
-                            Pilih jawapan yang betul di bawah
-                        </p>
                     </div>
 
-                    {/* 4 Big, Highly Responsive Answer Buttons (2x2 Grid) */}
+                    {/* 4 Answer Options (NO REVEAL OF CORRECT/WRONG UNTIL END) */}
                     <div className="grid grid-cols-2 gap-3 sm:gap-4 pt-1">
                         {currentQuestion.options.map((option, idx) => {
-                            let btnStyle = "bg-slate-50 hover:bg-indigo-50/60 text-slate-800 border-slate-200 hover:border-indigo-400 active:scale-97";
-
-                            if (isAnswerLocked) {
-                                if (option === currentQuestion.answer) {
-                                    // Highlight correct answer in green
-                                    btnStyle = "bg-emerald-500 text-white border-emerald-600 ring-4 ring-emerald-300 scale-102 font-black shadow-md";
-                                } else if (option === selectedAnswer) {
-                                    // Highlight wrong selected answer in red
-                                    btnStyle = "bg-rose-500 text-white border-rose-600 ring-4 ring-rose-300 line-through font-black";
-                                } else {
-                                    // Fade other options
-                                    btnStyle = "bg-slate-100 text-slate-400 border-slate-200 opacity-60";
-                                }
-                            }
+                            const isSelected = option === selectedAnswer;
+                            const btnStyle = isSelected
+                                ? "bg-[#0099e5] text-white border-[#0088cc] scale-98"
+                                : "bg-white hover:bg-slate-50 text-slate-800 border-slate-200 hover:border-[#0099e5] active:scale-97";
 
                             return (
                                 <button
@@ -770,70 +601,45 @@ export default function MathSpeedQuiz({
                                     type="button"
                                     disabled={isAnswerLocked}
                                     onClick={() => handleSelectAnswer(option)}
-                                    className={`min-h-[72px] sm:min-h-[84px] p-3 rounded-2xl border-3 font-mono font-black text-2xl sm:text-3xl shadow-sm transition-all duration-150 flex items-center justify-center cursor-pointer select-none relative ${btnStyle}`}
+                                    className={`min-h-[72px] sm:min-h-[80px] p-3 rounded-2xl border-2 font-mono font-black text-2xl sm:text-3xl shadow-xs transition-all duration-100 flex items-center justify-center cursor-pointer select-none ${btnStyle}`}
                                 >
                                     <span>{option}</span>
-                                    {isAnswerLocked && option === currentQuestion.answer && (
-                                        <span className="absolute top-1.5 right-2 text-xs bg-white text-emerald-700 px-1.5 py-0.5 rounded-full font-black">
-                                            ✓
-                                        </span>
-                                    )}
-                                    {isAnswerLocked && option === selectedAnswer && option !== currentQuestion.answer && (
-                                        <span className="absolute top-1.5 right-2 text-xs bg-white text-rose-700 px-1.5 py-0.5 rounded-full font-black">
-                                            ✕
-                                        </span>
-                                    )}
                                 </button>
                             );
                         })}
                     </div>
-
-                    {/* Live correct counter pill */}
-                    <div className="flex items-center justify-between text-xs text-slate-500 font-bold px-2 pt-1 border-t border-slate-100">
-                        <span className="text-emerald-700 flex items-center gap-1">
-                            <span>✅ Betul:</span> <strong>{correctCount}</strong>
-                        </span>
-                        <span className="text-rose-600 flex items-center gap-1">
-                            <span>❌ Salah:</span> <strong>{wrongCount}</strong>
-                        </span>
-                    </div>
                 </div>
 
-                {/* Pop-up Pengesahan Keluar Aktiviti */}
+                {/* Pop-up Pengesahan Keluar */}
                 {showExitConfirm && (
                     <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 z-50 anim-fade-in">
-                        <div className="bg-white rounded-3xl p-5 sm:p-6 max-w-sm w-full border-3 border-indigo-300 shadow-2xl text-center space-y-4 anim-pop">
-                            <div className="w-16 h-16 bg-amber-100 rounded-full flex items-center justify-center mx-auto text-3xl shadow-inner border border-amber-300">
+                        <div className="bg-white rounded-3xl p-5 sm:p-6 max-w-sm w-full border-2 border-slate-200 shadow-2xl text-center space-y-4 anim-pop">
+                            <div className="w-14 h-14 bg-sky-50 rounded-full flex items-center justify-center mx-auto text-2xl border border-sky-200">
                                 ⚠️
                             </div>
                             <div>
-                                <h3 className="text-lg font-black text-slate-900">
-                                    Sahkan Keluar Kuiz?
+                                <h3 className="text-base font-black text-slate-900">
+                                    Keluar Dari Pertandingan?
                                 </h3>
-                                <p className="text-xs text-slate-500 mt-1 leading-relaxed">
-                                    Adakah anda pasti mahu keluar dari kuiz sifir sekarang? Kemajuan semasa anda tidak akan disimpan.
+                                <p className="text-xs text-slate-500 mt-1">
+                                    Keputusan pertandingan tidak akan direkod jika keluar sekarang.
                                 </p>
                             </div>
-                            <div className="flex flex-col sm:flex-row gap-2.5 pt-1">
+                            <div className="flex gap-2 pt-1">
                                 <button
                                     type="button"
-                                    onClick={() => {
-                                        playLocalSound("tap");
-                                        setShowExitConfirm(false);
-                                    }}
-                                    className="flex-1 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-black rounded-xl text-xs shadow-md active:scale-95 transition-all cursor-pointer"
+                                    onClick={() => setShowExitConfirm(false)}
+                                    className="flex-1 py-2.5 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold rounded-xl text-xs cursor-pointer"
                                 >
-                                    Teruskan Kuiz
+                                    Teruskan
                                 </button>
                                 <button
                                     type="button"
                                     onClick={() => {
-                                        playLocalSound("tap");
-                                        setShowExitConfirm(false);
                                         isRunningRef.current = false;
                                         setGameState("setup");
                                     }}
-                                    className="flex-1 py-3 bg-rose-50 hover:bg-rose-100 text-rose-700 font-black rounded-xl text-xs border border-rose-200 active:scale-95 transition-all cursor-pointer"
+                                    className="flex-1 py-2.5 bg-[#0099e5] hover:bg-[#0088cc] text-white font-bold rounded-xl text-xs cursor-pointer"
                                 >
                                     Ya, Keluar
                                 </button>
@@ -846,55 +652,64 @@ export default function MathSpeedQuiz({
     }
 
     /* =========================================================================
-       VIEW 3: RESULT SCREEN (COMPREHENSIVE PERFORMANCE SUMMARY)
+       VIEW 3: RESULT SCREEN (KEPUTUSAN & PEMBETULAN PENUH HANYA DI SINI!)
        ========================================================================= */
     return (
         <div className="w-full max-w-xl mx-auto space-y-4 anim-fade-in text-left">
-            {/* Header */}
-            <div className="bg-gradient-to-br from-indigo-500 via-indigo-600 to-purple-600 rounded-3xl p-5 sm:p-6 border-3 border-indigo-400 text-white shadow-xl text-center space-y-3 relative overflow-hidden">
+            {/* Header Keputusan */}
+            <div className="bg-gradient-to-r from-[#0088cc] to-[#0099e5] rounded-3xl p-5 sm:p-6 border-2 border-white/20 text-white shadow-md text-center space-y-3">
                 <div className="flex justify-center anim-pop">
-                    <GraphicTrophy className="w-20 h-20 drop-shadow-md" />
+                    <GraphicTrophy className="w-16 h-16 drop-shadow-sm" />
                 </div>
 
                 <div>
-                    <div className="inline-block bg-white/20 backdrop-blur-xs px-3 py-0.5 rounded-full text-xs font-black uppercase tracking-wider mb-1">
-                        Keputusan Pertandingan Sifir
-                    </div>
-                    <h2 className="text-xl sm:text-2xl font-black">
-                        {accuracy >= 80 ? "Hebat! Juara Sifir Kilat!" : accuracy >= 50 ? "Tahniah! Usaha Yang Bagus!" : "Teruskan Berlatih Sifir!"}
+                    <span className="inline-block bg-white/20 px-3 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider mb-1">
+                        Keputusan Rasmi Pertandingan
+                    </span>
+                    <h2 className="text-2xl font-black">
+                        {accuracy >= 80 ? "Hebat! Cemerlang!" : accuracy >= 50 ? "Tahniah! Teruskan Usaha!" : "Latihan Lagi, Pasti Boleh!"}
                     </h2>
-                    <p className="text-xs text-indigo-100 mt-0.5 font-medium">
+                    <p className="text-xs text-sky-100 mt-0.5">
                         {gameMode === "timed60"
-                            ? `Menjawab ${totalQuestions} soalan dalam masa 60 saat!`
-                            : `Berjaya menamatkan 10 soalan dalam masa ${sprintTime} saat!`}
+                            ? `Menjawab ${totalAnswered} soalan dalam 60 saat`
+                            : `Selesai 10 soalan dalam ${sprintTime} saat`}
                     </p>
                 </div>
 
-                {/* Score & Stats 3-Column Grid */}
+                {/* Ringkasan Skor 3 Kolum */}
                 <div className="grid grid-cols-3 gap-2.5 pt-1 text-slate-800">
-                    <div className="bg-white/95 p-3 rounded-2xl border border-indigo-200 shadow-xs text-center">
-                        <div className="text-[10px] font-black uppercase text-indigo-800">Jumlah Skor</div>
-                        <div className="text-xl sm:text-2xl font-black text-amber-600 mt-0.5">+{score}</div>
+                    <div className="bg-white p-3 rounded-2xl border border-slate-200 text-center shadow-xs">
+                        <div className="text-[10px] font-black uppercase text-slate-500">Skor Terkumpul</div>
+                        <div className="text-xl font-black text-[#0099e5] mt-0.5">+{finalScore} XP</div>
                     </div>
-                    <div className="bg-white/95 p-3 rounded-2xl border border-indigo-200 shadow-xs text-center">
-                        <div className="text-[10px] font-black uppercase text-indigo-800">Ketepatan</div>
-                        <div className="text-xl sm:text-2xl font-black text-emerald-700 mt-0.5">{accuracy}%</div>
+                    <div className="bg-white p-3 rounded-2xl border border-slate-200 text-center shadow-xs">
+                        <div className="text-[10px] font-black uppercase text-slate-500">Ketepatan</div>
+                        <div className="text-xl font-black text-emerald-600 mt-0.5">{accuracy}%</div>
                     </div>
-                    <div className="bg-white/95 p-3 rounded-2xl border border-indigo-200 shadow-xs text-center">
-                        <div className="text-[10px] font-black uppercase text-indigo-800">Purata Masa</div>
-                        <div className="text-xl sm:text-2xl font-black text-slate-800 mt-0.5">{avgSpeed}s</div>
+                    <div className="bg-white p-3 rounded-2xl border border-slate-200 text-center shadow-xs">
+                        <div className="text-[10px] font-black uppercase text-slate-500">Purata Masa</div>
+                        <div className="text-xl font-black text-slate-700 mt-0.5">{avgSpeed}s</div>
+                    </div>
+                </div>
+
+                {/* Ganjaran Koin Bintang */}
+                <div className="bg-gradient-to-r from-amber-400 via-yellow-300 to-amber-400 text-amber-950 font-black px-4 py-2.5 rounded-2xl shadow-sm border-2 border-white flex items-center justify-center gap-2 anim-pop">
+                    <span className="text-2xl">🌟</span>
+                    <div>
+                        <span className="text-[10px] uppercase font-bold text-amber-900 block leading-tight">Ganjaran Koin Pertandingan</span>
+                        <span className="text-base font-black">+{accuracy >= 80 ? 20 : accuracy >= 50 ? 15 : 10} Koin Bintang Diperoleh!</span>
                     </div>
                 </div>
             </div>
 
-            {/* Questions Review History List */}
-            <div className="bg-white rounded-3xl p-4 sm:p-5 border-2 border-indigo-200 shadow-xs space-y-3">
+            {/* SEKSYEN PEMBETULAN & SEMAKAN (HANYA DI SINI) */}
+            <div className="bg-white rounded-3xl p-5 border-2 border-slate-200 shadow-xs space-y-3">
                 <div className="flex items-center justify-between border-b border-slate-100 pb-2.5">
                     <h3 className="text-xs sm:text-sm font-black text-slate-800 flex items-center gap-1.5">
-                        <span>📝</span> Senarai Semakan Soalan ({correctCount}/{totalQuestions} Betul)
+                        <span>📝</span> Pembetulan & Semakan Soalan
                     </h3>
-                    <span className="text-[11px] font-bold text-slate-500">
-                        {gameMode === "timed60" ? "Mod 60 Saat" : "Pecutan 10 Soalan"}
+                    <span className="text-xs font-bold text-slate-600">
+                        {correctCount} / {totalAnswered} Betul
                     </span>
                 </div>
 
@@ -907,9 +722,11 @@ export default function MathSpeedQuiz({
                             }`}
                         >
                             <div className="flex items-center gap-2.5">
-                                <span className={`w-6 h-6 rounded-full flex items-center justify-center text-white text-xs font-black shrink-0 ${
-                                    item.isCorrect ? "bg-emerald-600" : "bg-rose-600"
-                                }`}>
+                                <span
+                                    className={`w-6 h-6 rounded-full flex items-center justify-center text-white text-xs font-black shrink-0 ${
+                                        item.isCorrect ? "bg-emerald-600" : "bg-rose-600"
+                                    }`}
+                                >
                                     {item.isCorrect ? "✓" : "✕"}
                                 </span>
                                 <div>
@@ -937,40 +754,34 @@ export default function MathSpeedQuiz({
                 </div>
             </div>
 
-            {/* Actions */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
-                <button
-                    type="button"
-                    onClick={() => {
-                        playLocalSound("tap");
-                        setGameState("setup");
-                    }}
-                    className="py-3.5 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-black rounded-2xl shadow-md border-b-3 border-indigo-900 active:translate-y-0.5 transition-all cursor-pointer flex items-center justify-center gap-2 text-xs sm:text-sm"
-                >
-                    <span>✅</span>
-                    <span>Selesai</span>
-                </button>
+            {/* BUTANG TINDAKAN (1-2 WARNA STANDARD) */}
+            <div className="grid grid-cols-2 gap-3 pt-1">
+                {/* BUTANG 1: PRIMARY BLUE */}
                 <button
                     type="button"
                     onClick={() => {
                         playLocalSound("tap");
                         startQuiz();
                     }}
-                    className="py-3.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-800 font-black rounded-2xl shadow-xs border-2 border-indigo-200 active:translate-y-0.5 transition-all cursor-pointer flex items-center justify-center gap-2 text-xs sm:text-sm"
+                    className="py-3.5 bg-gradient-to-r from-[#0088cc] to-[#0099e5] hover:from-[#0077b6] hover:to-[#0088cc] text-white font-black rounded-2xl shadow-xs cursor-pointer transition-all active:scale-98 flex items-center justify-center gap-1.5 text-xs sm:text-sm"
                 >
                     <span>🔄</span>
                     <span>Main Semula</span>
                 </button>
+
+                {/* BUTANG 2: SECONDARY WHITE */}
                 <button
                     type="button"
                     onClick={() => {
                         playLocalSound("tap");
-                        onNavigate("activityList");
+                        if (typeof onNavigate === "function") {
+                            onNavigate("competitionList");
+                        }
                     }}
-                    className="py-3.5 bg-white hover:bg-slate-50 text-slate-700 font-black rounded-2xl shadow-xs border-2 border-slate-200 active:translate-y-0.5 transition-all cursor-pointer flex items-center justify-center gap-2 text-xs sm:text-sm"
+                    className="py-3.5 bg-white hover:bg-slate-50 text-slate-700 font-black rounded-2xl shadow-xs border border-slate-200 cursor-pointer transition-all active:scale-98 flex items-center justify-center gap-1.5 text-xs sm:text-sm"
                 >
-                    <span>🏠</span>
-                    <span>Kembali ke Aktiviti</span>
+                    <GraphicBackArrow className="w-4 h-4 text-slate-600" />
+                    <span>Back</span>
                 </button>
             </div>
         </div>

@@ -84,7 +84,7 @@ export default function AuthGatewayView({
                     <div className="mt-5 pt-3 border-t border-slate-100">
                         <button
                             type="button"
-                            className="w-full py-2.5 bg-gradient-to-r from-[#0088cc] to-[#0099e5] group-hover:from-[#0077b6] group-hover:to-[#0088cc] text-white font-black text-xs rounded-xl shadow-sm flex items-center justify-center gap-1.5 transition-all"
+                            className="w-full py-2.5 bg-transparent border-2 border-[#0099e5] text-[#0099e5] hover:bg-[#0099e5]/10 font-black text-xs rounded-xl flex items-center justify-center gap-1.5 transition-all"
                         >
                             <span>{t ? t("Log Masuk Sekarang", "Log In Now") : "Log Masuk Sekarang"}</span>
                             <GraphicArrowRight className="w-3.5 h-3.5" />
@@ -95,26 +95,26 @@ export default function AuthGatewayView({
                 {/* PILIHAN 2: DAFTAR AKAUN (HIGHLIGHTED / RECOMMENDED) */}
                 <div
                     onClick={() => handleAction("sparkle", () => onNavigate && onNavigate("register"))}
-                    className="bg-gradient-to-b from-white via-amber-50/30 to-orange-50/40 rounded-3xl p-5 sm:p-6 border-3 border-amber-400 hover:border-amber-500 shadow-lg hover:shadow-2xl hover:-translate-y-1.5 active:scale-98 transition-all duration-300 cursor-pointer flex flex-col justify-between relative overflow-hidden group ring-3 ring-amber-300/40"
+                    className="bg-white rounded-3xl p-5 sm:p-6 border-3 border-sky-400 hover:border-sky-500 shadow-lg hover:shadow-2xl hover:-translate-y-1.5 active:scale-98 transition-all duration-300 cursor-pointer flex flex-col justify-between relative overflow-hidden group ring-3 ring-sky-200/50"
                 >
-                    {/* Pulsing Recommended Pill */}
-                    <div className="absolute top-0 right-0 bg-gradient-to-l from-amber-400 to-orange-400 text-slate-950 font-black text-[9px] uppercase px-3 py-1 rounded-bl-xl shadow-xs">
+                    {/* Recommended Pill */}
+                    <div className="absolute top-0 right-0 bg-[#0099e5] text-white font-black text-[9px] uppercase px-3 py-1 rounded-bl-xl shadow-xs">
                         ⭐ {t ? t("Disyorkan • Bonus 100 XP", "Recommended • 100 XP") : "Disyorkan • Bonus 100 XP"}
                     </div>
 
                     <div>
                         <div className="flex items-center justify-between gap-2 mb-3 mt-1">
-                            <span className="text-[10px] font-black uppercase tracking-wider bg-amber-400 text-slate-950 px-2.5 py-0.5 rounded-full shadow-xs">
+                            <span className="text-[10px] font-black uppercase tracking-wider bg-sky-100 text-sky-800 px-2.5 py-0.5 rounded-full border border-sky-200">
                                 {t ? t("Murid Baharu", "New Student") : "Murid Baharu"}
                             </span>
                             <span className="text-2xl">✨</span>
                         </div>
 
-                        <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-amber-400 via-orange-400 to-rose-400 text-slate-950 flex items-center justify-center text-2xl shadow-md mb-3 group-hover:rotate-6 transition-transform">
+                        <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-[#0088cc] to-sky-400 text-white flex items-center justify-center text-2xl shadow-md mb-3 group-hover:rotate-6 transition-transform">
                             📝
                         </div>
 
-                        <h3 className="text-lg font-black text-slate-900 group-hover:text-amber-600 transition-colors">
+                        <h3 className="text-lg font-black text-slate-900 group-hover:text-[#0088cc] transition-colors">
                             {t ? t("2. Daftar Murid", "2. Register Student") : "2. Daftar Murid"}
                         </h3>
                         <p className="text-xs text-slate-600 font-medium mt-1 leading-relaxed">
@@ -127,10 +127,10 @@ export default function AuthGatewayView({
                         </p>
                     </div>
 
-                    <div className="mt-5 pt-3 border-t border-amber-100">
+                    <div className="mt-5 pt-3 border-t border-slate-100">
                         <button
                             type="button"
-                            className="w-full py-2.5 bg-gradient-to-r from-amber-400 via-orange-400 to-amber-500 hover:from-amber-300 hover:to-orange-300 text-slate-950 font-black text-xs rounded-xl shadow-md flex items-center justify-center gap-1.5 transition-all"
+                            className="w-full py-2.5 bg-gradient-to-r from-[#0088cc] to-[#0099e5] hover:from-[#0077b6] hover:to-[#0088cc] text-white font-black text-xs rounded-xl shadow-md flex items-center justify-center gap-1.5 transition-all"
                         >
                             <span>{t ? t("Daftar Percuma", "Register Free") : "Daftar Percuma"}</span>
                             <GraphicArrowRight className="w-3.5 h-3.5" />

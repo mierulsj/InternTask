@@ -24,17 +24,32 @@ export default function NotesTab({
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                {topics.map((topic) => (
+                {topics.map((topic, idx) => (
                     <div
                         key={topic.id}
                         className="bg-slate-50/70 p-4 rounded-xl border border-slate-200 space-y-2.5 relative hover:border-cyan-400 hover:shadow-sm transition-all"
                     >
                         <div className="flex justify-between items-start gap-2">
                             <div>
-                                <span className="text-[10px] font-mono text-cyan-800 bg-cyan-50 px-2 py-0.5 rounded border border-cyan-200 font-bold">
-                                    {topic.category || "Sains"}
-                                </span>
+                                <div className="flex items-center gap-1.5 flex-wrap">
+                                    <span className="text-[10px] font-mono text-cyan-800 bg-cyan-50 px-2 py-0.5 rounded border border-cyan-200 font-black">
+                                        Lesson {idx + 1}
+                                    </span>
+                                    <span className="text-[10px] font-mono text-slate-700 bg-slate-100 px-2 py-0.5 rounded border border-slate-200 font-bold">
+                                        {topic.category || "Sains"}
+                                    </span>
+                                    {topic.graphicType && (
+                                        <span className="text-[10px] font-bold text-amber-700 bg-amber-50 px-1.5 py-0.5 rounded border border-amber-200">
+                                            {topic.graphicType === "planet" ? "🪐 Planet" : topic.graphicType === "plant" ? "🌱 Tumbuhan" : topic.graphicType === "rocket" ? "🚀 Roket" : topic.graphicType === "energy" ? "⚡ Tenaga" : "📚 Buku"}
+                                        </span>
+                                    )}
+                                </div>
                                 <h4 className="text-sm font-black text-slate-900 mt-1">{topic.title}</h4>
+                                {topic.shortTitle && topic.shortTitle !== topic.title && (
+                                    <p className="text-[11px] text-slate-500 font-semibold mt-0.5">
+                                        Kad Explore: <span className="font-bold text-slate-700">{topic.shortTitle}</span>
+                                    </p>
+                                )}
                             </div>
                             <div className="flex items-center gap-1.5 shrink-0">
                                 <button

@@ -38,203 +38,8 @@ export default function SolarActivityView({
     onBlockedAction = null,
 }) {
     const [showExitConfirm, setShowExitConfirm] = useState(false);
-    if (currentView === "activityList") {
-        return (
-            <div className="space-y-6 w-full max-w-xl anim-fade-in">
-                            <div className="flex items-center justify-between w-full border-b border-slate-100 pb-3">
-                                <div>
-                                    <h2 className="text-xl sm:text-2xl font-black text-purple-700 text-left">
-                                        Pusat Permainan & Aktiviti
-                                    </h2>
-                                    <p className="text-xs text-slate-500 text-left mt-0.5">Pilih aktiviti santai untuk bermain sambil belajar</p>
-                                </div>
-                                <button
-                                    onClick={() => { playAudioFeedback?.("tap"); onNavigate("menu"); }}
-                                    className="px-4 py-2.5 btn-3d-white text-slate-700 font-black rounded-xl text-xs cursor-pointer flex items-center gap-2 border border-slate-200"
-                                >
-                                    <GraphicBackArrow className="w-4 h-4 text-slate-600" />
-                                    <span>Kembali</span>
-                                </button>
-                            </div>
-
-                            {/* Maskot Robot Speech (Statik) */}
-                            <div className="flex items-center gap-4 bg-purple-50 p-4 rounded-3xl border-2 border-purple-200 text-left">
-                                <div className="shrink-0">
-                                    <GraphicMascotRobot className="w-14 h-14" />
-                                </div>
-                                <div>
-                                    <span className="text-[10px] font-black uppercase text-purple-700 bg-purple-100 px-2 py-0.5 rounded-full">
-                                        Aktiviti Tanpa Timer
-                                    </span>
-                                    <p className="text-xs sm:text-sm font-bold text-slate-700 mt-1 leading-snug">
-                                        &ldquo;Uji ketepatan minda anda! Seret planet ke orbit yang betul dan kumpulkan markah maksimum!&rdquo;
-                                    </p>
-                                </div>
-                            </div>
-
-                            <div className="space-y-4 w-full">
-                                {/* Permainan 1: Susun Sistem Suria (Aktif & Boleh Dimainkan) */}
-                                <div
-                                    onClick={() => {
-                                        if (!isLoggedIn) {
-                                            if (onBlockedAction) onBlockedAction();
-                                            return;
-                                        }
-                                        onResetSolarGame?.();
-                                        onNavigate("solarDragDrop");
-                                    }}
-                                    className="bg-gradient-to-r from-purple-50 via-indigo-50 to-sky-50 border-3 border-purple-400 hover:border-purple-600 p-5 sm:p-6 rounded-3xl cursor-pointer transition-all duration-300 shadow-md hover:shadow-xl hover:-translate-y-1.5 active:translate-y-0 group relative overflow-hidden"
-                                >
-                                    <div className="flex items-center justify-between">
-                                        <div className="flex items-center gap-4">
-                                            <div className="w-16 h-16 rounded-2xl bg-slate-900 border-2 border-purple-400/50 flex items-center justify-center shrink-0 shadow-md group-hover:scale-110 group-hover:rotate-3 transition-transform">
-                                                <GraphicPlanetIcon planetId="zuhal" className="w-12 h-12" />
-                                            </div>
-                                            <div className="text-left">
-                                                <div className="flex items-center gap-2 mb-1">
-                                                    <span className="text-[10px] font-black uppercase tracking-wider text-purple-700 bg-purple-100 px-2.5 py-0.5 rounded-full border border-purple-200">
-                                                        Drag & Drop
-                                                    </span>
-                                                    <span className="text-[10px] font-bold text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded-full border border-emerald-200">
-                                                        8 Planet • Tiada Timer
-                                                    </span>
-                                                </div>
-                                                <h3 className="text-lg font-black text-slate-800 group-hover:text-purple-700 transition-colors">
-                                                    {t ? t("Susun Sistem Suria", "Arrange Solar System") : "Susun Sistem Suria"}
-                                                </h3>
-                                                <p className="text-xs text-slate-600 mt-0.5">
-                                                    Susun 8 planet ke dalam orbit mengikut jarak dari Matahari. Kumpul 800 mata!
-                                                </p>
-                                            </div>
-                                        </div>
-                                        <div className="w-11 h-11 rounded-2xl bg-purple-600 text-white flex items-center justify-center shrink-0 shadow-md group-hover:bg-purple-700 group-hover:scale-105 transition-all">
-                                            <GraphicArrowRight className="w-5 h-5" />
-                                        </div>
-                                    </div>
-                                </div>
-
-                                {/* Permainan 2: Makmal Tumbuhan Cilik & Kebun Fotosintesis (BARU & AKTIF!) */}
-                                <div
-                                    onClick={() => {
-                                        if (!isLoggedIn && onBlockedAction) {
-                                            onBlockedAction();
-                                            return;
-                                        }
-                                        playAudioFeedback?.("sparkle");
-                                        onNavigate("plantActivity");
-                                    }}
-                                    className="bg-gradient-to-r from-emerald-50 via-teal-50 to-green-50 border-3 border-emerald-400 hover:border-emerald-600 p-5 sm:p-6 rounded-3xl cursor-pointer transition-all duration-300 shadow-md hover:shadow-xl hover:-translate-y-1.5 active:translate-y-0 group relative overflow-hidden"
-                                >
-                                    <div className="flex items-center justify-between">
-                                        <div className="flex items-center gap-4">
-                                            <div className="w-16 h-16 rounded-2xl bg-gradient-to-tr from-emerald-600 to-teal-400 border-2 border-emerald-300 flex items-center justify-center shrink-0 shadow-md group-hover:scale-110 group-hover:rotate-3 transition-transform text-white">
-                                                <GraphicNatureLeaf className="w-11 h-11" />
-                                            </div>
-                                            <div className="text-left">
-                                                <div className="flex items-center gap-2 mb-1">
-                                                    <span className="text-[10px] font-black uppercase tracking-wider text-emerald-800 bg-emerald-100 px-2.5 py-0.5 rounded-full border border-emerald-300">
-                                                        🌿 {t ? t("Baru & Interaktif", "New & Interactive") : "Baru & Interaktif"}
-                                                    </span>
-                                                    <span className="text-[10px] font-bold text-sky-700 bg-sky-100 px-2 py-0.5 rounded-full border border-sky-200">
-                                                        Fotosintesis & Anatomi
-                                                    </span>
-                                                </div>
-                                                <h3 className="text-lg font-black text-slate-800 group-hover:text-emerald-700 transition-colors">
-                                                    {t ? t("Makmal Tumbuhan & Kebun Fotosintesis", "Plant Lab & Photosynthesis Garden") : "Makmal Tumbuhan & Kebun Fotosintesis"}
-                                                </h3>
-                                                <p className="text-xs text-slate-600 mt-0.5">
-                                                    {t ? t("Bantu pokok membesar dari benih ke bunga mekar! Bekalkan air, cahaya & CO₂ serta padankan anatomi pokok.", "Help the plant grow from seed to full bloom! Supply water, light & CO₂ and match plant anatomy.") : "Bantu pokok membesar dari benih ke bunga mekar! Bekalkan air, cahaya & CO₂ serta padankan anatomi pokok."}
-                                                </p>
-                                            </div>
-                                        </div>
-                                        <div className="w-11 h-11 rounded-2xl bg-emerald-600 text-white flex items-center justify-center shrink-0 shadow-md group-hover:bg-emerald-700 group-hover:scale-105 transition-all">
-                                            <GraphicArrowRight className="w-5 h-5" />
-                                        </div>
-                                    </div>
-                                </div>
-
-                                {/* Permainan 3: Cabaran Ejaan Spelling Bee STEM (Audio & Ejaan Baru!) */}
-                                <div
-                                    onClick={() => {
-                                        if (!isLoggedIn && onBlockedAction) {
-                                            onBlockedAction();
-                                            return;
-                                        }
-                                        playAudioFeedback?.("sparkle");
-                                        onNavigate("spellingBee");
-                                    }}
-                                    className="bg-gradient-to-r from-amber-50 via-yellow-50 to-orange-50 border-3 border-amber-400 hover:border-amber-600 p-5 sm:p-6 rounded-3xl cursor-pointer transition-all duration-300 shadow-md hover:shadow-xl hover:-translate-y-1.5 active:translate-y-0 group relative overflow-hidden"
-                                >
-                                    <div className="flex items-center justify-between">
-                                        <div className="flex items-center gap-4">
-                                            <div className="w-16 h-16 rounded-2xl bg-gradient-to-tr from-amber-500 to-yellow-400 border-2 border-amber-300 flex items-center justify-center shrink-0 shadow-md group-hover:scale-110 group-hover:rotate-3 transition-transform text-white text-3xl">
-                                                <span>🐝</span>
-                                            </div>
-                                            <div className="text-left">
-                                                <div className="flex items-center gap-2 mb-1">
-                                                    <span className="text-[10px] font-black uppercase tracking-wider text-amber-900 bg-amber-100 px-2.5 py-0.5 rounded-full border border-amber-300">
-                                                        🐝 {t ? t("English • Audio & Gambar", "English • Audio & Pictures") : "English • Audio & Pictures"}
-                                                    </span>
-                                                    <span className="text-[10px] font-bold text-amber-800 bg-amber-50 px-2 py-0.5 rounded-full border border-amber-200">
-                                                        8 Soalan • 9 Tema
-                                                    </span>
-                                                </div>
-                                                <h3 className="text-lg font-black text-slate-800 group-hover:text-amber-800 transition-colors">
-                                                    {t ? t("Cabaran Spelling Bee English", "English Spelling Bee Challenge") : "Cabaran Spelling Bee English"}
-                                                </h3>
-                                                <p className="text-xs text-slate-600 mt-0.5">
-                                                    {t ? t("Dengar sebutan audio, kenal pasti gambar dan pilih 9 tema menarik untuk cabaran ejaan bahasa Inggeris!", "Listen to English pronunciations, identify the picture clue, and choose from 9 fun themes!") : "Dengar sebutan audio, kenal pasti gambar dan pilih 9 tema menarik untuk cabaran ejaan bahasa Inggeris!"}
-                                                </p>
-                                            </div>
-                                        </div>
-                                        <div className="w-11 h-11 rounded-2xl bg-amber-500 text-white flex items-center justify-center shrink-0 shadow-md group-hover:bg-amber-600 group-hover:scale-105 transition-all">
-                                            <GraphicArrowRight className="w-5 h-5" />
-                                        </div>
-                                    </div>
-                                </div>
-
-                                {/* Permainan 4: Pertandingan Sifir (Math Speed Quiz) */}
-                                <div
-                                    onClick={() => {
-                                        if (!isLoggedIn && onBlockedAction) {
-                                            onBlockedAction();
-                                            return;
-                                        }
-                                        playAudioFeedback?.("sparkle");
-                                        onNavigate("mathQuiz");
-                                    }}
-                                    className="bg-gradient-to-r from-indigo-50 via-purple-50 to-pink-50 border-3 border-indigo-400 hover:border-indigo-600 p-5 sm:p-6 rounded-3xl cursor-pointer transition-all duration-300 shadow-md hover:shadow-xl hover:-translate-y-1.5 active:translate-y-0 group relative overflow-hidden"
-                                >
-                                    <div className="flex items-center justify-between">
-                                        <div className="flex items-center gap-4">
-                                            <div className="w-16 h-16 rounded-2xl bg-gradient-to-tr from-indigo-600 to-purple-600 border-2 border-indigo-300 flex items-center justify-center shrink-0 shadow-md group-hover:scale-110 group-hover:rotate-3 transition-transform text-white text-3xl">
-                                                <span>🔢</span>
-                                            </div>
-                                            <div className="text-left">
-                                                <div className="flex items-center gap-2 mb-1">
-                                                    <span className="text-[10px] font-black uppercase tracking-wider text-indigo-900 bg-indigo-100 px-2.5 py-0.5 rounded-full border border-indigo-300">
-                                                        ⚡ {t ? t("Baru • Congak Pantas", "New • Speed Math") : "Baru • Congak Pantas"}
-                                                    </span>
-                                                    <span className="text-[10px] font-bold text-purple-800 bg-purple-50 px-2 py-0.5 rounded-full border border-purple-200">
-                                                        Sifir 1-12 • 60s & 10 Soalan
-                                                    </span>
-                                                </div>
-                                                <h3 className="text-lg font-black text-slate-800 group-hover:text-indigo-800 transition-colors">
-                                                    {t ? t("Pertandingan Sifir Kilat", "Math Speed Quiz Challenge") : "Pertandingan Sifir Kilat"}
-                                                </h3>
-                                                <p className="text-xs text-slate-600 mt-0.5">
-                                                    {t ? t("Pilih julat sifir 1-12, cabar kepantasan dalam masa 60 saat atau 10 soalan pantas dan raih skor tertinggi!", "Choose tables 1-12, test your speed in 60s or 10 fast questions, and achieve high scores!") : "Pilih julat sifir 1-12, cabar kepantasan dalam masa 60 saat atau 10 soalan pantas dan raih skor tertinggi!"}
-                                                </p>
-                                            </div>
-                                        </div>
-                                        <div className="w-11 h-11 rounded-2xl bg-indigo-600 text-white flex items-center justify-center shrink-0 shadow-md group-hover:bg-indigo-700 group-hover:scale-105 transition-all">
-                                            <GraphicArrowRight className="w-5 h-5" />
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-        );
+    if (currentView !== "solarDragDrop") {
+        return null;
     }
 
     if (currentView === "solarDragDrop") {
@@ -243,52 +48,51 @@ export default function SolarActivityView({
 
                             {/* =========================================
                                 1. HALAMAN KEPUTUSAN & SEMAKAN JAWAPAN
-                                (Dipaparkan setelah user menekan SUBMIT)
+                                (Dipaparkan setelah user menek                            {/* =========================================
+                                1. HALAMAN KEPUTUSAN & SEMAKAN JAWAPAN
+                                (Kemas, ringkas, tanpa teks berlebihan)
                             ========================================== */}
                             {solarSubmitted ? (
-                                <div className="space-y-5 w-full anim-pop">
+                                <div className="space-y-4 w-full anim-pop">
                                     
-                                    {/* Header Keputusan */}
-                                    <div className="flex flex-col sm:flex-row items-center justify-between gap-3 w-full border-b border-slate-100 pb-3">
-                                        <div className="flex items-center gap-3 w-full sm:w-auto">
+                                    {/* Header Keputusan Ringkas */}
+                                    <div className="flex items-center justify-between gap-3 w-full border-b border-slate-100 pb-3">
+                                        <div className="flex items-center gap-3">
                                             <button
                                                 type="button"
                                                 onClick={() => { playAudioFeedback?.("tap"); onResetSolarGame?.(); onNavigate("activityList"); }}
-                                                className="px-3.5 py-2 btn-3d-white text-slate-700 font-black rounded-xl text-xs cursor-pointer flex items-center gap-1.5 border border-slate-200 shrink-0"
+                                                className="px-3 py-2 bg-white hover:bg-slate-50 text-slate-700 font-bold rounded-xl text-xs cursor-pointer flex items-center gap-1.5 border border-slate-200 shrink-0 hover:bg-rose-50 hover:text-rose-700 transition-colors shadow-xs active:scale-95"
                                             >
                                                 <GraphicBackArrow className="w-4 h-4 text-slate-600" />
-                                                <span>Aktiviti</span>
+                                                <span>Back</span>
                                             </button>
-                                            <div className="text-left">
-                                                <h2 className="text-lg sm:text-xl font-black text-purple-700 leading-tight">
-                                                    Keputusan Sistem Suria
-                                                </h2>
-                                                <span className="text-[11px] text-slate-500 font-bold block">
-                                                    Semakan Jawapan & Pembelajaran
-                                                </span>
-                                            </div>
+                                            <h2 className="text-base sm:text-lg font-black text-purple-700 leading-tight">
+                                                Keputusan Sistem Suria
+                                            </h2>
                                         </div>
 
                                         <button
+                                            type="button"
                                             onClick={onResetSolarGame}
-                                            className="px-4 py-2 btn-3d-blue text-white font-black text-xs rounded-xl flex items-center gap-1.5 shadow-sm cursor-pointer"
+                                            className="px-3.5 py-2 bg-transparent border-2 border-[#0099e5] text-[#0099e5] hover:bg-[#0099e5] hover:text-white font-black text-xs rounded-xl flex items-center gap-1.5 shadow-xs cursor-pointer transition-all duration-300 active:scale-95"
                                         >
                                             <GraphicRefresh className="w-4 h-4" />
                                             <span>Main Semula</span>
                                         </button>
                                     </div>
 
-                                    {/* Kad Skor & Ucapan ExploBot */}
+                                    {/* Kad Skor Ringkas & Padat */}
                                     {(() => {
                                         let correctCount = 0;
                                         SOLAR_PLANETS.forEach(p => {
                                             if (placedPlanets[p.orbit] === p.id) correctCount++;
                                         });
                                         const pct = Math.round((correctCount / 8) * 100);
+                                        const coinsEarned = correctCount === 8 ? 20 : correctCount >= 5 ? 15 : 10;
 
                                         return (
-                                            <div className="bg-gradient-to-br from-purple-50 via-white to-sky-50 border-3 border-purple-300 rounded-3xl p-5 sm:p-7 shadow-lg space-y-4 text-center">
-                                                <div className="w-16 h-16 sm:w-20 sm:h-20 mx-auto">
+                                            <div className="bg-gradient-to-br from-purple-50 via-white to-sky-50 border-2 border-purple-200 rounded-3xl p-4 sm:p-5 shadow-xs space-y-3 text-center">
+                                                <div className="w-14 h-14 sm:w-16 sm:h-16 mx-auto">
                                                     {correctCount === 8 ? (
                                                         <GraphicGrandTrophy className="w-full h-full" />
                                                     ) : correctCount >= 5 ? (
@@ -298,155 +102,108 @@ export default function SolarActivityView({
                                                     )}
                                                 </div>
 
-                                                <div className="space-y-1">
-                                                    <span className={`inline-block font-black text-[11px] px-3.5 py-1 rounded-full uppercase tracking-wider border shadow-sm ${
+                                                <div>
+                                                    <span className={`inline-block font-black text-[11px] px-3 py-0.5 rounded-full uppercase tracking-wider border shadow-xs mb-1 ${
                                                         correctCount === 8
                                                             ? "bg-amber-100 text-amber-900 border-amber-300"
                                                             : correctCount >= 5
                                                                 ? "bg-emerald-100 text-emerald-900 border-emerald-300"
                                                                 : "bg-purple-100 text-purple-900 border-purple-300"
                                                     }`}>
-                                                        {correctCount === 8 ? "🏆 Sistem Suria Sempurna!" : correctCount >= 5 ? "🌟 Pencapaian Hebat!" : "🚀 Usaha yang Baik!"}
+                                                        {correctCount === 8 ? "🏆 Sistem Suria Sempurna" : correctCount >= 5 ? "🌟 Pencapaian Hebat" : "🚀 Usaha Baik"}
                                                     </span>
                                                     <h3 className="text-xl sm:text-2xl font-black text-slate-800">
-                                                        {correctCount === 8
-                                                            ? "Tahniah! Semua Planet Tepat!"
-                                                            : `Anda Mendapat ${correctCount} daripada 8 Tepat!`}
+                                                        {correctCount} / 8 Planet Tepat ({pct}%)
                                                     </h3>
                                                 </div>
 
-                                                {/* Papan Markah */}
-                                                <div className="grid grid-cols-2 gap-3 max-w-sm mx-auto">
-                                                    <div className="bg-white p-3 rounded-2xl border-2 border-amber-300 shadow-sm">
-                                                        <span className="text-[10px] font-black uppercase text-amber-600 block">Jumlah Skor</span>
-                                                        <span className="text-2xl font-black text-amber-950">{solarScore} / 800</span>
+                                                {/* Papan Markah & Koin Ringkas */}
+                                                <div className="grid grid-cols-2 gap-2.5 max-w-xs mx-auto pt-1">
+                                                    <div className="bg-white p-2.5 rounded-2xl border-2 border-purple-200 shadow-xs">
+                                                        <span className="text-[10px] font-black uppercase text-purple-600 block">Jumlah Skor</span>
+                                                        <span className="text-lg sm:text-xl font-black text-purple-950">{solarScore} / 800</span>
                                                     </div>
-                                                    <div className="bg-white p-3 rounded-2xl border-2 border-emerald-300 shadow-sm">
-                                                        <span className="text-[10px] font-black uppercase text-emerald-600 block">Ketepatan</span>
-                                                        <span className="text-2xl font-black text-emerald-600">{pct}%</span>
+                                                    <div className="bg-gradient-to-br from-amber-50 to-yellow-100/70 p-2.5 rounded-2xl border-2 border-amber-300 shadow-xs">
+                                                        <span className="text-[10px] font-black uppercase text-amber-700 block">Ganjaran Koin</span>
+                                                        <span className="text-lg sm:text-xl font-black text-amber-950">+{coinsEarned} 🌟</span>
                                                     </div>
-                                                </div>
-
-                                                {/* Ulasan ExploBot */}
-                                                <div className="bg-white/80 border border-purple-200 rounded-2xl p-3 text-xs text-slate-700 font-bold flex items-center justify-center gap-2">
-                                                    <span>🤖</span>
-                                                    <span>
-                                                        {correctCount === 8
-                                                            ? "Luar biasa! Anda mengenali setiap rupa planet dan kedudukan orbitnya dengan sempurna!"
-                                                            : correctCount >= 5
-                                                                ? "Hebat! Anda hampir menguasai semuanya. Perhatikan jawapan yang benar di bawah untuk membetulkan kesilapan!"
-                                                                : "Jangan berputus asa! Teliti jawapan yang sebenar di bawah dan cuba lagi untuk mendapatkan skor penuh!"}
-                                                    </span>
                                                 </div>
                                             </div>
                                         );
                                     })()}
 
-                                    {/* SEMAKAN JAWAPAN BAGI SETIAP 8 ORBIT (TERMASUK JAWAPAN SEBENAR JIKA SALAH) */}
-                                    <div className="space-y-3 text-left">
+                                    {/* SEMAKAN 8 ORBIT (KOMPAK, KEMAS & PANTAS DIFAHAMI) */}
+                                    <div className="space-y-2.5 text-left">
                                         <div className="flex items-center justify-between px-1">
-                                            <div>
-                                                <h3 className="text-base font-black text-slate-800">
-                                                    Semakan Jawapan Mengikut Orbit
-                                                </h3>
-                                                <p className="text-[11px] text-slate-500">
-                                                    Berikut ialah semakan perbandingan jawapan anda dengan susunan Sistem Suria yang sebenar:
-                                                </p>
-                                            </div>
-                                            <span className="text-[10px] font-bold text-slate-400 bg-white px-2.5 py-1 rounded-xl border border-slate-200">
+                                            <h3 className="text-sm font-black text-slate-800">
+                                                Semakan 8 Orbit
+                                            </h3>
+                                            <span className="text-[10px] font-bold text-slate-500 bg-white px-2 py-0.5 rounded-lg border border-slate-200">
                                                 8 Orbit
                                             </span>
                                         </div>
 
-                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                                             {SOLAR_PLANETS.map((planetInfo) => {
                                                 const placedId = placedPlanets[planetInfo.orbit];
                                                 const placedPlanetObj = SOLAR_PLANETS.find(p => p.id === placedId);
                                                 const isMatch = placedPlanetObj?.id === planetInfo.id;
-                                                const isBlank = !placedId;
 
                                                 return (
                                                     <div
                                                         key={planetInfo.orbit}
-                                                        className={`p-4 rounded-3xl border-2 transition-all flex flex-col justify-between shadow-sm ${
+                                                        className={`p-3 rounded-2xl border-2 transition-all flex items-center justify-between gap-2 shadow-xs ${
                                                             isMatch
-                                                                ? "bg-emerald-50/70 border-emerald-400"
+                                                                ? "bg-emerald-50/70 border-emerald-300"
                                                                 : "bg-rose-50/70 border-rose-300"
                                                         }`}
                                                     >
-                                                        {/* Header Orbit */}
-                                                        <div>
-                                                            <div className="flex items-center justify-between mb-2">
-                                                                <span className="text-xs font-black text-slate-800 flex items-center gap-1.5">
-                                                                    <span className="w-5 h-5 rounded-full bg-slate-800 text-white text-[10px] flex items-center justify-center font-bold">
-                                                                        {planetInfo.orbit}
-                                                                    </span>
-                                                                    <span>Orbit {planetInfo.orbit}: {language === "en" && planetInfo.englishName ? planetInfo.englishName : planetInfo.name}</span>
+                                                        <div className="flex items-center gap-2.5 min-w-0">
+                                                            <span className={`w-6 h-6 rounded-full text-[10px] font-black flex items-center justify-center shrink-0 ${
+                                                                isMatch ? "bg-emerald-600 text-white" : "bg-rose-600 text-white"
+                                                            }`}>
+                                                                {planetInfo.orbit}
+                                                            </span>
+                                                            <div className="text-left min-w-0">
+                                                                <span className="text-xs font-black text-slate-800 block truncate">
+                                                                    Orbit {planetInfo.orbit}: {planetInfo.name}
                                                                 </span>
-
-                                                                <span className={`text-[10px] font-black px-2.5 py-0.5 rounded-full border uppercase tracking-wider ${
-                                                                    isMatch
-                                                                        ? "bg-emerald-500 text-white border-emerald-400 shadow-sm"
-                                                                        : isBlank
-                                                                            ? "bg-slate-500 text-white border-slate-400"
-                                                                            : "bg-rose-500 text-white border-rose-400 shadow-sm"
-                                                                }`}>
-                                                                    {isMatch ? "✓ Tepat (+100)" : isBlank ? "✕ Kosong (0pt)" : "✕ Salah (0pt)"}
-                                                                </span>
-                                                            </div>
-
-                                                            {/* Perbandingan Jawapan Anda vs Sebenar */}
-                                                            <div className="bg-white/90 rounded-2xl p-3 border border-slate-200/80 space-y-2.5">
-                                                                
-                                                                {/* 1. Apa yang user letak */}
-                                                                <div className="flex items-center justify-between text-xs">
-                                                                    <span className="font-bold text-slate-500 text-[11px]">Jawapan Anda:</span>
-                                                                    {placedPlanetObj ? (
-                                                                        <div className="flex items-center gap-1.5 font-black text-slate-800">
-                                                                            <GraphicPlanetIcon planetId={placedPlanetObj.id} className="w-6 h-6" />
-                                                                            <span>{placedPlanetObj.name}</span>
-                                                                        </div>
+                                                                <div className="flex items-center gap-1.5 text-[11px] font-bold mt-0.5">
+                                                                    {isMatch ? (
+                                                                        <span className="text-emerald-700 flex items-center gap-1">
+                                                                            <GraphicPlanetIcon planetId={planetInfo.id} className="w-4 h-4 inline-block" />
+                                                                            <span>Tepat (+100 XP)</span>
+                                                                        </span>
                                                                     ) : (
-                                                                        <span className="text-slate-400 italic text-[11px]">Tiada planet diletakkan</span>
+                                                                        <div className="flex items-center gap-1.5 text-slate-600">
+                                                                            <span className="flex items-center gap-1 line-through text-rose-600 opacity-80">
+                                                                                {placedPlanetObj ? (
+                                                                                    <>
+                                                                                        <GraphicPlanetIcon planetId={placedPlanetObj.id} className="w-4 h-4 inline-block" />
+                                                                                        <span>{placedPlanetObj.name}</span>
+                                                                                    </>
+                                                                                ) : (
+                                                                                    <span>Kosong</span>
+                                                                                )}
+                                                                            </span>
+                                                                            <span className="text-[10px] text-slate-400">➔</span>
+                                                                            <span className="flex items-center gap-1 font-black text-purple-900 bg-purple-100/90 px-1.5 py-0.5 rounded-md border border-purple-200">
+                                                                                <GraphicPlanetIcon planetId={planetInfo.id} className="w-4 h-4 inline-block" />
+                                                                                <span>{planetInfo.name}</span>
+                                                                            </span>
+                                                                        </div>
                                                                     )}
                                                                 </div>
-
-                                                                {/* 2. JAWAPAN YANG SEBENAR (Jika salah atau kosong) */}
-                                                                {!isMatch && (
-                                                                    <div className="pt-2 border-t border-rose-100 flex flex-col gap-1.5">
-                                                                        <div className="flex items-center justify-between">
-                                                                            <span className="font-black text-amber-700 text-[11px] flex items-center gap-1">
-                                                                                <span>✨</span>
-                                                                                <span>Jawapan yang Sebenar:</span>
-                                                                            </span>
-                                                                            <div className="flex items-center gap-1.5 font-black text-purple-900 bg-purple-50 px-2 py-0.5 rounded-lg border border-purple-200 text-xs">
-                                                                                <GraphicPlanetIcon planetId={planetInfo.id} className="w-6 h-6" />
-                                                                                <span>{planetInfo.name}</span>
-                                                                                <span className="text-[10px] text-purple-500 font-bold">({planetInfo.englishName})</span>
-                                                                            </div>
-                                                                        </div>
-                                                                        <p className="text-[11px] text-slate-600 bg-amber-50/70 p-2 rounded-xl border border-amber-200/70 leading-relaxed font-medium">
-                                                                            💡 <strong>Fakta:</strong> {planetInfo.fact}
-                                                                        </p>
-                                                                    </div>
-                                                                )}
-
-                                                                {/* Jika tepat: paparkan fakta menarik */}
-                                                                {isMatch && (
-                                                                    <div className="pt-1.5 border-t border-emerald-100">
-                                                                        <p className="text-[11px] text-emerald-800 bg-emerald-50/80 p-2 rounded-xl border border-emerald-200/80 leading-relaxed font-medium">
-                                                                            🌟 <strong>Tahniah:</strong> {planetInfo.fact}
-                                                                        </p>
-                                                                    </div>
-                                                                )}
                                                             </div>
                                                         </div>
 
-                                                        {/* Info Ciri Fizikal Tambahan */}
-                                                        <div className="mt-2 flex items-center justify-between text-[10px] text-slate-500 font-bold px-1">
-                                                            <span>Ciri: {planetInfo.sizeLabel}</span>
-                                                            <span>Saiz: {planetInfo.diameter}</span>
-                                                        </div>
+                                                        <span className={`text-[10px] font-black px-2.5 py-1 rounded-full border uppercase shrink-0 ${
+                                                            isMatch
+                                                                ? "bg-emerald-500 text-white border-emerald-400"
+                                                                : "bg-rose-500 text-white border-rose-400"
+                                                        }`}>
+                                                            {isMatch ? "✓ Tepat" : "✕ Salah"}
+                                                        </span>
                                                     </div>
                                                 );
                                             })}
@@ -486,8 +243,8 @@ export default function SolarActivityView({
                                             }}
                                             className="py-3.5 bg-white hover:bg-slate-50 text-slate-700 font-black rounded-2xl text-xs sm:text-sm flex items-center justify-center gap-2 cursor-pointer shadow-xs border-2 border-slate-200 transition-all active:scale-98"
                                         >
-                                            <span>🎮</span>
-                                            <span>Pusat Aktiviti</span>
+                                            <GraphicBackArrow className="w-4 h-4 text-slate-600" />
+                                            <span>Back</span>
                                         </button>
                                     </div>
                                 </div>
@@ -497,9 +254,9 @@ export default function SolarActivityView({
                                     (Semasa user sedang bermain - tiada skor dipaparkan)
                                 ========================================== */
                                 <>
-                                    {/* Header Permainan (Bebas dari Skor Semasa) */}
-                                    <div className="flex flex-col sm:flex-row items-center justify-between gap-3 w-full border-b border-slate-100 pb-3">
-                                        <div className="flex items-center gap-3 w-full sm:w-auto">
+                                    {/* Header Permainan Ringkas */}
+                                    <div className="flex items-center justify-between gap-3 w-full border-b border-slate-100 pb-3">
+                                        <div className="flex items-center gap-3">
                                             <button
                                                 type="button"
                                                 onClick={() => {
@@ -511,29 +268,24 @@ export default function SolarActivityView({
                                                         onNavigate("activityList");
                                                     }
                                                 }}
-                                                className="px-3.5 py-2 btn-3d-white text-slate-700 font-black rounded-xl text-xs cursor-pointer flex items-center gap-1.5 border border-slate-200 shrink-0 hover:bg-rose-50 hover:text-rose-700 transition-colors"
-                                                title="Kembali ke Senarai Aktiviti"
+                                                className="px-3 py-2 bg-white hover:bg-slate-50 text-slate-700 font-bold rounded-xl text-xs cursor-pointer flex items-center gap-1.5 border border-slate-200 shrink-0 hover:bg-rose-50 hover:text-rose-700 transition-colors shadow-xs active:scale-95"
+                                                title="Back"
                                             >
                                                 <GraphicBackArrow className="w-4 h-4 text-slate-600" />
-                                                <span>Aktiviti</span>
+                                                <span>Back</span>
                                             </button>
-                                            <div className="text-left">
-                                                <h2 className="text-lg sm:text-xl font-black text-purple-700 leading-tight">
-                                                    {t ? t("Susun Sistem Suria", "Arrange Solar System") : "Susun Sistem Suria"}
-                                                </h2>
-                                                <span className="text-[11px] text-slate-500 font-bold block">
-                                                    Kenal Pasti Rupa Planet & Masukkan ke Orbit
-                                                </span>
-                                            </div>
+                                            <h2 className="text-base sm:text-lg font-black text-purple-700 leading-tight">
+                                                {t ? t("Susun Sistem Suria", "Arrange Solar System") : "Susun Sistem Suria"}
+                                            </h2>
                                         </div>
 
-                                        {/* Status Bilangan Planet Diletakkan & Reset (Tiada Paparan Skor!) */}
                                         <div className="flex items-center gap-2 shrink-0">
-                                            <div className="bg-sky-100 border-2 border-sky-300 text-sky-950 font-black text-xs px-3.5 py-1.5 rounded-xl shadow-sm flex items-center gap-1.5">
+                                            <div className="bg-sky-100 border border-sky-300 text-sky-950 font-black text-xs px-3 py-1.5 rounded-xl shadow-xs flex items-center gap-1.5">
                                                 <span>🪐</span>
-                                                <span>{Object.keys(placedPlanets).length} / 8 Planet Diletakkan</span>
+                                                <span>{Object.keys(placedPlanets).length}/8</span>
                                             </div>
                                             <button
+                                                type="button"
                                                 onClick={onResetSolarGame}
                                                 className="p-2 bg-slate-100 hover:bg-slate-200 border border-slate-300 rounded-xl text-slate-600 cursor-pointer transition-all"
                                                 title="Kosongkan Semua"
@@ -543,17 +295,15 @@ export default function SolarActivityView({
                                         </div>
                                     </div>
 
-                                    {/* Dynamic Feedback Banner */}
-                                    {solarFeedbackMessage ? (
-                                        <div className={`p-3 rounded-2xl border-2 text-xs font-bold flex items-center justify-between gap-2 shadow-sm ${
+                                    {/* Dynamic Feedback Banner (Hanya jika ada mesej) */}
+                                    {solarFeedbackMessage && (
+                                        <div className={`p-2.5 rounded-2xl border-2 text-xs font-bold flex items-center justify-between gap-2 shadow-xs ${
                                             solarFeedbackMessage.type === "success"
                                                 ? "bg-emerald-50 border-emerald-400 text-emerald-900 anim-pop"
                                                 : "bg-sky-50 border-sky-400 text-sky-900"
                                         }`}>
                                             <div className="flex items-center gap-2">
-                                                <span className="text-base">
-                                                    {solarFeedbackMessage.type === "success" ? "🎉" : "💡"}
-                                                </span>
+                                                <span>{solarFeedbackMessage.type === "success" ? "🎉" : "💡"}</span>
                                                 <span>{solarFeedbackMessage.text}</span>
                                             </div>
                                             <button
@@ -564,35 +314,73 @@ export default function SolarActivityView({
                                                 ✕
                                             </button>
                                         </div>
-                                    ) : (
-                                        <div className="bg-sky-50/80 border border-sky-200 p-2.5 rounded-2xl text-[11px] text-sky-800 font-bold flex items-center justify-center gap-2">
-                                            <span>💡</span>
-                                            <span>Tip: Kenal pasti planet dari rupanya di rak, kemudian seret atau klik untuk meletakkannya ke orbit sasaran!</span>
-                                        </div>
                                     )}
+
+                                    {/* =========================================
+                                        RAK PLANET DI ATAS (MUDAH DIGAPAI!)
+                                        Pengguna boleh ketuk atau tarik ke orbit di bawah
+                                    ========================================== */}
+                                    <div className="bg-white/95 backdrop-blur-md p-3 sm:p-4 rounded-3xl border-2 border-slate-200/90 shadow-sm w-full transition-all">
+                                        <div className="flex items-center justify-between mb-2 px-1">
+                                            <div className="flex items-center gap-2">
+                                                <span className="text-xs font-black text-slate-800 flex items-center gap-1.5">
+                                                    <span>Rak Planet</span>
+                                                </span>
+                                                {selectedTrayPlanet ? (
+                                                    <span className="text-[10px] font-bold text-amber-700 bg-amber-100 border border-amber-300 px-2 py-0.5 rounded-full animate-pulse">
+                                                        Ketuk orbit di bawah
+                                                    </span>
+                                                ) : (
+                                                    <span className="text-[10px] text-slate-400 font-medium">
+                                                        Ketuk / Tarik planet ke orbit
+                                                    </span>
+                                                )}
+                                            </div>
+                                            <span className="text-[11px] font-black text-purple-700 bg-purple-50 border border-purple-200 px-2.5 py-0.5 rounded-full">
+                                                {SOLAR_PLANETS.filter(p => !Object.values(placedPlanets).includes(p.id)).length} Baki
+                                            </span>
+                                        </div>
+
+                                        {/* Planet-planet Bulat Mudah Digapai */}
+                                        <div className="flex flex-wrap items-center justify-center gap-2.5 sm:gap-3.5 py-1">
+                                            {SOLAR_PLANETS.filter(p => !Object.values(placedPlanets).includes(p.id)).map((planet) => {
+                                                const isSelected = selectedTrayPlanet === planet.id;
+
+                                                return (
+                                                    <div
+                                                        key={planet.id}
+                                                        draggable={true}
+                                                        onDragStart={(e) => onDragStart(e, planet.id)}
+                                                        onClick={() => onSelectTrayPlanet(planet.id)}
+                                                        title={planet.name}
+                                                        className={`w-13 h-13 sm:w-16 sm:h-16 rounded-full flex items-center justify-center cursor-grab active:cursor-grabbing select-none transition-all duration-200 relative group shrink-0 ${
+                                                            isSelected
+                                                                ? "scale-115 ring-4 ring-amber-400 bg-amber-100 border-2 border-amber-500 shadow-[0_0_20px_rgba(245,158,11,0.6)] animate-pulse"
+                                                                : "bg-slate-50 hover:bg-sky-50 border-2 border-slate-200 hover:border-purple-400 shadow-xs hover:shadow-md hover:scale-110 active:scale-95"
+                                                        }`}
+                                                    >
+                                                        <div className="w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center pointer-events-none">
+                                                            <GraphicPlanetIcon planetId={planet.id} className="w-full h-full drop-shadow-sm" />
+                                                        </div>
+                                                    </div>
+                                                );
+                                            })}
+
+                                            {SOLAR_PLANETS.filter(p => !Object.values(placedPlanets).includes(p.id)).length === 0 && (
+                                                <div className="py-1 text-center text-xs font-black text-emerald-700 flex items-center justify-center gap-1.5">
+                                                    <span>Semua 8 planet telah disusun ke orbit!</span>
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
 
                                     {/* =========================================
                                         KANVAS SISTEM SURIA ASLI DENGAN MATAHARI DI TENGAH
                                     ========================================== */}
-                                    <div className="bg-gradient-to-br from-[#020512] via-[#09153a] to-[#010410] border-3 border-sky-400/40 rounded-3xl p-4 sm:p-6 shadow-2xl relative overflow-hidden text-white flex flex-col items-center">
-                                        
-                                        {/* Info Tajuk Atas Kanvas */}
-                                        <div className="w-full flex items-center justify-between text-left mb-2 z-20">
-                                            <div>
-                                                <span className="text-[10px] font-black uppercase tracking-wider text-sky-400 bg-sky-950/80 px-2.5 py-0.5 rounded-full border border-sky-500/30">
-                                                    Model Sistem Suria Asli
-                                                </span>
-                                                <p className="text-[11px] text-slate-300 mt-0.5">
-                                                    Matahari di tengah. Masukkan planet ke orbit mengikut nama yang tertera.
-                                                </p>
-                                            </div>
-                                            <div className="text-right text-[10px] text-amber-300 font-bold bg-amber-950/60 px-2.5 py-1 rounded-xl border border-amber-400/30">
-                                                ✨ Seret atau Klik
-                                            </div>
-                                        </div>
-
+                                    <div className="bg-gradient-to-br from-[#020512] via-[#09153a] to-[#010410] border-2 sm:border-3 border-sky-400/40 rounded-3xl p-3 sm:p-5 shadow-2xl relative overflow-hidden text-white flex flex-col items-center">
+                                         
                                         {/* ARENA SISTEM SURIA BULAT CONCENTRIC (MATAHARI DI TENGAH) */}
-                                        <div className="relative w-full aspect-square max-w-[540px] sm:max-w-[580px] mx-auto rounded-full border-2 border-sky-500/30 shadow-[inset_0_0_40px_rgba(2,132,199,0.3)] flex items-center justify-center overflow-hidden my-2 select-none">
+                                        <div className="relative w-full aspect-square max-w-[430px] sm:max-w-[480px] mx-auto rounded-full border border-sky-500/30 shadow-[inset_0_0_35px_rgba(2,132,199,0.3)] flex items-center justify-center overflow-hidden my-1 select-none">
                                             
                                             {/* Bintang-bintang Angkasa */}
                                             <div className="absolute top-1/4 left-1/5 text-[10px] opacity-40">✨</div>
@@ -701,101 +489,34 @@ export default function SolarActivityView({
                                     </div>
 
                                     {/* =========================================
-                                        BAR HANTAR JAWAPAN & SEMAK KEPUTUSAN
+                                        BAR AKSI HANTAR JAWAPAN (KOMPAK & BERSIH)
                                     ========================================== */}
-                                    <div className="w-full flex flex-col sm:flex-row items-center justify-between gap-3 bg-gradient-to-r from-purple-100 via-indigo-100 to-sky-100 p-4 rounded-3xl border-2 border-purple-300 shadow-md">
-                                        <div className="text-left">
-                                            <div className="flex items-center gap-2">
-                                                <span className="text-xs font-black text-purple-950">
-                                                    {Object.keys(placedPlanets).length === 8 
-                                                        ? "✨ Kesemua 8 orbit telah diisi!" 
-                                                        : `🪐 ${Object.keys(placedPlanets).length} daripada 8 orbit telah diisi`}
+                                    <div className="w-full flex items-center justify-between gap-3 bg-white p-3 sm:p-4 rounded-2xl border-2 border-slate-200 shadow-xs">
+                                        <div className="flex items-center gap-2 text-left">
+                                            <span className="text-xs font-black text-slate-800">
+                                                {Object.keys(placedPlanets).length} / 8 Orbit Terisi
+                                            </span>
+                                            {Object.keys(placedPlanets).length === 8 && (
+                                                <span className="text-[10px] font-black bg-emerald-100 text-emerald-800 border border-emerald-300 px-2 py-0.5 rounded-full">
+                                                    Lengkap
                                                 </span>
-                                                {Object.keys(placedPlanets).length === 8 && (
-                                                    <span className="text-[10px] font-black bg-emerald-500 text-white px-2 py-0.5 rounded-full animate-pulse">
-                                                        Sedia Dihantar!
-                                                    </span>
-                                                )}
-                                            </div>
-                                            <p className="text-[11px] text-slate-600 mt-0.5">
-                                                {Object.keys(placedPlanets).length === 8
-                                                    ? "Sedia menyemak? Tekan butang di sebelah untuk lihat markah & semakan jawapan sebenar!"
-                                                    : "Anda boleh letakkan kesemua planet atau hantar bila-bila masa untuk semakan."}
-                                            </p>
+                                            )}
                                         </div>
                                         <button
+                                            type="button"
                                             onClick={onSubmitSolarGame}
                                             disabled={Object.keys(placedPlanets).length === 0}
-                                            className={`px-6 py-3 rounded-2xl font-black text-xs sm:text-sm flex items-center justify-center gap-2 shadow-lg transition-all duration-300 shrink-0 cursor-pointer ${
+                                            className={`px-5 py-2.5 rounded-xl font-black text-xs sm:text-sm flex items-center justify-center gap-2 shadow-xs transition-all duration-200 cursor-pointer ${
                                                 Object.keys(placedPlanets).length === 8
-                                                    ? "bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 hover:from-emerald-500 hover:to-cyan-500 text-white hover:scale-105 shadow-emerald-400/40 ring-4 ring-emerald-300/60"
+                                                    ? "bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white shadow-md hover:scale-102"
                                                     : Object.keys(placedPlanets).length > 0
-                                                        ? "bg-purple-600 hover:bg-purple-700 text-white hover:scale-102 shadow-purple-300/40"
-                                                        : "bg-slate-300 text-slate-500 cursor-not-allowed shadow-none"
+                                                        ? "bg-purple-600 hover:bg-purple-700 text-white hover:scale-102"
+                                                        : "bg-slate-200 text-slate-400 cursor-not-allowed shadow-none"
                                             }`}
                                         >
-                                            <span>🚀</span>
-                                            <span>Hantar & Semak Keputusan</span>
+                                            <span>Hantar Jawapan</span>
                                             <GraphicArrowRight className="w-4 h-4" />
                                         </button>
-                                    </div>
-
-                                    {/* =========================================
-                                        RAK PLANET (TERUS BULAT & HANYA GAMBAR PLANET SAHAJA!)
-                                        Tiada kotak petak, tiada nama planet = null, tiada teks nombor
-                                    ========================================== */}
-                                    <div className="bg-white/95 backdrop-blur-md p-4 sm:p-6 rounded-3xl border-2 border-slate-200 shadow-sm text-left w-full space-y-3">
-                                        <div className="flex items-center justify-between border-b border-slate-100 pb-2">
-                                            <div>
-                                                <h3 className="text-sm font-black text-slate-800">
-                                                    Pilihan Planet (Kenal Pasti Rupa Bentuk)
-                                                </h3>
-                                                <p className="text-[11px] text-slate-500">
-                                                    {SOLAR_PLANETS.filter(p => !Object.values(placedPlanets).includes(p.id)).length > 0
-                                                        ? "Kenal pasti planet daripada rupanya. Seret atau klik bulatan planet untuk diletakkan ke orbit!"
-                                                        : "Hebat! Kesemua planet telah ditempatkan. Sila klik &ldquo;Hantar &amp; Semak Keputusan&rdquo; di atas!"}
-                                                </p>
-                                            </div>
-                                            <span className="text-xs font-black text-purple-700 bg-purple-100 px-2.5 py-1 rounded-full shrink-0">
-                                                {SOLAR_PLANETS.filter(p => !Object.values(placedPlanets).includes(p.id)).length} Baki
-                                            </span>
-                                        </div>
-
-                                        {/* Pilihan Planet: BULAT SEMPURNA & HANYA GAMBAR PLANET SAHAJA */}
-                                        <div className="flex flex-wrap items-center justify-center gap-3.5 sm:gap-5 py-3">
-                                            {SOLAR_PLANETS.filter(p => !Object.values(placedPlanets).includes(p.id)).map((planet) => {
-                                                const isSelected = selectedTrayPlanet === planet.id;
-
-                                                return (
-                                                    <div
-                                                        key={planet.id}
-                                                        draggable={true}
-                                                        onDragStart={(e) => onDragStart(e, planet.id)}
-                                                        onClick={() => onSelectTrayPlanet(planet.id)}
-                                                        title="Klik atau seret bulatan planet ini ke orbit"
-                                                        className={`w-16 h-16 sm:w-20 sm:h-20 rounded-full flex items-center justify-center cursor-grab active:cursor-grabbing select-none transition-all duration-300 relative group shrink-0 ${
-                                                            isSelected
-                                                                ? "scale-115 ring-4 ring-amber-400 bg-gradient-to-br from-amber-100 via-amber-50 to-amber-200 border-2 border-amber-500 shadow-[0_0_24px_rgba(245,158,11,0.7)] animate-bounce"
-                                                                : "bg-gradient-to-b from-white via-sky-50/70 to-slate-100 hover:from-sky-50 hover:to-indigo-50 border-2 border-sky-300/80 hover:border-purple-400 shadow-md hover:shadow-xl hover:scale-115 hover:-translate-y-1"
-                                                        }`}
-                                                    >
-                                                        {/* Halo cahaya lembut bila hover */}
-                                                        <div className="absolute inset-0 rounded-full bg-sky-400/20 blur-md opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
-
-                                                        {/* HANYA GAMBAR PLANET SAHAJA (TIADA NAMA, TIADA KOTAK PETAK, TERUS BULAT) */}
-                                                        <div className="relative z-10 w-13 h-13 sm:w-16 sm:h-16 flex items-center justify-center transition-transform duration-300 group-hover:scale-110 group-hover:rotate-6 pointer-events-none">
-                                                            <GraphicPlanetIcon planetId={planet.id} className="w-full h-full drop-shadow-[0_4px_10px_rgba(0,0,0,0.18)]" />
-                                                        </div>
-                                                    </div>
-                                                );
-                                            })}
-                                        </div>
-
-                                        {SOLAR_PLANETS.filter(p => !Object.values(placedPlanets).includes(p.id)).length === 0 && (
-                                            <div className="py-4 text-center text-xs font-bold text-emerald-700 bg-emerald-50 rounded-2xl border border-emerald-200">
-                                                🎉 Hebat! Semua 8 planet berada di orbit. Klik butang &ldquo;Hantar &amp; Semak Keputusan&rdquo; di atas untuk melihat skor dan semakan jawapan!
-                                            </div>
-                                        )}
                                     </div>
                                 </>
                             )}
@@ -837,7 +558,7 @@ export default function SolarActivityView({
                                                     playAudioFeedback?.("tap");
                                                     setShowExitConfirm(false);
                                                     onResetSolarGame?.();
-                                                    onNavigate("activityList");
+                                                    onNavigate("menu");
                                                 }}
                                                 className="flex-1 py-3 bg-rose-50 hover:bg-rose-100 text-rose-700 font-black rounded-xl text-xs border border-rose-200 active:scale-95 transition-all cursor-pointer"
                                             >

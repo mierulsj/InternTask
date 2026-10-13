@@ -8,6 +8,16 @@ const nextConfig: NextConfig = {
         destination: "/aktiviti/tumbuhan",
         permanent: true,
       },
+      {
+        source: "/aktiviti/sifir",
+        destination: "/pertandingan/sifir",
+        permanent: true,
+      },
+      {
+        source: "/aktiviti/spelling-bee",
+        destination: "/pertandingan/spelling-bee",
+        permanent: true,
+      },
     ];
   },
 };

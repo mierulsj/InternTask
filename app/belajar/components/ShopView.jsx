@@ -7,8 +7,8 @@ import {
     purchaseShopItem,
     equipShopItem,
 } from "../../../lib/shopService";
-import { GraphicCoin } from "./Graphics";
-import ProfileAvatarFrame from "./ProfileAvatarFrame";
+import { GraphicCoin, GraphicBackArrow } from "./Graphics";
+import ProfileAvatarFrame, { BORDER_STYLES } from "./ProfileAvatarFrame";
 import {
     VectorCrown,
     VectorAvatarAstro,
@@ -21,42 +21,26 @@ import {
     VectorSparkles,
 } from "./GameIcons";
 
-// TEMA WARNA PADDING & KAD MENGIKUT TAHAP (RARITY / LEVEL) ITEM
 const RARITY_THEMES = {
     common: {
-        cardBg:
-            "bg-gradient-to-b from-slate-50 to-slate-100/90 border-slate-300 hover:border-slate-400",
-        badge: "bg-slate-200 text-slate-700 border-slate-300",
+        badge: "bg-slate-100 text-slate-600 border-slate-200",
         label: "Biasa",
-        priceText: "text-slate-700",
     },
     rare: {
-        cardBg:
-            "bg-gradient-to-b from-sky-50/90 via-cyan-50/50 to-blue-50/80 border-cyan-400 hover:border-cyan-500 shadow-[0_2px_8px_rgba(6,182,212,0.15)]",
-        badge: "bg-cyan-100 text-cyan-800 border-cyan-300 font-bold",
+        badge: "bg-cyan-50 text-cyan-700 border-cyan-200",
         label: "Istimewa",
-        priceText: "text-cyan-800",
     },
     epic: {
-        cardBg:
-            "bg-gradient-to-b from-purple-50/95 via-fuchsia-50/40 to-indigo-50/80 border-purple-400 hover:border-purple-500 shadow-[0_2px_10px_rgba(168,85,247,0.18)]",
-        badge: "bg-purple-100 text-purple-800 border-purple-300 font-bold",
+        badge: "bg-purple-50 text-purple-700 border-purple-200",
         label: "Epik",
-        priceText: "text-purple-800",
     },
     legendary: {
-        cardBg:
-            "bg-gradient-to-b from-amber-50/95 via-yellow-50/40 to-orange-50/80 border-amber-400 hover:border-amber-500 shadow-[0_2px_10px_rgba(245,158,11,0.2)]",
-        badge: "bg-amber-100 text-amber-900 border-amber-300 font-black",
+        badge: "bg-amber-50 text-amber-800 border-amber-300",
         label: "Mitik",
-        priceText: "text-amber-900",
     },
     mythic: {
-        cardBg:
-            "bg-gradient-to-b from-rose-50/95 via-pink-50/40 to-purple-50/80 border-rose-400 hover:border-rose-500 shadow-[0_2px_12px_rgba(244,63,94,0.22)]",
-        badge: "bg-rose-100 text-rose-900 border-rose-300 font-black animate-pulse",
+        badge: "bg-rose-50 text-rose-700 border-rose-200",
         label: "Glory",
-        priceText: "text-rose-900",
     },
 };
 
@@ -69,14 +53,20 @@ export default function ShopView({
     equippedItems = { border: "border_cadet", avatar: "avatar_astro_1", pet: null },
     setEquippedItems,
     playAudioFeedback,
-    t,
+    t = (bm) => bm,
+    onNavigate,
+    showBackToMenu = false,
 }) {
     const [shopCategory, setShopCategory] = useState("border"); // "border" | "avatar" | "pet" | "all"
     const [alertMessage, setAlertMessage] = useState(null);
 
     const filteredItems = getShopItemsByType(shopCategory);
     const equippedAvatarItem =
-        SHOP_CATALOG.find((i) => i.id === equippedItems?.avatar) || { id: "avatar_astro_1" };
+        SHOP_CATALOG.find((i) => i.id === equippedItems?.avatar) || { id: "avatar_astro_1", name: "Kadet Angkasa" };
+    const equippedBorderItem =
+        SHOP_CATALOG.find((i) => i.id === equippedItems?.border) || { id: "border_cadet", name: "Besi Perintis" };
+    const equippedPetItem =
+        SHOP_CATALOG.find((i) => i.id === equippedItems?.pet);
 
     const handleBuy = (item) => {
         const res = purchaseShopItem({
@@ -88,27 +78,27 @@ export default function ShopView({
 
         if (!res.success) {
             if (playAudioFeedback) playAudioFeedback("wrong");
-            setAlertMessage({ type: "error", text: res.error });
+            setAlertMessage({ type: "error", text: res.error || "Koin tidak mencukupi!" });
             setTimeout(() => setAlertMessage(null), 3000);
             return;
         }
 
         if (playAudioFeedback) playAudioFeedback("sparkle");
-        setStudentCoins(res.nextCoins);
-        setOwnedItems(res.nextOwned);
+        if (setStudentCoins) setStudentCoins(res.nextCoins);
+        if (setOwnedItems) setOwnedItems(res.nextOwned);
 
         const equipRes = equipShopItem({
             studentIC,
             item,
             currentEquipped: equippedItems,
         });
-        if (equipRes.success) {
+        if (equipRes.success && setEquippedItems) {
             setEquippedItems(equipRes.nextEquipped);
         }
 
         setAlertMessage({
             type: "success",
-            text: `Berjaya dipasang: ${item.name}`,
+            text: `Berjaya dibeli & dipakai: ${item.name}! 🎉`,
         });
         setTimeout(() => setAlertMessage(null), 3000);
     };
@@ -122,62 +112,93 @@ export default function ShopView({
 
         if (res.success) {
             if (playAudioFeedback) playAudioFeedback("tap");
-            setEquippedItems(res.nextEquipped);
+            if (setEquippedItems) setEquippedItems(res.nextEquipped);
             setAlertMessage({
                 type: "info",
-                text: `Aktif: ${item.name}`,
+                text: `Avatar dikemas kini: ${item.name}`,
             });
-            setTimeout(() => setAlertMessage(null), 2000);
+            setTimeout(() => setAlertMessage(null), 2500);
         }
     };
 
     return (
-        <div className="space-y-2.5 text-left anim-fade-in select-none">
-            {/* BAR KATEGORI & BAKI KOIN: TIGHT & COMPACT (100% SVG - TIADA EMOJI) */}
-            <div className="flex items-center justify-between gap-2 bg-white px-2.5 py-2 rounded-xl border border-slate-200 shadow-2xs">
-                {/* Kategori Tabs */}
-                <div className="flex items-center gap-1 overflow-x-auto no-scrollbar">
-                    {[
-                        { id: "border", label: "Border", icon: <VectorCrown className="w-3.5 h-3.5" /> },
-                        { id: "avatar", label: "Avatar", icon: <VectorAvatarAstro className="w-3.5 h-3.5" /> },
-                        { id: "pet", label: "Maskot", icon: <VectorPaw className="w-3.5 h-3.5" /> },
-                        { id: "all", label: "Semua", icon: <VectorSparkles className="w-3.5 h-3.5" /> },
-                    ].map((cat) => {
-                        const isActive = shopCategory === cat.id;
-                        return (
-                            <button
-                                key={cat.id}
-                                type="button"
-                                onClick={() => {
-                                    if (playAudioFeedback) playAudioFeedback("tap");
-                                    setShopCategory(cat.id);
-                                }}
-                                className={`px-2.5 py-1 rounded-lg text-[11px] font-black transition-all flex items-center gap-1.5 cursor-pointer whitespace-nowrap active:scale-95 ${
-                                    isActive
-                                        ? "bg-slate-900 text-white shadow-xs"
-                                        : "bg-slate-100 text-slate-600 hover:bg-slate-200"
-                                }`}
-                            >
-                                <span className="flex items-center justify-center">{cat.icon}</span>
-                                <span>{cat.label}</span>
-                            </button>
-                        );
-                    })}
+        <div className="w-full max-w-md sm:max-w-xl mx-auto space-y-4 text-left anim-fade-in select-none pb-8">
+
+            {/* 1. HEADER ATAS KEDAI (JIKA DIBUKA SECARA LANGSUNG DARI BOTTOM NAV / TOP BAR) */}
+            <div className="px-1 pt-1 flex items-center justify-between gap-3">
+                <div className="flex items-center gap-2.5">
+                    {onNavigate && (
+                        <button
+                            type="button"
+                            onClick={() => {
+                                if (playAudioFeedback) playAudioFeedback("tap");
+                                onNavigate("menu");
+                            }}
+                            className="px-3 py-2 bg-white hover:bg-slate-50 text-slate-700 font-bold rounded-xl text-xs cursor-pointer shrink-0 flex items-center gap-1.5 border border-slate-200 shadow-xs active:scale-95 transition-all group"
+                        >
+                            <GraphicBackArrow className="w-4 h-4 text-slate-600 group-hover:-translate-x-0.5 transition-transform" />
+                            <span>Kembali</span>
+                        </button>
+                    )}
+                    <div>
+                        <h2 className="text-xl sm:text-2xl font-black text-[#0099e5] tracking-tight">
+                            Kedai Penjelajah
+                        </h2>
+                        <p className="text-[11px] sm:text-xs text-slate-400 font-semibold mt-0.5">
+                            Guna koin untuk buka avatar & bingkai!
+                        </p>
+                    </div>
                 </div>
 
-                {/* Baki Koin Ringkas */}
-                <div className="flex items-center gap-1 bg-amber-50 border border-amber-300/80 px-2 py-0.5 rounded-lg shrink-0 shadow-2xs">
-                    <GraphicCoin className="w-3.5 h-3.5 shrink-0" />
-                    <span className="font-mono font-black text-amber-900 text-xs">
+                {/* Baki Koin */}
+                <div className="flex items-center gap-1.5 bg-amber-50 border border-amber-300/80 px-3 py-1.5 rounded-2xl shadow-xs shrink-0">
+                    <GraphicCoin className="w-4 h-4 shrink-0" />
+                    <span className="font-mono font-black text-amber-900 text-sm">
                         {studentCoins}
                     </span>
                 </div>
             </div>
 
-            {/* Notifikasi Maklum Balas Ringkas */}
+            {/* 2. PENTAS AVATAR LIVE (PREVIEW AVATAR SEMASA MURID) */}
+            <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-sky-50 via-white to-indigo-50/60 p-4 border border-sky-100 shadow-xs flex items-center justify-between gap-4">
+                <div className="flex items-center gap-3.5">
+                    <div className="relative shrink-0 p-1">
+                        <ProfileAvatarFrame
+                            avatar={equippedAvatarItem?.id || "avatar_astro_1"}
+                            borderId={equippedItems?.border || "border_cadet"}
+                            pet={equippedPetItem}
+                            size="md"
+                            interactive={false}
+                        />
+                    </div>
+                    <div>
+                        <span className="text-[10px] uppercase font-black tracking-wider text-sky-600 block">
+                            Avatar Aktif
+                        </span>
+                        <h3 className="text-sm sm:text-base font-black text-slate-800 leading-tight">
+                            {equippedAvatarItem?.name || "Kadet Angkasa"}
+                        </h3>
+                        <p className="text-[11px] font-bold text-slate-400 mt-0.5">
+                            {equippedBorderItem?.name || "Besi Perintis"}
+                        </p>
+                    </div>
+                </div>
+
+                <div className="text-right shrink-0">
+                    <span className="text-[10px] font-bold text-slate-400 block">
+                        Baki Koin
+                    </span>
+                    <span className="text-base sm:text-lg font-black font-mono text-amber-600 flex items-center gap-1 justify-end">
+                        <GraphicCoin className="w-4 h-4" />
+                        {studentCoins}
+                    </span>
+                </div>
+            </div>
+
+            {/* 3. NOTIFIKASI MAKLUM BALAS / TOAST */}
             {alertMessage && (
                 <div
-                    className={`px-3 py-1.5 rounded-lg text-[11px] font-bold border transition-all flex items-center justify-between shadow-2xs ${
+                    className={`px-3.5 py-2 rounded-2xl text-xs font-bold border transition-all flex items-center justify-between shadow-xs anim-pop ${
                         alertMessage.type === "success"
                             ? "bg-emerald-50 border-emerald-300 text-emerald-900"
                             : alertMessage.type === "info"
@@ -196,53 +217,76 @@ export default function ShopView({
                 </div>
             )}
 
-            {/* GRID KAD ITEM: PADDING KECIL, TIDAK MAKAN RUANG & MENGIKUT WARNA LEVEL */}
-            <div className="grid grid-cols-2 min-[400px]:grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-2">
+            {/* 4. TAB KATEGORI ITEM (BINGKAI, AVATAR, MASKOT, SEMUA) */}
+            <div className="flex items-center gap-1.5 p-1 bg-slate-100 rounded-2xl">
+                {[
+                    { id: "border", label: "Bingkai", icon: <VectorCrown className="w-4 h-4" /> },
+                    { id: "avatar", label: "Avatar", icon: <VectorAvatarAstro className="w-4 h-4" /> },
+                    { id: "pet", label: "Maskot", icon: <VectorPaw className="w-4 h-4" /> },
+                    { id: "all", label: "Semua", icon: <VectorSparkles className="w-4 h-4" /> },
+                ].map((cat) => {
+                    const isActive = shopCategory === cat.id;
+                    return (
+                        <button
+                            key={cat.id}
+                            type="button"
+                            onClick={() => {
+                                if (playAudioFeedback) playAudioFeedback("tap");
+                                setShopCategory(cat.id);
+                            }}
+                            className={`flex-1 py-2 px-2 rounded-xl text-xs font-black transition-all flex items-center justify-center gap-1.5 cursor-pointer active:scale-95 ${
+                                isActive
+                                    ? "bg-white text-[#0099e5] shadow-xs"
+                                    : "text-slate-500 hover:text-slate-800"
+                            }`}
+                        >
+                            <span>{cat.icon}</span>
+                            <span>{cat.label}</span>
+                        </button>
+                    );
+                })}
+            </div>
+
+            {/* 5. GRID KAD ITEM (2 KOLUM PADA MOBILE - MESRA JARI KANAK-KANAK) */}
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 pt-1">
                 {filteredItems.map((item) => {
                     const isOwned =
                         ownedItems.includes(item.id) ||
                         (item.id === "border_cadet" &&
-                            (ownedItems.includes("title_cadet") ||
-                                ownedItems.includes("border_cadet")));
+                            (ownedItems.includes("title_cadet") || ownedItems.includes("border_cadet")));
 
                     const isEquipped =
                         (item.type === "border" &&
-                            (equippedItems?.border === item.id ||
-                                (!equippedItems?.border && item.id === "border_cadet"))) ||
+                            (equippedItems?.border === item.id || (!equippedItems?.border && item.id === "border_cadet"))) ||
                         (item.type === "avatar" && equippedItems?.avatar === item.id) ||
                         (item.type === "pet" && equippedItems?.pet === item.id);
 
                     const canAfford = studentCoins >= item.price;
-                    const theme = RARITY_THEMES[item.rarity] || RARITY_THEMES.common;
+                    const rarityInfo = RARITY_THEMES[item.rarity] || RARITY_THEMES.common;
 
                     return (
                         <div
                             key={item.id}
-                            className={`group relative rounded-xl p-2 border-2 transition-all flex flex-col justify-between select-none ${
-                                theme.cardBg
-                            } ${
+                            className={`bg-white rounded-2xl p-3 border-2 transition-all flex flex-col justify-between shadow-2xs hover:shadow-md ${
                                 isEquipped
-                                    ? "ring-2 ring-emerald-400/80 border-emerald-500 shadow-md"
-                                    : ""
+                                    ? "border-emerald-500 ring-2 ring-emerald-400/40"
+                                    : "border-slate-100 hover:border-slate-200"
                             }`}
                         >
-                            {/* Rarity & Status Badge (Compact) */}
+                            {/* Rarity Tag */}
                             <div className="flex items-center justify-between mb-1">
-                                <span
-                                    className={`text-[8.5px] uppercase px-1.5 py-0.2 rounded-md border ${theme.badge}`}
-                                >
-                                    {theme.label}
+                                <span className={`text-[9px] font-black uppercase px-2 py-0.5 rounded-full border ${rarityInfo.badge}`}>
+                                    {rarityInfo.label}
                                 </span>
-
                                 {isEquipped && (
-                                    <span className="text-[8.5px] font-black text-emerald-800 bg-emerald-100 border border-emerald-300 px-1 py-0.2 rounded-md">
+                                    <span className="text-[9px] font-black text-emerald-700 bg-emerald-100 px-1.5 py-0.2 rounded-md">
                                         Aktif
                                     </span>
                                 )}
                             </div>
 
-                            {/* Center Visual: 3D Border Timbul / Avatar / Pet (100% Vector SVG) */}
-                            <div className="py-1 flex items-center justify-center">
+                            {/* Center Preview Visual */}
+                            <div className="py-2 flex items-center justify-center min-h-[70px]">
                                 {item.type === "border" ? (
                                     <ProfileAvatarFrame
                                         avatar={equippedAvatarItem?.id || "avatar_astro_1"}
@@ -251,8 +295,8 @@ export default function ShopView({
                                         interactive={false}
                                     />
                                 ) : item.type === "avatar" ? (
-                                    <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-sky-400 to-[#0099e5] p-0.5 shadow-2xs group-hover:scale-105 transition-transform flex items-center justify-center">
-                                        <div className="w-full h-full bg-slate-900 rounded-[10px] flex items-center justify-center p-1">
+                                    <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-sky-400 to-[#0099e5] p-0.5 shadow-2xs flex items-center justify-center">
+                                        <div className="w-full h-full bg-slate-900 rounded-[14px] flex items-center justify-center p-1.5">
                                             {item.id === "avatar_astro_1" && <VectorAvatarAstro className="w-full h-full" />}
                                             {item.id === "avatar_scientist" && <VectorAvatarScientist className="w-full h-full" />}
                                             {item.id === "avatar_cyber" && <VectorAvatarCyber className="w-full h-full" />}
@@ -262,71 +306,55 @@ export default function ShopView({
                                         </div>
                                     </div>
                                 ) : (
-                                    <div className="w-10 h-10 rounded-xl bg-white/90 border border-slate-200 flex items-center justify-center shadow-2xs group-hover:scale-105 transition-transform p-2 text-[#0099e5]">
-                                        <VectorPaw className="w-6 h-6" />
+                                    <div className="w-12 h-12 rounded-2xl bg-amber-50 border border-amber-200 flex items-center justify-center shadow-2xs p-2 text-amber-600">
+                                        <VectorPaw className="w-7 h-7" />
                                     </div>
                                 )}
                             </div>
 
-                            {/* Nama Item */}
-                            <div className="text-center my-0.5">
-                                <h4 className="text-[11px] font-black text-slate-900 truncate">
+                            {/* Item Title */}
+                            <div className="text-center my-1">
+                                <h4 className="text-xs sm:text-sm font-black text-slate-800 truncate" title={item.name}>
                                     {item.name}
                                 </h4>
                             </div>
 
-                            {/* Harga & Butang Tindakan */}
-                            <div className="pt-1 mt-1 border-t border-slate-200/60 flex items-center justify-between gap-1">
-                                <div>
-                                    {isOwned ? (
-                                        <span className="text-[9.5px] font-bold text-slate-400">
-                                            Dimiliki
-                                        </span>
-                                    ) : item.price === 0 ? (
-                                        <span className="text-[10px] font-black text-emerald-600">
-                                            Percuma
-                                        </span>
-                                    ) : (
-                                        <span className={`text-[10.5px] font-black font-mono flex items-center gap-0.5 ${theme.priceText}`}>
-                                            <GraphicCoin className="w-3 h-3 shrink-0 inline" />
-                                            <span>{item.price}</span>
-                                        </span>
-                                    )}
-                                </div>
-
-                                <div>
-                                    {isEquipped ? (
-                                        <span className="text-[9px] font-black text-emerald-700 px-1.5 py-0.5 bg-emerald-100/80 rounded">
-                                            ✓
-                                        </span>
-                                    ) : isOwned ? (
-                                        <button
-                                            type="button"
-                                            onClick={() => handleEquip(item)}
-                                            className="px-2 py-0.5 bg-slate-900 hover:bg-slate-800 text-white text-[9.5px] font-bold rounded-md transition-all active:scale-95 cursor-pointer"
-                                        >
-                                            Pakai
-                                        </button>
-                                    ) : (
-                                        <button
-                                            type="button"
-                                            onClick={() => handleBuy(item)}
-                                            disabled={!canAfford}
-                                            className={`px-2 py-0.5 text-[9.5px] font-black rounded-md transition-all active:scale-95 cursor-pointer flex items-center gap-0.5 ${
-                                                canAfford
-                                                    ? "bg-[#0099e5] hover:bg-[#0088cc] text-white shadow-2xs"
-                                                    : "bg-slate-100 text-slate-400 border border-slate-200 cursor-not-allowed"
-                                            }`}
-                                        >
-                                            <span>Beli</span>
-                                        </button>
-                                    )}
-                                </div>
+                            {/* Action Button (Besar & Mudah Ditekan Murid) */}
+                            <div className="pt-2 mt-1 border-t border-slate-100">
+                                {isEquipped ? (
+                                    <div className="w-full py-1.5 bg-emerald-50 text-emerald-700 text-xs font-black rounded-xl text-center border border-emerald-200 flex items-center justify-center gap-1">
+                                        <span>✓</span>
+                                        <span>Dipakai</span>
+                                    </div>
+                                ) : isOwned ? (
+                                    <button
+                                        type="button"
+                                        onClick={() => handleEquip(item)}
+                                        className="w-full py-1.5 bg-slate-900 hover:bg-slate-800 text-white text-xs font-black rounded-xl transition-all active:scale-95 cursor-pointer shadow-xs"
+                                    >
+                                        Pakai
+                                    </button>
+                                ) : (
+                                    <button
+                                        type="button"
+                                        onClick={() => handleBuy(item)}
+                                        disabled={!canAfford}
+                                        className={`w-full py-1.5 text-xs font-black rounded-xl transition-all active:scale-95 cursor-pointer flex items-center justify-center gap-1 ${
+                                            canAfford
+                                                ? "bg-amber-400 hover:bg-amber-500 text-amber-950 shadow-xs"
+                                                : "bg-slate-100 text-slate-400 border border-slate-200 cursor-not-allowed"
+                                        }`}
+                                    >
+                                        <GraphicCoin className="w-3.5 h-3.5 shrink-0" />
+                                        <span>{item.price === 0 ? "Percuma" : item.price}</span>
+                                    </button>
+                                )}
                             </div>
                         </div>
                     );
                 })}
             </div>
+
         </div>
     );
 }

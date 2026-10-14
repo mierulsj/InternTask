@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import PlantActivityView from "../../belajar/components/PlantActivityView";
-import { GraphicHomeButton, LanguageToggle, GraphicCoin } from "../../belajar/components/Graphics";
+import { GraphicHomeButton, GraphicCoin } from "../../belajar/components/Graphics";
 import { saveStudentProfile } from "../../../lib/firestoreService";
 import { getLevelFromXP } from "../../../lib/levelService";
 
@@ -98,16 +98,8 @@ export default function PlantActivityPage() {
         } catch {}
     };
 
-    const toggleLanguage = () => {
-        playAudioFeedback("pick");
-        const next = language === "bm" ? "en" : "bm";
-        setLanguage(next);
-        try {
-            localStorage.setItem("exploria_lang", next);
-        } catch {}
-    };
-
-    const t = (bm, en) => (language === "en" ? en : bm);
+    const toggleLanguage = () => {};
+    const t = (bm) => bm;
 
     const handleSubmitPlantGame = (score = 800) => {
         playAudioFeedback("victory");
@@ -235,7 +227,6 @@ export default function PlantActivityPage() {
                 </div>
 
                 <div className="flex items-center gap-2">
-                    <LanguageToggle language={language} onToggle={toggleLanguage} variant="dark" />
                     <Link
                         href="/kedai"
                         onClick={() => playAudioFeedback("tap")}

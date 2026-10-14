@@ -11,7 +11,6 @@ import {
     GraphicRocketLaunch,
     GraphicSolarSystemBanner,
     GraphicPhotosynthesisBanner,
-    LanguageToggle,
     GraphicCoin,
     GraphicMascotRobot,
     GraphicArrowRight,
@@ -31,6 +30,7 @@ import MathSpeedQuiz from "./components/MathSpeedQuiz";
 import CompetitionView from "./components/CompetitionView";
 import ActivityView from "./components/ActivityView";
 import DashboardView from "./components/DashboardView";
+import ShopView from "./components/ShopView";
 import StudentSettingsModal from "./components/StudentSettingsModal";
 import ProfileAvatarFrame from "./components/ProfileAvatarFrame";
 import RegisterPage from "./Register";
@@ -87,7 +87,7 @@ export default function LessonPage() {
     const handleNavigate = (view) => {
         if (view === "shop") {
             setDashboardActiveTab("shop");
-            setCurrentView("profile");
+            setCurrentView("shop");
             return;
         }
         if (view === "profile") {
@@ -138,29 +138,9 @@ export default function LessonPage() {
     const [language, setLanguage] = useState("bm");
     const timerRef = useRef(null);
 
-    const toggleLanguage = (lang) => {
-
-        playAudioFeedback("sparkle");
-
-        const next = lang || (language === "bm" ? "en" : "bm");
-
-        setLanguage(next);
-
-        try {
-
-            localStorage.setItem("exploria_lang", next);
-
-        } catch {
-
-            // fallback
-
-        }
-
-    };
-
-
-
-    const t = (bm, en) => (language === "en" ? en : bm);
+    // Bahasa ditetapkan kepada Bahasa Melayu sepenuhnya untuk kemudahan murid Tahap 1
+    const toggleLanguage = () => {};
+    const t = (bm) => bm;
 
 
 
@@ -2194,85 +2174,39 @@ export default function LessonPage() {
 
                ========================================================================= */}
 
-            <nav
-                className="sticky top-0 z-50 w-full text-white border-b-2 border-indigo-400/30 shadow-[0_4px_25px_rgba(20,20,60,0.22)] select-none"
-                style={{
-                    background: "linear-gradient(135deg, #0284c7 0%, #1d4ed8 55%, #4f46e5 80%, #7c3aed 100%)"
-                }}
-            >
-                <div className="max-w-7xl mx-auto px-3 sm:px-6 py-2 sm:py-2.5 flex items-center justify-between gap-2 sm:gap-4">
-
+            <nav className="sticky top-0 z-50 w-full bg-white/95 backdrop-blur-md border-b border-slate-100 shadow-xs select-none">
+                <div className="max-w-md sm:max-w-xl mx-auto px-3.5 sm:px-4 py-2 sm:py-2.5 flex items-center justify-between">
                     {/* KIRI: BRANDING & LOGO EXPLORIA */}
                     <div
                         onClick={() => { playAudioFeedback("tap"); setCurrentView("menu"); }}
-                        className="flex flex-col items-center justify-center cursor-pointer group shrink-0 text-center"
+                        className="flex items-center gap-2 cursor-pointer active:scale-95 transition-transform"
                     >
                         <img
                             src="/logoexploria.png"
                             alt="Logo Exploria"
-                            className="h-7 sm:h-8.5 w-auto object-contain transition-transform duration-200 group-hover:scale-105 drop-shadow-[0_2px_8px_rgba(0,0,0,0.25)]"
+                            className="h-7 sm:h-8 w-auto object-contain"
                         />
-                        <span className="text-[9px] sm:text-[10px] font-black text-white uppercase tracking-wider block drop-shadow-sm leading-tight mt-0.5">
-                            {t("Portal Aktiviti", "Activity Portal")}
-                        </span>
                     </div>
 
-
-                    {/* KANAN: PILIHAN BAHASA, CART EMOJI KEDAI & STATUS PELAJAR */}
-                    <div className="flex items-center gap-1.5 sm:gap-2.5 shrink-0">
-                        {/* TOGGLE PILIHAN BAHASA (BM / EN) */}
-                        <LanguageToggle language={language} onToggle={toggleLanguage} variant="dark" />
-
-                        {/* BUTANG CART EMOJI KEDAI & DUIT SEMASA (SEBELAH BAHASA) */}
+                    {/* KANAN: KOIN & PROFIL */}
+                    <div className="flex items-center gap-2">
+                        {/* Butang Koin */}
                         <button
                             type="button"
                             onClick={() => { playAudioFeedback("sparkle"); handleNavigate("shop"); }}
-                            className={`h-8 sm:h-9 px-2 sm:px-2.5 rounded-xl sm:rounded-2xl flex items-center gap-1.5 transition-all cursor-pointer shadow-xs active:scale-95 border ${
-                                currentView === "profile" && dashboardActiveTab === "shop"
-                                    ? "bg-amber-300 text-amber-950 border-amber-400 ring-2 ring-amber-300/50 shadow-md"
-                                    : "bg-white/15 hover:bg-white/25 text-amber-200 border-white/20 backdrop-blur-md"
-                            }`}
-                            title={t(`Kedai Penjelajah • Baki: ${studentCoins} Koin Bintang`, `Explorer Shop • Balance: ${studentCoins} Star Coins`)}
-                            aria-label="Kedai Penjelajah"
+                            className="h-8 sm:h-9 px-3 rounded-full bg-amber-50 hover:bg-amber-100 border border-amber-200/80 text-amber-900 font-black text-xs flex items-center gap-1.5 shadow-xs cursor-pointer active:scale-95 transition-all"
+                            title={`Koin: ${studentCoins}`}
                         >
-                            <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                                <circle cx="9" cy="21" r="1"></circle>
-                                <circle cx="20" cy="21" r="1"></circle>
-                                <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
-                            </svg>
-                            <span className={`text-xs font-mono font-black flex items-center gap-1 ${
-                                currentView === "profile" && dashboardActiveTab === "shop"
-                                    ? "text-amber-950"
-                                    : "text-amber-300"
-                            }`}>
-                                <GraphicCoin className="w-3.5 h-3.5 shrink-0 drop-shadow-xs" />
-                                <span>{studentCoins}</span>
-                            </span>
+                            <GraphicCoin className="w-3.5 h-3.5 shrink-0" />
+                            <span>{studentCoins}</span>
                         </button>
 
-                        {/* BUTANG TETAPAN (SETTINGS) UNTUK MURID */}
-                        <button
-                            type="button"
-                            onClick={() => { playAudioFeedback("tap"); setShowStudentSettingsModal(true); }}
-                            className="h-8 sm:h-9 w-8 sm:w-9 rounded-xl sm:rounded-2xl flex items-center justify-center transition-all cursor-pointer shadow-xs active:scale-95 border bg-white/15 hover:bg-white/25 text-white border-white/20 backdrop-blur-md"
-                            title={t("Tetapan Murid", "Student Settings")}
-                            aria-label="Tetapan Murid"
-                        >
-                            <svg className="w-4 h-4 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                                <circle cx="12" cy="12" r="3"></circle>
-                                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
-                            </svg>
-                        </button>
-
-                        {/* Profile Chip / Trigger Button & Log Masuk */}
+                        {/* Profile Avatar Frame / Log Masuk */}
                         {isLoggedIn ? (
                             <button
                                 onClick={() => { playAudioFeedback("sparkle"); setDashboardActiveTab("all"); setCurrentView("profile"); }}
-                                className={`flex items-center gap-2 border-2 py-1 px-2 sm:px-3 rounded-2xl shadow-xs cursor-pointer transition-all active:scale-95 group shrink-0 ${currentView === "profile" || currentView === "dashboard"
-                                    ? "bg-white text-[#0077b6] border-white ring-2 ring-white/50 shadow-md"
-                                    : "bg-white/20 hover:bg-white/30 text-white border-white/30 backdrop-blur-md"
-                                    }`}
-                                title={t("Buka Profil Murid", "Open Student Profile")}
+                                className="flex items-center p-0.5 rounded-full hover:ring-2 hover:ring-sky-200 transition-all cursor-pointer active:scale-95"
+                                title={studentName || "Profil"}
                             >
                                 <ProfileAvatarFrame
                                     avatar={equippedAvatarItem?.id || "avatar_astro_1"}
@@ -2280,148 +2214,65 @@ export default function LessonPage() {
                                     pet={equippedPetItem}
                                     size="sm"
                                 />
-                                <div className="text-left leading-tight hidden min-[520px]:block">
-                                    <div className="flex items-center gap-1.5">
-                                        <span className={`text-xs font-black ${currentView === "profile" || currentView === "dashboard" ? "text-[#0077b6]" : "text-white"}`}>{studentName || "Penjelajah"}</span>
-                                        <span className={`text-[9px] font-black uppercase px-1.5 py-0.2 rounded-md ${currentView === "profile" || currentView === "dashboard" ? "bg-sky-100 text-[#0077b6]" : "bg-white/25 text-white"}`}>
-                                            {t("Tahap", "Lv.")} {studentLevel}
-                                        </span>
-                                    </div>
-                                    <span className={`text-[10px] font-bold flex items-center gap-1 flex-wrap ${currentView === "profile" || currentView === "dashboard" ? "text-slate-600" : "text-sky-100"}`}>
-                                        <span>{studentXP.toLocaleString()} XP</span>
-                                        <span>•</span>
-                                        <span className="inline-flex items-center gap-0.5 text-amber-300">
-                                            <GraphicCoin className="w-3 h-3 shrink-0 inline" />
-                                            <span>{studentCoins}</span>
-                                        </span>
-                                        <span>•</span>
-                                        <span>{studentStreak}{t("h", "d")}</span>
-                                    </span>
-                                </div>
                             </button>
                         ) : (
-                            <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
-                                <button
-                                    onClick={() => { playAudioFeedback("tap"); setCurrentView("login"); }}
-                                    className="px-2.5 sm:px-3 py-1.5 rounded-xl bg-transparent hover:bg-white/15 text-white text-xs font-black cursor-pointer active:scale-95 transition-all flex items-center gap-1.5 shrink-0 border-2 border-white/60 hover:border-white"
-                                    title={t("Log Masuk Murid", "Student Login")}
-                                >
-                                    <span>{t("Log Masuk", "Login")}</span>
-                                </button>
-                                <button
-                                    onClick={() => { playAudioFeedback("tap"); setDashboardActiveTab("all"); setCurrentView("profile"); }}
-                                    className={`flex items-center gap-2 border-2 py-1 px-2 sm:px-3 rounded-2xl shadow-xs cursor-pointer transition-all active:scale-95 group shrink-0 ${currentView === "profile" || currentView === "dashboard"
-                                        ? "bg-white text-[#0077b6] border-white ring-2 ring-white/50 shadow-md"
-                                        : "bg-white/15 hover:bg-white/25 text-white border-white/25 backdrop-blur-md"
-                                        }`}
-                                    title={t("Buka Profil Tetamu", "Open Guest Profile")}
-                                >
-                                    <div className="w-8 h-8 rounded-xl bg-sky-50 border border-sky-100 flex items-center justify-center text-sm shadow-xs text-[#0077b6] shrink-0">
-                                        <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                                            <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path>
-                                            <circle cx="12" cy="7" r="4"></circle>
-                                        </svg>
-                                    </div>
-                                    <div className="text-left leading-tight hidden min-[520px]:block">
-                                        <div className="flex items-center gap-1.5">
-                                            <span className={`text-xs font-black ${currentView === "profile" || currentView === "dashboard" ? "text-[#0077b6]" : "text-white"}`}>{t("Profil", "Profile")}</span>
-                                            <span className={`text-[9px] font-black uppercase px-1.5 py-0.2 rounded-md ${currentView === "profile" || currentView === "dashboard" ? "bg-sky-100 text-[#0077b6]" : "bg-white/30 text-white"}`}>
-                                                {t("Tetamu", "Guest")}
-                                            </span>
-                                        </div>
-                                    </div>
-                                </button>
-                            </div>
+                            <button
+                                onClick={() => { playAudioFeedback("tap"); setCurrentView("login"); }}
+                                className="h-8 sm:h-9 px-3 rounded-full bg-[#0099e5] hover:bg-[#0284c7] text-white text-xs font-black cursor-pointer active:scale-95 transition-all shadow-xs"
+                            >
+                                Log Masuk
+                            </button>
                         )}
                     </div>
-
                 </div>
-
-
             </nav>
 
-
-
             {/* KANDUNGAN UTAMA (MAIN CONTAINER) */}
+            <main className={`flex-1 w-full mx-auto px-3.5 sm:px-4 pt-3 pb-24 flex flex-col items-center justify-start relative z-10 ${
+                currentView === "solarDragDrop" || currentView === "dashboard" || currentView === "profile" || currentView === "authGateway"
+                    ? "max-w-4xl"
+                    : "max-w-md sm:max-w-xl"
+            }`}>
 
-            <main className="flex-1 w-full pt-5 sm:pt-8 pb-24 sm:pb-28 px-3 sm:px-6 flex flex-col items-center justify-start relative z-10">
-
-
-
-
-
-
-
-                {/* KOTAK UTAMA (PAD) DENGAN TEMA WARNA LOGO EXPLORIA & BAYANG CERAH */}
-
-                <div className={`w-full bg-white rounded-[1.75rem] sm:rounded-[2.5rem] shadow-[0_20px_60px_-10px_rgba(0,120,215,0.25)] overflow-hidden border-2 sm:border-4 border-[#0099e5]/30 text-center transition-all duration-300 relative z-10 ${currentView === "solarDragDrop" || currentView === "dashboard" || currentView === "profile" || currentView === "authGateway" ? "max-w-4xl sm:max-w-5xl" : "max-w-3xl"}`}>
-
-
-
-                    <div
-                        className={`p-4 sm:p-8 text-white relative shadow-md flex flex-col items-center justify-center ${currentView !== "menu" ? "pt-14 sm:pt-8" : "pt-8"}`}
-                        style={{
-                            background: "linear-gradient(135deg, #0284c7 0%, #1d4ed8 55%, #4f46e5 80%, #7c3aed 100%)"
+                {/* 3 KAD NAVIGASI MODUL UTAMA (TEROKA, AKTIVITI, PERTANDINGAN) */}
+                {(currentView === "menu" || currentView === "activityList" || currentView === "competitionList") && (
+                    <ModuleNavCards
+                        currentView={currentView}
+                        onSelectView={(view) => {
+                            playAudioFeedback("tap");
+                            setCurrentView(view);
                         }}
-                    >
-                        {/* BUTTON MENU UTAMA: HANYA KETIKA BUKAN MENU, DETAIL LESSON, AKTIVITI, ATAU PERTANDINGAN */}
-                        {currentView !== "menu" && currentView !== "learningDetail" && currentView !== "activityList" && currentView !== "competitionList" && currentView !== "competition" && currentView !== "pertandingan" && currentView !== "mathQuiz" && currentView !== "spellingBee" && currentView !== "leaderboard" && (
-                            <div className="absolute left-3 top-3 sm:left-6 sm:top-6 z-20">
-                                <button
-                                    onClick={() => { playAudioFeedback("tap"); setCurrentView("menu"); resetQuizState(); resetSolarGame(); }}
-                                    title={t("Kembali ke Teroka", "Back to Explore")}
-                                    aria-label={t("Kembali ke Teroka", "Back to Explore")}
-                                    className="h-9 sm:h-11 px-3 sm:px-4 bg-white/20 hover:bg-white/35 active:scale-90 text-white rounded-2xl transition-all flex items-center gap-1.5 cursor-pointer backdrop-blur-md shadow-md border-2 border-white/35 hover:border-white/60 group"
-                                >
-                                    <GraphicBackArrow className="w-4 h-4 sm:w-5 sm:h-5 text-white group-hover:-translate-x-1 transition-transform" />
-                                    <span className="text-xs sm:text-sm font-black text-white">Back</span>
-                                </button>
-                            </div>
-                        )}
+                        t={t}
+                        playAudioFeedback={playAudioFeedback}
+                    />
+                )}
 
-                        <h1 className="text-xl sm:text-2xl md:text-3xl font-black tracking-tight text-white drop-shadow-sm px-2 text-balance leading-tight">
-                            {courseData.courseTitle}
-                        </h1>
-                    </div>
-
-
-
-                    <div className="p-3.5 sm:p-7 md:p-10 bg-white flex flex-col items-center justify-center">
-
-                        {/* 3 KAD NAVIGASI MODUL UTAMA GAYA REKA BENTUK MODEN (TEROKA, AKTIVITI, PERTANDINGAN) */}
-                        {(currentView === "menu" || currentView === "activityList" || currentView === "competitionList") && (
-                            <ModuleNavCards
-                                currentView={currentView}
-                                onSelectView={(view) => {
-                                    playAudioFeedback("tap");
-                                    setCurrentView(view);
-                                }}
-                                t={t}
-                                playAudioFeedback={playAudioFeedback}
-                            />
-                        )}
-
-                        {/* PAPARAN 1: TEROKA / MENU UTAMA */}
-                        {currentView === "menu" && (
-                            <MainMenu
-                                onNavigate={handleNavigate}
-                                t={t}
-                                playAudioFeedback={playAudioFeedback}
-                                studentName={studentName}
-                                isLoggedIn={isLoggedIn}
-                                studentLevel={studentLevel}
-                                studentXP={studentXP}
-                                studentStreak={studentStreak}
-                                studentCoins={studentCoins}
-                                equippedAvatarIcon={equippedAvatarItem?.id || "avatar_astro_1"}
-                                equippedTitleName=""
-                                equippedPetIcon={equippedPetItem?.icon || null}
-                                unlockedBadgesCount={1}
-                                curriculumTopics={courseData.topics}
-                                readTopics={readTopics}
-                                setSelectedTopicIndex={handleSelectTopic}
-                            />
-                        )}
+                {/* PAPARAN 1: TEROKA / MENU UTAMA */}
+                {currentView === "menu" && (
+                    <MainMenu
+                        onNavigate={handleNavigate}
+                        t={t}
+                        playAudioFeedback={playAudioFeedback}
+                        studentName={studentName}
+                        isLoggedIn={isLoggedIn}
+                        studentLevel={studentLevel}
+                        studentXP={studentXP}
+                        studentStreak={studentStreak}
+                        studentCoins={studentCoins}
+                        equippedAvatarIcon={equippedAvatarItem?.id || "avatar_astro_1"}
+                        equippedTitleName=""
+                        equippedPetIcon={equippedPetItem?.icon || null}
+                        unlockedBadgesCount={1}
+                        curriculumTopics={courseData.topics}
+                        readTopics={readTopics}
+                        setSelectedTopicIndex={handleSelectTopic}
+                        quizHighScore={quizHighScore}
+                        solarSubmitted={solarSubmitted}
+                        plantSubmitted={plantSubmitted}
+                        mathSubmitted={mathSubmitted}
+                        spellingSubmitted={spellingSubmitted}
+                    />
+                )}
 
                         {/* PAPARAN: PEMBELAJARAN (DETAIL NOTA TOPIK DARI EXPLORE) */}
                         {currentView === "learningDetail" && (
@@ -2586,6 +2437,23 @@ export default function LessonPage() {
                             />
                         )}
 
+                        {/* PAPARAN: KEDAI PENJELAJAH */}
+                        {currentView === "shop" && (
+                            <ShopView
+                                studentIC={studentIC}
+                                studentCoins={studentCoins}
+                                setStudentCoins={setStudentCoins}
+                                ownedItems={ownedItems}
+                                setOwnedItems={setOwnedItems}
+                                equippedItems={equippedItems}
+                                setEquippedItems={setEquippedItems}
+                                playAudioFeedback={playAudioFeedback}
+                                t={t}
+                                onNavigate={handleNavigate}
+                                showBackToMenu={true}
+                            />
+                        )}
+
                         {/* PAPARAN: PROFIL & PRESTASI STEM PELAJAR */}
                         {(currentView === "profile" || currentView === "dashboard") && (
                             <DashboardView
@@ -2660,8 +2528,6 @@ export default function LessonPage() {
                             />
                         )}
 
-                    </div>
-                </div>
             {/* POPUP NOTIS UNTUK TETAMU (LOG MASUK / DAFTAR DIPERLUKAN) */}
             {showGuestAuthModal && (
                 <div

@@ -2,7 +2,6 @@
 
 import React, { useState } from "react";
 import {
-    GraphicMascotRobot,
     GraphicBackArrow,
     GraphicLightningBolt,
     GraphicBookOpen,
@@ -10,33 +9,23 @@ import {
     GraphicNatureLeaf,
     GraphicSaturnPlanet,
     GraphicStarMedal,
-    GraphicGrandTrophy,
-    GraphicLightbulb,
-    GraphicQuizLightning,
 } from "./Graphics";
-import ShopView from "./ShopView";
 import ProfileAvatarFrame, { BORDER_STYLES } from "./ProfileAvatarFrame";
 import {
     VectorSchool,
     VectorCrown,
     VectorPencil,
-    VectorDiamond,
     VectorTrophy,
     VectorTarget,
-    VectorDna,
-    VectorClipboard,
-    VectorGrid,
-    VectorAvatarGuest,
     VectorFlame,
     VectorStar,
     VectorBee,
     VectorMath,
-    VectorMicroscope,
-    VectorBook,
     VectorPlant,
+    VectorClipboard,
 } from "./GameIcons";
 import { SHOP_CATALOG } from "../../../lib/shopService";
-import { getLevelDetails, LEVELS_CONFIG, MAX_EXPLORIA_XP } from "../../../lib/levelService";
+import { getLevelDetails } from "../../../lib/levelService";
 
 export default function DashboardView({
     studentName = "",
@@ -46,19 +35,16 @@ export default function DashboardView({
     studentXP = 100,
     studentStreak = 1,
     readTopics = [],
-    averageQuizSpeed = null,
     setStudentName,
     isEditingName = false,
     setIsEditingName,
     tempStudentName = "",
     setTempStudentName,
-    dashboardActiveTab = "all",
+    dashboardActiveTab = "records", // "records" | "badges" | "account"
     setDashboardActiveTab,
     selectedBadgeModal = null,
     setSelectedBadgeModal,
     quizHighScore = 0,
-    quizTotalPoints = 0,
-    scoreCount = 0,
     solarScore = 0,
     solarSubmitted = false,
     plantScore = 0,
@@ -68,21 +54,19 @@ export default function DashboardView({
     mathScore = 0,
     mathSubmitted = false,
     studentCoins = 50,
-    setStudentCoins,
-    ownedItems = ["border_cadet", "avatar_astro_1"],
-    setOwnedItems,
     equippedItems = { border: "border_cadet", avatar: "avatar_astro_1", pet: null },
-    setEquippedItems,
     onNavigate,
     onOpenSettings,
-    t,
+    t = (bm) => bm,
     playAudioFeedback,
     isLoggedIn = false,
     onLogout,
 }) {
     const [copiedStuId, setCopiedStuId] = useState(false);
+    const [activeTab, setActiveTab] = useState(dashboardActiveTab === "badges" || dashboardActiveTab === "account" ? dashboardActiveTab : "records");
+
     const equippedBorderId = equippedItems?.border || "border_cadet";
-    const equippedAvatarItem = SHOP_CATALOG.find((i) => i.id === equippedItems?.avatar) || { id: "avatar_astro_1", name: "Angkasawan Perintis", icon: "avatar_astro_1" };
+    const equippedAvatarItem = SHOP_CATALOG.find((i) => i.id === equippedItems?.avatar) || { id: "avatar_astro_1", name: "Angkasawan Perintis" };
     const equippedPetItem = SHOP_CATALOG.find((i) => i.id === equippedItems?.pet);
     const readTopicsCount = Array.isArray(readTopics) ? readTopics.length : 0;
     const effectiveXP = isLoggedIn ? (studentXP ?? 100) : 0;
@@ -92,21 +76,18 @@ export default function DashboardView({
     const effectivePlantScore = (plantSubmitted && plantScore > 0) ? plantScore : 0;
     const effectiveSpellingScore = (spellingSubmitted && spellingScore > 0) ? spellingScore : 0;
     const effectiveMathScore = (mathSubmitted && mathScore > 0) ? mathScore : (mathScore || 0);
-    const totalScore = effectiveSolarScore + effectiveQuizScore + effectivePlantScore + effectiveSpellingScore + effectiveMathScore;
 
-    // Calculate level & XP milestones up to 15,000 XP
     const levelInfo = getLevelDetails(effectiveXP);
     const levelNum = levelInfo.level;
-    const title = levelInfo.title;
     const percentage = Math.min(100, Math.round((effectiveXP / 15000) * 100));
 
-    // Stars calculation (max 24)
+    // Stars calculation
     const solarStars = Math.min(8, Math.floor((effectiveSolarScore / 800) * 8));
     const quizStars = Math.min(10, Math.floor(effectiveQuizScore / 150));
     const topicStars = Math.min(6, readTopicsCount * 3);
     const totalStars = Math.min(24, solarStars + quizStars + topicStars);
 
-    // Badges (7 badges)
+    // Badges
     const badges = [
         {
             id: "welcome_badge",
@@ -154,333 +135,265 @@ export default function DashboardView({
             requirement: "Selesaikan bacaan semua topik nota.",
         },
         {
-            id: "streak_champ",
-            name: "Bintang 7 Hari",
+            id: "math_master",
+            name: "Jaguh Sifir",
             level: "Emas",
-            xp: "+350 XP",
-            unlocked: effectiveStreak >= 7,
-            icon: <GraphicStarMedal className="w-8 h-8" />,
-            requirement: "Kekalkan streak 7 hari berturut-turut.",
-        },
-        {
-            id: "grand_champion",
-            name: "Juara Galaksi",
-            level: "Platinum",
-            xp: "+500 XP",
-            unlocked: solarSubmitted && solarScore >= 800 && effectiveQuizScore >= 500 && readTopicsCount >= 2,
-            icon: <GraphicGrandTrophy className="w-8 h-8" />,
-            requirement: "Tamatkan aktiviti Suria, Kuiz, dan Nota.",
+            xp: "+300 XP",
+            unlocked: mathSubmitted && mathScore > 0,
+            icon: <VectorMath className="w-8 h-8 text-purple-500" />,
+            requirement: "Jawab Kuiz Sifir Kilat dengan betul.",
         },
     ];
 
     const unlockedBadgesCount = badges.filter((b) => b.unlocked).length;
 
-    // Daily Quests (4 quests)
-    const quests = [
+    // Senarai Kad Skor Aktiviti Ringkas
+    const activityScores = [
         {
-            id: "quest_solar",
-            title: "Susun 8 Planet Sistem Suria",
-            xp: "+100 XP",
-            completed: Boolean(solarSubmitted && solarScore > 0),
-            icon: <GraphicSaturnPlanet className="w-5 h-5" />,
-            targetView: "solarDragDrop",
-        },
-        {
-            id: "quest_plant",
+            id: "plant",
             title: "Makmal Tumbuhan",
-            xp: "+120 XP",
-            completed: Boolean(plantSubmitted && plantScore > 0),
+            score: effectivePlantScore,
+            maxScore: 800,
+            unit: "PTS",
             icon: <VectorPlant className="w-5 h-5" />,
-            targetView: "plantActivity",
+            color: "emerald",
+            done: plantSubmitted && plantScore > 0,
+            view: "plantActivity",
+            btnLabel: plantSubmitted && plantScore > 0 ? "Main Semula" : "Mula",
         },
         {
-            id: "quest_quiz",
-            title: "Cabar Kuiz Pantas 20s",
-            xp: "+150 XP",
-            completed: effectiveQuizScore > 0,
+            id: "solar",
+            title: "Sistem Suria",
+            score: effectiveSolarScore,
+            maxScore: 800,
+            unit: "PTS",
+            icon: <GraphicSaturnPlanet className="w-5 h-5" />,
+            color: "indigo",
+            done: solarSubmitted && solarScore > 0,
+            view: "solarDragDrop",
+            btnLabel: solarSubmitted && solarScore > 0 ? "Main Semula" : "Mula",
+        },
+        {
+            id: "quiz",
+            title: "Kuiz Pantas 20s",
+            score: effectiveQuizScore,
+            maxScore: null,
+            unit: "PTS",
             icon: <GraphicLightningBolt className="w-5 h-5" />,
-            targetView: "quizList",
+            color: "amber",
+            done: effectiveQuizScore > 0,
+            view: "quizList",
+            btnLabel: effectiveQuizScore > 0 ? "Cabar Semula" : "Mula",
         },
         {
-            id: "quest_study",
-            title: "Ulang Kaji Nota Sains",
-            xp: "+80 XP",
-            completed: readTopicsCount > 0,
-            icon: <VectorBook className="w-5 h-5" />,
-            targetView: "menu",
+            id: "math",
+            title: "Sifir Kilat",
+            score: effectiveMathScore,
+            maxScore: null,
+            unit: "PTS",
+            icon: <VectorMath className="w-5 h-5" />,
+            color: "rose",
+            done: mathSubmitted && mathScore > 0,
+            view: "mathQuiz",
+            btnLabel: mathSubmitted && mathScore > 0 ? "Main Semula" : "Mula",
+        },
+        {
+            id: "spelling",
+            title: "Spelling Bee",
+            score: effectiveSpellingScore,
+            maxScore: null,
+            unit: "PTS",
+            icon: <VectorBee className="w-5 h-5" />,
+            color: "amber",
+            done: spellingSubmitted && spellingScore > 0,
+            view: "spellingBee",
+            btnLabel: spellingSubmitted && spellingScore > 0 ? "Main Semula" : "Mula",
         },
     ];
 
-    const completedQuestsCount = quests.filter((q) => q.completed).length;
-
-    // STEM Skills
-    const astroScore = solarSubmitted ? Math.round((solarScore / 800) * 100) : (readTopics?.includes?.(0) ? 40 : 0);
-    const speedScore = effectiveQuizScore > 0 ? Math.min(100, Math.round((effectiveQuizScore / 1500) * 100)) : 0;
-    const lifeScore = plantSubmitted ? Math.round((plantScore / 800) * 100) : (readTopics?.includes?.(1) ? 60 : (readTopicsCount > 0 ? 30 : 0));
-    const inqScore = Math.round((astroScore + speedScore + lifeScore) / 3);
-
-    const stemSkills = [
-        { name: "Astronomi & Angkasa", score: astroScore, icon: <GraphicSaturnPlanet className="w-4 h-4" /> },
-        { name: "Inkuiri Sains", score: inqScore, icon: <VectorMicroscope className="w-4 h-4" /> },
-        { name: "Kepantasan Berfikir", score: speedScore, icon: <GraphicLightningBolt className="w-4 h-4" /> },
-        { name: "Sains Hayat", score: lifeScore, icon: <VectorPlant className="w-4 h-4" /> },
-    ];
-
-    const skillsAverage = Math.round((astroScore + inqScore + speedScore + lifeScore) / 4);
+    const studentIdString = studentIC ? `STU-${studentIC.length >= 5 ? studentIC.slice(-5) : studentIC.padStart(5, "0")}` : "STU-15542";
 
     return (
-        <div className="space-y-4 w-full max-w-4xl anim-fade-in text-left">
+        <div className="w-full max-w-md sm:max-w-xl mx-auto space-y-4 anim-fade-in text-left select-none pb-8">
 
-            {/* BAR ATAS: IDENTITI & NAVIGASI */}
-            <div className="bg-white rounded-2xl p-3.5 sm:p-4 border-2 border-slate-200 shadow-xs flex items-center justify-between gap-3">
-                <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-xl bg-sky-50 text-[#0099e5] flex items-center justify-center p-1.5 shrink-0 border border-sky-100">
-                        {isLoggedIn ? <GraphicMascotRobot className="w-full h-full" /> : <VectorAvatarGuest className="w-full h-full" />}
-                    </div>
-                    <div>
-                        <div className="flex items-center gap-2">
-                            <h2 className="text-base sm:text-lg font-black text-slate-900 leading-tight">
-                                {isLoggedIn ? (studentName || "Penjelajah STEM") : "Mod Tetamu"}
-                            </h2>
-                            <span className={`text-[10px] font-bold px-2 py-0.2 rounded-full ${
-                                isLoggedIn ? "bg-emerald-50 text-emerald-700 border border-emerald-200" : "bg-slate-100 text-slate-500"
-                            }`}>
-                                {isLoggedIn ? "Aktif" : "Tetamu"}
-                            </span>
-                        </div>
-                        {isLoggedIn && (studentSchool || (typeof window !== "undefined" && localStorage.getItem("exploria_student_school"))) && (
-                            <p className="text-[11px] sm:text-xs font-semibold text-slate-500 flex items-center gap-1.5 mt-0.5">
-                                <VectorSchool className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                                <span className="truncate max-w-[190px] sm:max-w-[300px]">
-                                    {studentSchool || (typeof window !== "undefined" && localStorage.getItem("exploria_student_school"))}
-                                </span>
-                            </p>
-                        )}
-                    </div>
+            {/* 1. HEADER RINGKAS DENGAN BUTANG KEMBALI & TETAPAN */}
+            <div className="px-1 pt-1 flex items-center justify-between">
+                <div className="flex items-center gap-2.5">
+                    <button
+                        type="button"
+                        onClick={() => {
+                            if (playAudioFeedback) playAudioFeedback("tap");
+                            if (onNavigate) onNavigate("menu");
+                        }}
+                        className="px-3 py-2 bg-white hover:bg-slate-50 text-slate-700 font-bold rounded-xl text-xs cursor-pointer shrink-0 flex items-center gap-1.5 border border-slate-200 shadow-xs active:scale-95 transition-all group"
+                    >
+                        <GraphicBackArrow className="w-4 h-4 text-slate-600 group-hover:-translate-x-0.5 transition-transform" />
+                        <span>Kembali</span>
+                    </button>
+                    <h2 className="text-xl sm:text-2xl font-black text-[#0099e5] tracking-tight">
+                        Profil Murid
+                    </h2>
                 </div>
 
-                <div className="flex items-center gap-2 shrink-0">
-                    {!isLoggedIn ? (
-                        <>
-                            <button
-                                onClick={() => { playAudioFeedback("tap"); onNavigate("login"); }}
-                                className="px-3 py-1.5 bg-[#0099e5] hover:bg-[#0088cc] active:scale-95 text-white text-xs font-black rounded-xl shadow-xs cursor-pointer transition-all"
-                            >
-                                Log Masuk
-                            </button>
-                            <button
-                                onClick={() => { playAudioFeedback("tap"); onNavigate("register"); }}
-                                className="px-3 py-1.5 bg-white hover:bg-slate-50 active:scale-95 text-slate-700 border border-slate-200 text-xs font-bold rounded-xl shadow-xs cursor-pointer transition-all"
-                            >
-                                Daftar
-                            </button>
-                        </>
-                    ) : (
+                <div className="flex items-center gap-2">
+                    {isLoggedIn && onOpenSettings && (
                         <button
+                            type="button"
                             onClick={() => {
                                 if (playAudioFeedback) playAudioFeedback("tap");
-                                if (onLogout) onLogout();
+                                onOpenSettings();
                             }}
-                            className="px-3 py-1.5 bg-white hover:bg-rose-50 active:scale-95 text-rose-600 border border-rose-200 text-xs font-bold rounded-xl shadow-xs cursor-pointer transition-all"
+                            className="p-2 bg-white hover:bg-slate-50 text-slate-600 border border-slate-200 rounded-xl shadow-xs cursor-pointer active:scale-95 transition-all"
+                            title="Buka Tetapan Murid"
                         >
-                            Log Keluar
+                            <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                                <circle cx="12" cy="12" r="3" />
+                                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
+                            </svg>
                         </button>
                     )}
-                    <button
-                        onClick={() => { playAudioFeedback("tap"); onNavigate("menu"); }}
-                        className="px-3 py-1.5 bg-white hover:bg-slate-50 active:scale-95 text-slate-700 border border-slate-200 text-xs font-bold rounded-xl shadow-xs cursor-pointer flex items-center gap-1.5 transition-all"
-                    >
-                        <GraphicBackArrow className="w-3.5 h-3.5" />
-                        <span>Menu</span>
-                    </button>
                 </div>
             </div>
 
-            {/* KAD HERO: PROFIL & STATISTIK (DISEMBUNYIKAN BILA DI TAB KEDAI AGAR KEMAS & MINIMALIS) */}
-            {dashboardActiveTab !== "shop" && (
-                <div className="rounded-3xl bg-gradient-to-br from-[#0088cc] via-[#0099e5] to-[#0284c7] p-5 sm:p-6 text-white shadow-md border-2 border-sky-300/40">
-                <div className="flex flex-col md:flex-row items-center md:items-start justify-between gap-5">
-                    {/* Identiti & XP */}
-                    <div className="flex items-center gap-4 w-full md:w-auto">
-                        <div className="relative shrink-0">
-                            <ProfileAvatarFrame
-                                avatar={isLoggedIn ? (equippedAvatarItem?.id || "avatar_astro_1") : "avatar_astro_1"}
-                                borderId={equippedBorderId}
-                                pet={equippedPetItem}
-                                size="lg"
-                                level={levelNum}
+            {/* 2. KAD PROFIL COMEL & BERSIH (PROFILE CARD) */}
+            <div className="bg-white rounded-3xl p-5 border border-slate-100 shadow-xs flex flex-col items-center text-center relative overflow-hidden">
+                {/* Avatar Frame di Tengah */}
+                <div className="relative mb-2">
+                    <ProfileAvatarFrame
+                        avatar={isLoggedIn ? (equippedAvatarItem?.id || "avatar_astro_1") : "avatar_astro_1"}
+                        borderId={equippedBorderId}
+                        pet={equippedPetItem}
+                        size="md"
+                        level={levelNum}
+                        interactive={false}
+                    />
+                </div>
+
+                {/* Nama Pelajar */}
+                <div className="flex items-center gap-1.5 justify-center mt-1">
+                    {isEditingName ? (
+                        <div className="flex items-center gap-1.5">
+                            <input
+                                type="text"
+                                value={tempStudentName}
+                                onChange={(e) => setTempStudentName(e.target.value)}
+                                maxLength={20}
+                                className="bg-slate-100 border border-slate-300 rounded-lg px-2 py-0.5 text-slate-900 text-sm font-black outline-none"
+                                autoFocus
+                                onKeyDown={(e) => {
+                                    if (e.key === "Enter") {
+                                        const val = tempStudentName.trim() || "Penjelajah";
+                                        if (setStudentName) setStudentName(val);
+                                        if (setIsEditingName) setIsEditingName(false);
+                                        try { localStorage.setItem("exploria_student_name", val); } catch {}
+                                    }
+                                }}
                             />
+                            <button
+                                onClick={() => {
+                                    const val = tempStudentName.trim() || "Penjelajah";
+                                    if (setStudentName) setStudentName(val);
+                                    if (setIsEditingName) setIsEditingName(false);
+                                    try { localStorage.setItem("exploria_student_name", val); } catch {}
+                                }}
+                                className="px-2 py-0.5 bg-[#0099e5] text-white text-xs font-black rounded-lg cursor-pointer"
+                            >
+                                OK
+                            </button>
                         </div>
-
-                        <div className="flex-1">
-                            {isLoggedIn ? (
-                                <div>
-                                    <div className="flex items-center gap-2 flex-wrap">
-                                        {isEditingName ? (
-                                            <div className="flex items-center gap-1.5">
-                                                <input
-                                                    type="text"
-                                                    value={tempStudentName}
-                                                    onChange={(e) => setTempStudentName(e.target.value)}
-                                                    maxLength={20}
-                                                    className="bg-white/20 border border-white/60 rounded-lg px-2 py-0.5 text-white text-sm font-black outline-none"
-                                                    autoFocus
-                                                    onKeyDown={(e) => {
-                                                        if (e.key === "Enter") {
-                                                            const val = tempStudentName.trim() || "Penjelajah STEM";
-                                                            setStudentName(val);
-                                                            setIsEditingName(false);
-                                                            playAudioFeedback("snap");
-                                                            try { localStorage.setItem("exploria_student_name", val); } catch {}
-                                                        }
-                                                    }}
-                                                />
-                                                <button
-                                                    onClick={() => {
-                                                        const val = tempStudentName.trim() || "Penjelajah STEM";
-                                                        setStudentName(val);
-                                                        setIsEditingName(false);
-                                                        playAudioFeedback("snap");
-                                                        try { localStorage.setItem("exploria_student_name", val); } catch {}
-                                                    }}
-                                                    className="px-2.5 py-0.5 bg-white text-[#0099e5] text-xs font-black rounded-lg cursor-pointer"
-                                                >
-                                                    OK
-                                                </button>
-                                            </div>
-                                        ) : (
-                                            <div className="flex items-center gap-2">
-                                                <h3 className="text-lg sm:text-xl font-black text-white">
-                                                    {studentName || "Penjelajah STEM"}
-                                                </h3>
-                                                <button
-                                                    onClick={() => {
-                                                        setTempStudentName(studentName);
-                                                        setIsEditingName(true);
-                                                        playAudioFeedback("tap");
-                                                    }}
-                                                    className="w-6 h-6 bg-white/20 hover:bg-white/30 rounded-md flex items-center justify-center text-white cursor-pointer"
-                                                >
-                                                    <VectorPencil className="w-3.5 h-3.5 text-white" />
-                                                </button>
-                                            </div>
-                                        )}
-                                        <span className="text-[10px] font-black uppercase px-2.5 py-0.5 rounded-full bg-slate-900/40 text-amber-300 shadow-xs border border-amber-400/50 flex items-center gap-1.5 backdrop-blur-xs">
-                                            <VectorCrown className="w-3 h-3 text-amber-300 shrink-0" />
-                                            <span>{BORDER_STYLES[equippedBorderId]?.name || "Besi Perintis"}</span>
-                                        </span>
-                                    </div>
-
-                                    {/* Bar XP (Sehingga 15,000 XP) */}
-                                    <div className="mt-2 w-full max-w-xs">
-                                        <div className="flex justify-between text-[11px] font-bold text-sky-100 mb-1">
-                                            <span>XP</span>
-                                            <span>{effectiveXP.toLocaleString()} / 15,000</span>
-                                        </div>
-                                        <div className="w-full h-2.5 bg-black/25 rounded-full overflow-hidden p-0.5 border border-white/20">
-                                            <div
-                                                className="h-full bg-white rounded-full transition-all duration-500 shadow-xs"
-                                                style={{ width: `${percentage}%` }}
-                                            />
-                                        </div>
-                                    </div>
-
-                                    {/* LENCANA ID PELAJAR UNIK (UNTUK IBU BAPA) */}
-                                    <div className="mt-2.5 inline-flex items-center gap-1.5 bg-black/25 hover:bg-black/35 backdrop-blur-xs border border-white/25 rounded-xl px-2.5 py-1 text-xs transition-all">
-                                        <span className="text-sky-200 text-[10px] font-bold uppercase tracking-wider">ID Pelajar:</span>
-                                        <span className="font-mono font-black text-amber-300 tracking-wider text-xs">
-                                            {studentIC ? `STU-${studentIC.length >= 5 ? studentIC.slice(-5) : studentIC.padStart(5, "0")}` : "STU-15542"}
-                                        </span>
-                                        <button
-                                            type="button"
-                                            onClick={() => {
-                                                const idToCopy = studentIC ? `STU-${studentIC.length >= 5 ? studentIC.slice(-5) : studentIC.padStart(5, "0")}` : "STU-15542";
-                                                if (navigator?.clipboard) {
-                                                    navigator.clipboard.writeText(idToCopy);
-                                                    setCopiedStuId(true);
-                                                    setTimeout(() => setCopiedStuId(false), 2000);
-                                                }
-                                            }}
-                                            className="text-[10px] bg-white/20 hover:bg-white/35 active:scale-95 text-white font-bold px-2 py-0.5 rounded-lg cursor-pointer transition-all ml-1 flex items-center gap-1"
-                                            title="Salin ID untuk diberikan kepada ibu bapa anda"
-                                        >
-                                            <VectorClipboard className="w-3 h-3 shrink-0" />
-                                            <span>{copiedStuId ? "Disalin" : "Salin ID"}</span>
-                                        </button>
-                                    </div>
-                                </div>
-                            ) : (
-                                <div>
-                                    <h3 className="text-lg sm:text-xl font-black text-white">Penjelajah Tetamu</h3>
-                                    <span className="text-[10px] font-bold bg-white/20 px-2 py-0.5 rounded-md inline-block mt-1">
-                                        Sesi Sementara
-                                    </span>
-                                </div>
+                    ) : (
+                        <div className="flex items-center gap-1.5">
+                            <h3 className="text-lg font-black text-slate-800">
+                                {isLoggedIn ? (studentName || "Penjelajah") : "Penjelajah Tetamu"}
+                            </h3>
+                            {isLoggedIn && (
+                                <button
+                                    onClick={() => {
+                                        if (setTempStudentName) setTempStudentName(studentName);
+                                        if (setIsEditingName) setIsEditingName(true);
+                                    }}
+                                    className="p-1 text-slate-400 hover:text-slate-600 cursor-pointer"
+                                    title="Edit Nama"
+                                >
+                                    <VectorPencil className="w-3.5 h-3.5" />
+                                </button>
                             )}
                         </div>
-                    </div>
+                    )}
+                </div>
 
-                    {/* Statistik KPI Termasuk Koin Bintang */}
-                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2 w-full md:w-auto shrink-0">
-                        <div className="bg-amber-400/25 px-2.5 py-2 rounded-xl border border-amber-300/40 text-center col-span-2 sm:col-span-1 shadow-2xs flex flex-col items-center justify-center">
-                            <GraphicCoin className="w-5 h-5 mx-auto mb-0.5" />
-                            <span className="text-[10px] uppercase font-bold text-amber-200">Koin</span>
-                            <span className="text-xs sm:text-sm font-black text-amber-300 block font-mono">{studentCoins}</span>
-                        </div>
-                        <div className="bg-white/15 px-2.5 py-2 rounded-xl border border-white/20 text-center flex flex-col items-center justify-center">
-                            <VectorFlame className="w-5 h-5 mx-auto mb-0.5 text-amber-300" />
-                            <span className="text-[10px] uppercase font-bold text-sky-100">Streak</span>
-                            <span className="text-xs sm:text-sm font-black text-white block">{effectiveStreak} Hari</span>
-                        </div>
-                        <div className="bg-white/15 px-2.5 py-2 rounded-xl border border-white/20 text-center flex flex-col items-center justify-center">
-                            <VectorStar className="w-5 h-5 mx-auto mb-0.5 text-amber-300" />
-                            <span className="text-[10px] uppercase font-bold text-sky-100">Bintang</span>
-                            <span className="text-xs sm:text-sm font-black text-white block">{totalStars} / 24</span>
-                        </div>
-                        <div className="bg-white/15 px-2.5 py-2 rounded-xl border border-white/20 text-center flex flex-col items-center">
-                            <VectorDiamond className="w-5 h-5 text-sky-200 mb-0.5" />
-                            <span className="text-[10px] uppercase font-bold text-sky-100">Skor</span>
-                            <span className="text-xs sm:text-sm font-black text-white block">{totalScore.toLocaleString()}</span>
-                        </div>
-                        <div className="bg-white/15 px-2.5 py-2 rounded-xl border border-white/20 text-center flex flex-col items-center">
-                            <VectorTrophy className="w-5 h-5 text-amber-200 mb-0.5" />
-                            <span className="text-[10px] uppercase font-bold text-sky-100">Lencana</span>
-                            <span className="text-xs sm:text-sm font-black text-white block">{unlockedBadgesCount} / {badges.length}</span>
-                        </div>
+                {/* Lencana Gelaran & Tahap */}
+                <div className="flex items-center gap-1.5 mt-1">
+                    <span className="text-[10px] font-black uppercase px-2.5 py-0.5 rounded-full bg-sky-50 text-[#0099e5] border border-sky-200">
+                        Tahap {levelNum} • {levelInfo.title || "Kadet STEM"}
+                    </span>
+                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 border border-slate-200">
+                        {BORDER_STYLES[equippedBorderId]?.name || "Besi Perintis"}
+                    </span>
+                </div>
+
+                {/* Bar Kemajuan XP Sederhana */}
+                <div className="w-full max-w-xs mt-3">
+                    <div className="flex justify-between text-[11px] font-bold text-slate-500 mb-1">
+                        <span>XP Terkumpul</span>
+                        <span className="font-mono text-[#0099e5] font-black">{effectiveXP.toLocaleString()} / 15,000</span>
+                    </div>
+                    <div className="w-full h-2.5 bg-slate-100 rounded-full overflow-hidden p-0.5 border border-slate-200">
+                        <div
+                            className="h-full bg-gradient-to-r from-[#0099e5] to-cyan-400 rounded-full transition-all duration-500"
+                            style={{ width: `${percentage}%` }}
+                        />
+                    </div>
+                </div>
+
+                {/* 3 Petak Statistik Ringkas (Streak, Koin, Bintang) */}
+                <div className="grid grid-cols-3 gap-2 w-full max-w-xs mt-4 pt-3 border-t border-slate-100">
+                    <div className="bg-amber-50/70 border border-amber-200/60 rounded-2xl p-2 text-center">
+                        <VectorFlame className="w-4 h-4 mx-auto text-amber-500 mb-0.5" />
+                        <span className="text-[9px] uppercase font-bold text-slate-400 block">Streak</span>
+                        <span className="text-xs font-black text-amber-950 font-mono">{effectiveStreak} Hari</span>
+                    </div>
+                    <div className="bg-amber-50/70 border border-amber-200/60 rounded-2xl p-2 text-center">
+                        <GraphicCoin className="w-4 h-4 mx-auto mb-0.5" />
+                        <span className="text-[9px] uppercase font-bold text-slate-400 block">Koin</span>
+                        <span className="text-xs font-black text-amber-950 font-mono">{studentCoins}</span>
+                    </div>
+                    <div className="bg-sky-50/70 border border-sky-200/60 rounded-2xl p-2 text-center">
+                        <VectorStar className="w-4 h-4 mx-auto text-sky-500 mb-0.5" />
+                        <span className="text-[9px] uppercase font-bold text-slate-400 block">Bintang</span>
+                        <span className="text-xs font-black text-sky-950 font-mono">{totalStars} / 24</span>
                     </div>
                 </div>
             </div>
-            )}
 
-            {/* TAB NAVIGASI */}
-            <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar pb-0.5">
+            {/* 3. TAB NAVIGASI RINGKAS (HANYA 3 TAB: AKTIVITI, LENCANA, AKAUN) */}
+            <div className="flex items-center gap-1.5 p-1 bg-slate-100 rounded-2xl">
                 {[
-                    { id: "all", label: "Semua", icon: <VectorGrid className="w-3.5 h-3.5" /> },
-                    { id: "shop", label: "Kedai Border", icon: <VectorCrown className="w-3.5 h-3.5" /> },
-                    { id: "records", label: "Aktiviti", icon: <VectorTarget className="w-3.5 h-3.5" />, count: 6 },
-                    { id: "skills", label: "Kemahiran", icon: <VectorDna className="w-3.5 h-3.5" /> },
-                    { id: "quests", label: "Misi", icon: <VectorClipboard className="w-3.5 h-3.5" />, count: `${completedQuestsCount}/${quests.length}` },
+                    { id: "records", label: "Aktiviti", icon: <VectorTarget className="w-3.5 h-3.5" /> },
                     { id: "badges", label: "Lencana", icon: <VectorTrophy className="w-3.5 h-3.5" />, count: unlockedBadgesCount },
+                    { id: "account", label: "Akaun", icon: <VectorSchool className="w-3.5 h-3.5" /> },
                 ].map((tab) => {
-                    const isActive = dashboardActiveTab === tab.id;
+                    const isActive = activeTab === tab.id;
                     return (
                         <button
                             key={tab.id}
+                            type="button"
                             onClick={() => {
-                                playAudioFeedback("tap");
-                                setDashboardActiveTab(tab.id);
+                                if (playAudioFeedback) playAudioFeedback("tap");
+                                setActiveTab(tab.id);
+                                if (setDashboardActiveTab) setDashboardActiveTab(tab.id);
                             }}
-                            className={`px-3.5 py-1.5 rounded-xl text-xs font-black whitespace-nowrap transition-all flex items-center gap-1.5 cursor-pointer ${
+                            className={`flex-1 py-2 px-2 rounded-xl text-xs font-black transition-all flex items-center justify-center gap-1.5 cursor-pointer active:scale-95 ${
                                 isActive
-                                    ? "bg-[#0099e5] text-white shadow-xs"
-                                    : "bg-white hover:bg-slate-50 text-slate-700 border border-slate-200"
+                                    ? "bg-white text-[#0099e5] shadow-xs"
+                                    : "text-slate-500 hover:text-slate-800"
                             }`}
                         >
                             <span>{tab.icon}</span>
                             <span>{tab.label}</span>
                             {tab.count !== undefined && (
-                                <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-black ${
-                                    isActive ? "bg-white/25 text-white" : "bg-slate-100 text-slate-600"
+                                <span className={`text-[9px] px-1.5 py-0.2 rounded-full font-black ${
+                                    isActive ? "bg-sky-100 text-[#0099e5]" : "bg-slate-200 text-slate-600"
                                 }`}>
                                     {tab.count}
                                 </span>
@@ -490,334 +403,169 @@ export default function DashboardView({
                 })}
             </div>
 
-            {/* KEDAI PENJELAJAH TAB CONTENT */}
-            {dashboardActiveTab === "shop" && (
-                <ShopView
-                    studentIC={studentIC}
-                    studentCoins={studentCoins}
-                    setStudentCoins={setStudentCoins}
-                    ownedItems={ownedItems}
-                    setOwnedItems={setOwnedItems}
-                    equippedItems={equippedItems}
-                    setEquippedItems={setEquippedItems}
-                    playAudioFeedback={playAudioFeedback}
-                    t={t}
-                />
-            )}
-
-            {/* REKOD AKTIVITI (6 KAD MINIMALIS - TIADA TEXT BERLEBIHAN) */}
-            {(dashboardActiveTab === "all" || dashboardActiveTab === "records") && (
-                <div className="space-y-3 anim-fade-in">
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-                        {/* 1: Makmal Tumbuhan */}
-                        <div className="bg-white rounded-2xl p-4 border-2 border-slate-200 hover:border-[#0099e5] shadow-xs transition-all flex flex-col justify-between">
-                            <div>
-                                <div className="flex items-center justify-between mb-2">
-                                    <div className="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center p-1 border border-emerald-100">
-                                        <VectorPlant className="w-5 h-5" />
-                                    </div>
-                                    <span className={`text-[10px] font-black uppercase px-2 py-0.5 rounded-full border ${
-                                        !plantSubmitted || plantScore === 0
-                                            ? "bg-slate-50 text-slate-500 border-slate-200"
-                                            : "bg-emerald-50 text-emerald-700 border-emerald-200"
-                                    }`}>
-                                        {!plantSubmitted || plantScore === 0 ? "Belum Mula" : "Selesai"}
-                                    </span>
+            {/* TAB 1: REKOD SKOR AKTIVITI */}
+            {activeTab === "records" && (
+                <div className="space-y-2.5 pt-1">
+                    {activityScores.map((act) => (
+                        <div
+                            key={act.id}
+                            className="bg-white rounded-2xl p-3.5 border border-slate-100 shadow-2xs hover:shadow-xs transition-all flex items-center justify-between gap-3"
+                        >
+                            <div className="flex items-center gap-3 min-w-0">
+                                <div className="w-10 h-10 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-700 shrink-0">
+                                    {act.icon}
                                 </div>
-                                <h4 className="text-sm font-black text-slate-900">Makmal Tumbuhan</h4>
-                                <div className="text-xl font-black text-slate-900 mt-1">
-                                    {effectivePlantScore} <span className="text-xs font-bold text-slate-400">/ 800 PTS</span>
+                                <div className="min-w-0">
+                                    <h4 className="text-xs sm:text-sm font-black text-slate-800 truncate">
+                                        {act.title}
+                                    </h4>
+                                    <div className="text-xs font-black text-[#0099e5] font-mono mt-0.5">
+                                        {act.score}{act.maxScore ? <span className="text-slate-400 font-bold"> / {act.maxScore}</span> : ""} {act.unit}
+                                    </div>
                                 </div>
                             </div>
+
                             <button
-                                onClick={() => { playAudioFeedback("tap"); onNavigate("plantActivity"); }}
-                                className="mt-3 w-full py-2 bg-[#0099e5] hover:bg-[#0088cc] active:scale-95 text-white text-xs font-black rounded-xl shadow-xs cursor-pointer transition-all"
-                            >
-                                {plantSubmitted && plantScore > 0 ? "Main Semula" : "Mula"}
-                            </button>
-                        </div>
-
-                        {/* 2: Sistem Suria */}
-                        <div className="bg-white rounded-2xl p-4 border-2 border-slate-200 hover:border-[#0099e5] shadow-xs transition-all flex flex-col justify-between">
-                            <div>
-                                <div className="flex items-center justify-between mb-2">
-                                    <div className="w-8 h-8 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center p-1 border border-indigo-100">
-                                        <GraphicSaturnPlanet className="w-5 h-5" />
-                                    </div>
-                                    <span className={`text-[10px] font-black uppercase px-2 py-0.5 rounded-full border ${
-                                        !solarSubmitted || solarScore === 0
-                                            ? "bg-slate-50 text-slate-500 border-slate-200"
-                                            : "bg-emerald-50 text-emerald-700 border-emerald-200"
-                                    }`}>
-                                        {!solarSubmitted || solarScore === 0 ? "Belum Mula" : "Selesai"}
-                                    </span>
-                                </div>
-                                <h4 className="text-sm font-black text-slate-900">Sistem Suria</h4>
-                                <div className="text-xl font-black text-slate-900 mt-1">
-                                    {effectiveSolarScore} <span className="text-xs font-bold text-slate-400">/ 800 PTS</span>
-                                </div>
-                            </div>
-                            <button
-                                onClick={() => { playAudioFeedback("tap"); onNavigate("solarDragDrop"); }}
-                                className="mt-3 w-full py-2 bg-[#0099e5] hover:bg-[#0088cc] active:scale-95 text-white text-xs font-black rounded-xl shadow-xs cursor-pointer transition-all"
-                            >
-                                {solarSubmitted && solarScore > 0 ? "Main Semula" : "Mula"}
-                            </button>
-                        </div>
-
-                        {/* 3: Kuiz Pantas 20s */}
-                        <div className="bg-white rounded-2xl p-4 border-2 border-slate-200 hover:border-[#0099e5] shadow-xs transition-all flex flex-col justify-between">
-                            <div>
-                                <div className="flex items-center justify-between mb-2">
-                                    <div className="w-8 h-8 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center p-1 border border-amber-100">
-                                        <GraphicLightningBolt className="w-5 h-5" />
-                                    </div>
-                                    <span className={`text-[10px] font-black uppercase px-2 py-0.5 rounded-full border ${
-                                        effectiveQuizScore === 0
-                                            ? "bg-slate-50 text-slate-500 border-slate-200"
-                                            : "bg-emerald-50 text-emerald-700 border-emerald-200"
-                                    }`}>
-                                        {effectiveQuizScore === 0 ? "Belum Dicabar" : "Rekod Skor"}
-                                    </span>
-                                </div>
-                                <h4 className="text-sm font-black text-slate-900">Kuiz Pantas 20s</h4>
-                                <div className="text-xl font-black text-slate-900 mt-1">
-                                    {effectiveQuizScore.toLocaleString()} <span className="text-xs font-bold text-slate-400">PTS</span>
-                                </div>
-                            </div>
-                            <button
-                                onClick={() => { playAudioFeedback("tap"); onNavigate("quizList"); }}
-                                className="mt-3 w-full py-2 bg-[#0099e5] hover:bg-[#0088cc] active:scale-95 text-white text-xs font-black rounded-xl shadow-xs cursor-pointer transition-all flex items-center justify-center gap-1.5"
-                            >
-                                <GraphicLightningBolt className="w-3.5 h-3.5" />
-                                <span>{effectiveQuizScore > 0 ? "Cabar Semula" : "Mula"}</span>
-                            </button>
-                        </div>
-
-                        {/* 4: Spelling Bee STEM */}
-                        <div className="bg-white rounded-2xl p-4 border-2 border-slate-200 hover:border-[#0099e5] shadow-xs transition-all flex flex-col justify-between">
-                            <div>
-                                <div className="flex items-center justify-between mb-2">
-                                    <div className="w-8 h-8 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center p-1 border border-amber-100">
-                                        <VectorBee className="w-5 h-5" />
-                                    </div>
-                                    <span className={`text-[10px] font-black uppercase px-2 py-0.5 rounded-full border ${
-                                        !spellingSubmitted || spellingScore === 0
-                                            ? "bg-slate-50 text-slate-500 border-slate-200"
-                                            : "bg-emerald-50 text-emerald-700 border-emerald-200"
-                                    }`}>
-                                        {!spellingSubmitted || spellingScore === 0 ? "Belum Mula" : "Selesai"}
-                                    </span>
-                                </div>
-                                <h4 className="text-sm font-black text-slate-900">Spelling Bee STEM</h4>
-                                <div className="text-xl font-black text-slate-900 mt-1">
-                                    {effectiveSpellingScore} <span className="text-xs font-bold text-slate-400">PTS</span>
-                                </div>
-                            </div>
-                            <button
-                                onClick={() => { playAudioFeedback("tap"); onNavigate("spellingBee"); }}
-                                className="mt-3 w-full py-2 bg-[#0099e5] hover:bg-[#0088cc] active:scale-95 text-white text-xs font-black rounded-xl shadow-xs cursor-pointer transition-all"
-                            >
-                                {spellingSubmitted && spellingScore > 0 ? "Main Semula" : "Mula"}
-                            </button>
-                        </div>
-
-                        {/* 5: Pertandingan Sifir */}
-                        <div className="bg-white rounded-2xl p-4 border-2 border-slate-200 hover:border-[#0099e5] shadow-xs transition-all flex flex-col justify-between">
-                            <div>
-                                <div className="flex items-center justify-between mb-2">
-                                    <div className="w-8 h-8 rounded-xl bg-sky-50 text-sky-600 flex items-center justify-center p-1 border border-sky-100">
-                                        <VectorMath className="w-5 h-5" />
-                                    </div>
-                                    <span className={`text-[10px] font-black uppercase px-2 py-0.5 rounded-full border ${
-                                        !mathSubmitted || mathScore === 0
-                                            ? "bg-slate-50 text-slate-500 border-slate-200"
-                                            : "bg-emerald-50 text-emerald-700 border-emerald-200"
-                                    }`}>
-                                        {!mathSubmitted || mathScore === 0 ? "Belum Mula" : "Selesai"}
-                                    </span>
-                                </div>
-                                <h4 className="text-sm font-black text-slate-900">Pertandingan Sifir</h4>
-                                <div className="text-xl font-black text-slate-900 mt-1">
-                                    {effectiveMathScore} <span className="text-xs font-bold text-slate-400">PTS</span>
-                                </div>
-                            </div>
-                            <button
-                                onClick={() => { playAudioFeedback("tap"); onNavigate("mathQuiz"); }}
-                                className="mt-3 w-full py-2 bg-[#0099e5] hover:bg-[#0088cc] active:scale-95 text-white text-xs font-black rounded-xl shadow-xs cursor-pointer transition-all"
-                            >
-                                {mathSubmitted && mathScore > 0 ? "Main Semula" : "Mula"}
-                            </button>
-                        </div>
-
-                        {/* 6: Nota Visual Sains */}
-                        <div className="bg-white rounded-2xl p-4 border-2 border-slate-200 hover:border-[#0099e5] shadow-xs transition-all flex flex-col justify-between">
-                            <div>
-                                <div className="flex items-center justify-between mb-2">
-                                    <div className="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center p-1 border border-emerald-100">
-                                        <VectorBook className="w-5 h-5" />
-                                    </div>
-                                    <span className={`text-[10px] font-black uppercase px-2 py-0.5 rounded-full border ${
-                                        readTopicsCount === 0
-                                            ? "bg-slate-50 text-slate-500 border-slate-200"
-                                            : "bg-emerald-50 text-emerald-700 border-emerald-200"
-                                    }`}>
-                                        {readTopicsCount >= 2 ? "Lengkap" : (readTopicsCount === 1 ? "1/2" : "0/2")}
-                                    </span>
-                                </div>
-                                <h4 className="text-sm font-black text-slate-900">Nota Sains</h4>
-                                <div className="text-xl font-black text-slate-900 mt-1">
-                                    {readTopicsCount} <span className="text-xs font-bold text-slate-400">/ 2 Topik</span>
-                                </div>
-                            </div>
-                            <button
-                                onClick={() => { playAudioFeedback("tap"); onNavigate("menu"); }}
-                                className="mt-3 w-full py-2 bg-[#0099e5] hover:bg-[#0088cc] active:scale-95 text-white text-xs font-black rounded-xl shadow-xs cursor-pointer transition-all flex items-center justify-center gap-1.5"
-                            >
-                                <GraphicBookOpen className="w-3.5 h-3.5" />
-                                <span>{readTopicsCount >= 2 ? "Ulang Kaji" : "Buka"}</span>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            )}
-
-            {/* DUA LAJUR: KEMAHIRAN STEM & MISI HARIAN */}
-            {(dashboardActiveTab === "all" || dashboardActiveTab === "skills" || dashboardActiveTab === "quests") && (
-                <div className={`grid gap-4 anim-fade-in ${dashboardActiveTab === "all" ? "grid-cols-1 md:grid-cols-2" : "grid-cols-1"}`}>
-
-                    {/* Lajur Kiri: Kemahiran STEM */}
-                    {(dashboardActiveTab === "all" || dashboardActiveTab === "skills") && (
-                        <div className="bg-white rounded-2xl p-4 sm:p-5 border-2 border-slate-200 shadow-xs space-y-3">
-                            <div className="flex items-center justify-between border-b border-slate-100 pb-2">
-                                <h3 className="text-sm font-black text-slate-800 flex items-center gap-1.5">
-                                    <VectorDna className="w-4 h-4 text-sky-500" />
-                                    <span>Kemahiran STEM</span>
-                                </h3>
-                                <span className="text-xs font-black text-[#0099e5]">
-                                    Purata {skillsAverage}%
-                                </span>
-                            </div>
-
-                            <div className="space-y-3 pt-1">
-                                {stemSkills.map((skill, idx) => (
-                                    <div key={idx} className="space-y-1">
-                                        <div className="flex items-center justify-between text-xs">
-                                            <span className="font-bold text-slate-700 flex items-center gap-1.5">
-                                                <span className="shrink-0">{skill.icon}</span>
-                                                <span>{skill.name}</span>
-                                            </span>
-                                            <span className="font-black text-slate-900">{skill.score}%</span>
-                                        </div>
-                                        <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
-                                            <div
-                                                className="h-full rounded-full bg-[#0099e5] transition-all duration-500"
-                                                style={{ width: `${skill.score}%` }}
-                                            />
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-                    )}
-
-                    {/* Lajur Kanan: Misi Harian */}
-                    {(dashboardActiveTab === "all" || dashboardActiveTab === "quests") && (
-                        <div className="bg-white rounded-2xl p-4 sm:p-5 border-2 border-slate-200 shadow-xs space-y-3">
-                            <div className="flex items-center justify-between border-b border-slate-100 pb-2">
-                                <h3 className="text-sm font-black text-slate-800 flex items-center gap-1.5">
-                                    <VectorClipboard className="w-4 h-4 text-sky-500" />
-                                    <span>Misi Harian</span>
-                                </h3>
-                                <span className="text-xs font-black text-slate-700 bg-slate-100 px-2 py-0.2 rounded-full">
-                                    {completedQuestsCount} / {quests.length}
-                                </span>
-                            </div>
-
-                            <div className="space-y-2 pt-1">
-                                {quests.map((quest) => (
-                                    <div
-                                        key={quest.id}
-                                        className="bg-slate-50 rounded-xl p-2.5 flex items-center justify-between gap-2.5 border border-slate-200/80"
-                                    >
-                                        <div className="flex items-center gap-2.5 min-w-0">
-                                            <div className="w-7 h-7 rounded-lg bg-sky-50 text-[#0099e5] flex items-center justify-center p-1 shrink-0 border border-sky-100">
-                                                {quest.icon}
-                                            </div>
-                                            <div className="min-w-0">
-                                                <h4 className="text-xs font-black text-slate-800 truncate">
-                                                    {quest.title}
-                                                </h4>
-                                                <span className="text-[10px] font-black text-[#0099e5]">
-                                                    {quest.xp}
-                                                </span>
-                                            </div>
-                                        </div>
-
-                                        <div className="shrink-0">
-                                            {quest.completed ? (
-                                                <span className="w-6 h-6 rounded-full bg-emerald-500 text-white flex items-center justify-center text-xs font-black" title="Selesai">
-                                                    ✓
-                                                </span>
-                                            ) : (
-                                                <button
-                                                    onClick={() => { playAudioFeedback("tap"); onNavigate(quest.targetView); }}
-                                                    className="px-2.5 py-1 bg-[#0099e5] hover:bg-[#0088cc] active:scale-95 text-white text-[10px] font-black rounded-lg cursor-pointer transition-all"
-                                                >
-                                                    Buka
-                                                </button>
-                                            )}
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-                    )}
-                </div>
-            )}
-
-            {/* PETI LENCANA */}
-            {(dashboardActiveTab === "all" || dashboardActiveTab === "badges") && (
-                <div className="bg-white rounded-2xl p-4 sm:p-5 border-2 border-slate-200 shadow-xs anim-fade-in space-y-3">
-                    <div className="flex items-center justify-between border-b border-slate-100 pb-2">
-                        <h3 className="text-sm font-black text-slate-800 flex items-center gap-1.5">
-                            <VectorTrophy className="w-4 h-4 text-amber-500" />
-                            <span>Peti Lencana</span>
-                        </h3>
-                        <span className="text-xs font-black text-[#0099e5]">
-                            {unlockedBadgesCount} / {badges.length}
-                        </span>
-                    </div>
-
-                    <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-2.5 pt-1">
-                        {badges.map((badge) => (
-                            <div
-                                key={badge.id}
+                                type="button"
                                 onClick={() => {
-                                    playAudioFeedback("sparkle");
-                                    setSelectedBadgeModal(badge);
+                                    if (playAudioFeedback) playAudioFeedback("tap");
+                                    if (onNavigate) onNavigate(act.view);
                                 }}
-                                className={`rounded-xl p-2.5 border transition-all cursor-pointer flex flex-col items-center text-center ${
-                                    badge.unlocked
-                                        ? "bg-white border-slate-200 hover:border-[#0099e5] shadow-xs active:scale-95"
-                                        : "bg-slate-50/80 border-slate-200/80 opacity-60 hover:opacity-100"
-                                }`}
+                                className="px-3.5 py-1.5 bg-[#0099e5] hover:bg-[#0284c7] active:scale-95 text-white text-xs font-black rounded-xl shadow-xs cursor-pointer transition-all shrink-0"
                             >
-                                <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-xl mb-1.5 ${
-                                    badge.unlocked
-                                        ? "bg-sky-50 text-[#0099e5]"
-                                        : "bg-slate-200 text-slate-400 grayscale"
-                                }`}>
-                                    {badge.icon}
-                                </div>
-                                <h4 className={`text-[11px] font-black line-clamp-1 ${badge.unlocked ? "text-slate-800" : "text-slate-400"}`}>
-                                    {badge.name}
-                                </h4>
-                                <span className="text-[9px] font-bold text-slate-400 mt-0.5">
-                                    {badge.xp}
-                                </span>
+                                {act.btnLabel}
+                            </button>
+                        </div>
+                    ))}
+                </div>
+            )}
+
+            {/* TAB 2: PETI LENCANA */}
+            {activeTab === "badges" && (
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5 pt-1">
+                    {badges.map((badge) => (
+                        <div
+                            key={badge.id}
+                            onClick={() => {
+                                if (playAudioFeedback) playAudioFeedback("sparkle");
+                                if (setSelectedBadgeModal) setSelectedBadgeModal(badge);
+                            }}
+                            className={`bg-white rounded-2xl p-3.5 border transition-all cursor-pointer flex flex-col items-center text-center shadow-2xs active:scale-95 ${
+                                badge.unlocked
+                                    ? "border-amber-200 hover:border-amber-400"
+                                    : "border-slate-100 opacity-60"
+                            }`}
+                        >
+                            <div className={`w-12 h-12 rounded-2xl flex items-center justify-center text-2xl mb-2 ${
+                                badge.unlocked ? "bg-amber-50" : "bg-slate-100 grayscale"
+                            }`}>
+                                {badge.icon}
                             </div>
-                        ))}
+                            <h4 className="text-xs font-black text-slate-800 line-clamp-1">
+                                {badge.name}
+                            </h4>
+                            <span className="text-[10px] font-bold text-amber-600 mt-0.5">
+                                {badge.xp}
+                            </span>
+                        </div>
+                    ))}
+                </div>
+            )}
+
+            {/* TAB 3: MAKLUMAT AKAUN & TETAPAN */}
+            {activeTab === "account" && (
+                <div className="bg-white rounded-2xl p-4 border border-slate-100 shadow-2xs space-y-3 pt-3">
+                    {/* ID Pelajar */}
+                    <div className="flex items-center justify-between p-3 rounded-xl bg-slate-50 border border-slate-100">
+                        <div>
+                            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">
+                                ID Pelajar
+                            </span>
+                            <span className="text-sm font-black font-mono text-slate-800">
+                                {studentIdString}
+                            </span>
+                        </div>
+                        <button
+                            type="button"
+                            onClick={() => {
+                                if (navigator?.clipboard) {
+                                    navigator.clipboard.writeText(studentIdString);
+                                    setCopiedStuId(true);
+                                    setTimeout(() => setCopiedStuId(false), 2000);
+                                }
+                            }}
+                            className="px-2.5 py-1 bg-white hover:bg-slate-100 border border-slate-200 text-xs font-bold text-slate-700 rounded-lg cursor-pointer"
+                        >
+                            {copiedStuId ? "Disalin ✓" : "Salin"}
+                        </button>
+                    </div>
+
+                    {/* Sekolah */}
+                    {studentSchool && (
+                        <div className="p-3 rounded-xl bg-slate-50 border border-slate-100">
+                            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">
+                                Sekolah
+                            </span>
+                            <span className="text-xs font-black text-slate-700 block mt-0.5">
+                                {studentSchool}
+                            </span>
+                        </div>
+                    )}
+
+                    {/* Butang Tindakan Akaun */}
+                    <div className="pt-2 space-y-2">
+                        {isLoggedIn && onOpenSettings && (
+                            <button
+                                type="button"
+                                onClick={() => {
+                                    if (playAudioFeedback) playAudioFeedback("tap");
+                                    onOpenSettings();
+                                }}
+                                className="w-full py-2.5 bg-sky-50 hover:bg-sky-100 text-[#0099e5] border border-sky-200 font-black text-xs rounded-xl shadow-xs cursor-pointer flex items-center justify-center gap-1.5 transition-all"
+                            >
+                                <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                                    <circle cx="12" cy="12" r="3" />
+                                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
+                                </svg>
+                                <span>Tetapan Murid (Tukar Kata Laluan)</span>
+                            </button>
+                        )}
+
+                        {!isLoggedIn ? (
+                            <div className="flex items-center gap-2">
+                                <button
+                                    type="button"
+                                    onClick={() => {
+                                        if (playAudioFeedback) playAudioFeedback("tap");
+                                        if (onNavigate) onNavigate("login");
+                                    }}
+                                    className="flex-1 py-2.5 bg-[#0099e5] hover:bg-[#0088cc] text-white font-black text-xs rounded-xl shadow-xs cursor-pointer transition-all"
+                                >
+                                    Log Masuk
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={() => {
+                                        if (playAudioFeedback) playAudioFeedback("tap");
+                                        if (onNavigate) onNavigate("register");
+                                    }}
+                                    className="flex-1 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-black text-xs rounded-xl shadow-xs cursor-pointer transition-all"
+                                >
+                                    Daftar Akaun
+                                </button>
+                            </div>
+                        ) : (
+                            <button
+                                type="button"
+                                onClick={() => {
+                                    if (playAudioFeedback) playAudioFeedback("tap");
+                                    if (onLogout) onLogout();
+                                }}
+                                className="w-full py-2.5 bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 font-black text-xs rounded-xl shadow-xs cursor-pointer transition-all"
+                            >
+                                Log Keluar
+                            </button>
+                        )}
                     </div>
                 </div>
             )}
@@ -826,21 +574,27 @@ export default function DashboardView({
             {selectedBadgeModal && (
                 <div
                     className="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-xs flex items-center justify-center p-4 anim-fade-in"
-                    onClick={() => { playAudioFeedback("tap"); setSelectedBadgeModal(null); }}
+                    onClick={() => {
+                        if (playAudioFeedback) playAudioFeedback("tap");
+                        if (setSelectedBadgeModal) setSelectedBadgeModal(null);
+                    }}
                 >
                     <div
                         onClick={(e) => e.stopPropagation()}
-                        className="bg-white rounded-3xl max-w-sm w-full p-5 shadow-2xl border-2 border-slate-200 text-center relative anim-scale-up"
+                        className="bg-white rounded-3xl max-w-sm w-full p-5 shadow-2xl border border-slate-100 text-center relative anim-pop"
                     >
                         <button
-                            onClick={() => { playAudioFeedback("tap"); setSelectedBadgeModal(null); }}
+                            onClick={() => {
+                                if (playAudioFeedback) playAudioFeedback("tap");
+                                if (setSelectedBadgeModal) setSelectedBadgeModal(null);
+                            }}
                             className="absolute top-3.5 right-3.5 w-7 h-7 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 flex items-center justify-center font-bold text-xs cursor-pointer"
                         >
                             ✕
                         </button>
 
                         <div className={`mx-auto w-16 h-16 rounded-2xl flex items-center justify-center text-3xl mt-1 ${
-                            selectedBadgeModal.unlocked ? "bg-sky-50 border border-sky-200" : "bg-slate-100 grayscale"
+                            selectedBadgeModal.unlocked ? "bg-amber-50 border border-amber-200" : "bg-slate-100 grayscale"
                         }`}>
                             {selectedBadgeModal.icon}
                         </div>
@@ -859,7 +613,10 @@ export default function DashboardView({
                         </div>
 
                         <button
-                            onClick={() => { playAudioFeedback("tap"); setSelectedBadgeModal(null); }}
+                            onClick={() => {
+                                if (playAudioFeedback) playAudioFeedback("tap");
+                                if (setSelectedBadgeModal) setSelectedBadgeModal(null);
+                            }}
                             className="mt-4 w-full py-2 bg-[#0099e5] hover:bg-[#0088cc] active:scale-95 text-white font-black text-xs rounded-xl shadow-xs cursor-pointer transition-all"
                         >
                             Tutup

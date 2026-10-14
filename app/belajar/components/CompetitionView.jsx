@@ -48,44 +48,16 @@ export default function CompetitionView({
                             className="px-3.5 py-2 bg-white hover:bg-slate-50 text-slate-700 font-bold rounded-xl text-xs cursor-pointer shrink-0 flex items-center gap-1.5 border border-slate-200 shadow-xs active:scale-95 transition-all group"
                         >
                             <GraphicBackArrow className="w-4 h-4 text-slate-600 group-hover:-translate-x-0.5 transition-transform" />
-                            <span>Back</span>
+                            <span>Kembali</span>
                         </button>
                         <div>
-                            <h2 className="text-2xl sm:text-3xl font-black text-[#0099e5] tracking-tight">
+                            <h2 className="text-xl sm:text-2xl font-black text-[#0099e5] tracking-tight">
                                 {t ? t("Pertandingan", "Competitions") : "Pertandingan"}
                             </h2>
-                            <p className="text-xs sm:text-sm text-slate-400 font-semibold mt-0.5">
+                            <p className="text-xs text-slate-400 font-semibold mt-0.5">
                                 {t ? t("Pilih cabaran anda", "Pick your challenge") : "Pilih cabaran anda"}
                             </p>
                         </div>
-                    </div>
-
-                    {/* Kanan: Koin & Profil Avatar */}
-                    <div className="flex items-center gap-2 shrink-0">
-                        {/* Koin */}
-                        <button
-                            type="button"
-                            onClick={() => handleAction("sparkle", () => onNavigate && onNavigate("shop"))}
-                            className="h-10 px-3 rounded-full bg-amber-50 hover:bg-amber-100 border border-amber-200/80 text-amber-900 font-bold text-xs flex items-center gap-1.5 shadow-xs cursor-pointer active:scale-95 transition-all"
-                            title={t ? t(`${studentCoins} Koin`, `${studentCoins} Coins`) : `${studentCoins} Koin`}
-                        >
-                            <GraphicCoin className="w-4 h-4 shrink-0" />
-                            <span className="font-bold text-xs">{studentCoins}</span>
-                        </button>
-
-                        {/* Profil Avatar */}
-                        <button
-                            type="button"
-                            onClick={() => handleAction("sparkle", () => onNavigate && onNavigate("profile"))}
-                            className="w-10 h-10 rounded-full bg-sky-50 hover:bg-sky-100 border border-sky-200 text-sky-600 flex items-center justify-center shadow-xs cursor-pointer active:scale-95 transition-all shrink-0 p-1.5"
-                            title={isLoggedIn ? studentName : (t ? t("Buka Profil", "Open Profile") : "Buka Profil")}
-                        >
-                            {isLoggedIn ? (
-                                <VectorAvatarAstro className="w-full h-full" />
-                            ) : (
-                                <VectorAvatarGuest className="w-full h-full text-sky-500" />
-                            )}
-                        </button>
                     </div>
                 </div>
 

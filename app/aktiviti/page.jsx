@@ -11,7 +11,6 @@ import {
     GraphicSaturnPlanet,
     GraphicQuizLightning,
     GraphicCoin,
-    LanguageToggle,
 } from "../belajar/components/Graphics";
 
 // Clean vector SVG icons to replace emojis
@@ -98,15 +97,8 @@ export default function AktivitiHubPage() {
         } catch (e) {}
     };
 
-    const toggleLanguage = (l) => {
-        const next = l || (language === "bm" ? "en" : "bm");
-        setLanguage(next);
-        try {
-            localStorage.setItem("exploria_lang", next);
-        } catch {}
-    };
-
-    const t = (bm, en) => (language === "en" ? en : bm);
+    const toggleLanguage = () => {};
+    const t = (bm) => bm;
 
     const handleSelectActivity = (targetView, routePath) => {
         playAudioFeedback("tap");
@@ -195,8 +187,6 @@ export default function AktivitiHubPage() {
                 </div>
 
                 <div className="flex items-center gap-2">
-                    <LanguageToggle language={language} onToggle={toggleLanguage} variant="dark" />
-                    
                     <Link
                         href="/kedai"
                         onClick={() => playAudioFeedback("tap")}

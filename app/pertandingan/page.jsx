@@ -10,7 +10,6 @@ import {
     GraphicCoin,
     GraphicLevelTrophy,
     GraphicLevelBee,
-    LanguageToggle
 } from "../belajar/components/Graphics";
 import MathSpeedQuiz from "../belajar/components/MathSpeedQuiz";
 import SpellingBeeActivity from "../belajar/components/SpellingBeeActivity";
@@ -112,15 +111,8 @@ export default function PertandinganPage() {
         }
     };
 
-    const toggleLanguage = (l) => {
-        const next = l || (language === "bm" ? "en" : "bm");
-        setLanguage(next);
-        try {
-            localStorage.setItem("exploria_lang", next);
-        } catch {}
-    };
-
-    const t = (bm, en) => (language === "en" ? en : bm);
+    const toggleLanguage = () => {};
+    const t = (bm) => bm;
 
     const awardPertandinganCoins = (amount = 15) => {
         setStudentCoins((prev) => {
@@ -203,7 +195,6 @@ export default function PertandinganPage() {
                 </div>
 
                 <div className="flex items-center gap-2">
-                    <LanguageToggle language={language} onToggle={toggleLanguage} variant="dark" />
                     <Link
                         href="/kedai"
                         onClick={() => playAudioFeedback("tap")}

@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import SpellingBeeActivity from "../../belajar/components/SpellingBeeActivity";
-import { GraphicHomeButton, GraphicCoin, LanguageToggle } from "../../belajar/components/Graphics";
+import { GraphicHomeButton, GraphicCoin } from "../../belajar/components/Graphics";
 import { saveStudentProfile } from "../../../lib/firestoreService";
 
 export default function SpellingBeePertandinganPage() {
@@ -95,15 +95,8 @@ export default function SpellingBeePertandinganPage() {
         }
     };
 
-    const toggleLanguage = (l) => {
-        const next = l || (language === "bm" ? "en" : "bm");
-        setLanguage(next);
-        try {
-            localStorage.setItem("exploria_lang", next);
-        } catch {}
-    };
-
-    const t = (bm, en) => (language === "en" ? en : bm);
+    const toggleLanguage = () => {};
+    const t = (bm) => bm;
 
     const handleSubmitSpelling = (score) => {
         const newScore = Math.max(spellingScore, score);
@@ -163,7 +156,6 @@ export default function SpellingBeePertandinganPage() {
                 </div>
 
                 <div className="flex items-center gap-2">
-                    <LanguageToggle language={language} onToggle={toggleLanguage} variant="dark" />
                     <Link
                         href="/kedai"
                         onClick={() => playAudioFeedback("tap")}

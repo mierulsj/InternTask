@@ -448,30 +448,13 @@ export default function ModuleNavCards({
     return (
         <div className="w-full max-w-sm sm:max-w-md mx-auto mb-6 select-none">
             {/* Header Tajuk Seksyen Modul Pembelajaran */}
-            <div className="flex items-center justify-between mb-3 px-1">
-                <div>
-                    <h2 className="text-lg sm:text-xl font-black text-slate-800 tracking-tight flex items-center gap-1.5">
-                        <span>{t("Pilih Mod Pembelajaran", "Choose Learning Mode")}</span>
-                    </h2>
-                    <p className="text-[11px] sm:text-xs text-slate-400 font-semibold">
-                        {t("Ketik kad untuk mula meneroka", "Tap a card to start exploring")}
-                    </p>
-                </div>
-
-                {/* Butang Pintas Leaderboard */}
-                <button
-                    type="button"
-                    onClick={() => handleCardClick("leaderboard")}
-                    className="px-2.5 sm:px-3 py-1.5 rounded-full bg-gradient-to-r from-amber-50 to-orange-50 hover:from-amber-100 hover:to-orange-100 border border-amber-200/90 text-amber-900 font-black text-[11px] sm:text-xs flex items-center gap-1.5 shadow-xs cursor-pointer active:scale-95 transition-all shrink-0"
-                    title={t("Buka Papan Juara", "Open Leaderboard")}
-                >
-                    <svg className="w-3.5 h-3.5 text-amber-600 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                        <line x1="18" y1="20" x2="18" y2="10" />
-                        <line x1="12" y1="20" x2="12" y2="4" />
-                        <line x1="6" y1="20" x2="6" y2="14" />
-                    </svg>
-                    <span>Leaderboard</span>
-                </button>
+            <div className="mb-3 px-1">
+                <h2 className="text-lg sm:text-xl font-black text-slate-800 tracking-tight">
+                    {t("Pilih Mod Pembelajaran", "Choose Learning Mode")}
+                </h2>
+                <p className="text-[11px] sm:text-xs text-slate-400 font-semibold mt-0.5">
+                    {t("Ketik kad untuk mula meneroka", "Tap a card to start exploring")}
+                </p>
             </div>
 
             {/* Container 3 Kad Bersebelahan (Side-by-side Carousel / Grid) */}

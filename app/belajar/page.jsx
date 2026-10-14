@@ -1929,7 +1929,7 @@ export default function LessonPage() {
             <div
                 className="min-h-screen text-slate-800 flex flex-col items-center justify-center p-4 select-none"
                 style={{
-                    fontFamily: 'system-ui, -apple-system, sans-serif',
+                    fontFamily: "var(--font-poppins), 'Poppins', sans-serif",
                     background: "#ffffff"
                 }}
             >
@@ -1937,7 +1937,7 @@ export default function LessonPage() {
                     <div className="w-16 h-16 rounded-2xl bg-white/80 backdrop-blur-md flex items-center justify-center p-2.5 shadow-lg border border-slate-300 text-sky-600">
                         <GraphicMascotRobot className="w-full h-full" />
                     </div>
-                    <div className="text-xl font-black tracking-wide text-slate-800 drop-shadow-sm">EXPLORIA STEM</div>
+                    <div className="text-xl font-black tracking-wide text-slate-800 drop-shadow-sm font-fredoka">EXPLORIA STEM</div>
                     <div className="text-xs text-slate-600 font-bold">Memuatkan portal penjelajahan...</div>
                 </div>
             </div>
@@ -1972,7 +1972,7 @@ export default function LessonPage() {
 
             style={{
 
-                fontFamily: 'system-ui, -apple-system, sans-serif',
+                fontFamily: "var(--font-poppins), 'Poppins', sans-serif",
 
                 background: getBackgroundStyle()
 

@@ -174,7 +174,7 @@ export default function PlantActivityPage() {
             <div
                 className="min-h-screen text-slate-800 flex flex-col items-center justify-center p-4 select-none"
                 style={{
-                    fontFamily: "system-ui, -apple-system, sans-serif",
+                    fontFamily: "var(--font-poppins), 'Poppins', sans-serif",
                     background: "#ffffff",
                 }}
             >
@@ -186,7 +186,7 @@ export default function PlantActivityPage() {
                             <path d="M12 9v12"/>
                         </svg>
                     </div>
-                    <div className="text-xl font-black tracking-wide text-slate-800 drop-shadow-sm">MAKMAL TUMBUHAN STEM</div>
+                    <div className="text-xl font-black tracking-wide text-slate-800 drop-shadow-sm font-fredoka">MAKMAL TUMBUHAN STEM</div>
                     <div className="text-xs text-slate-600 font-bold">Menyediakan kebun interaktif...</div>
                 </div>
             </div>
@@ -197,7 +197,7 @@ export default function PlantActivityPage() {
         <div
             className="min-h-screen text-slate-800 flex flex-col items-center justify-start select-none py-6 px-3 sm:px-6 relative overflow-x-hidden"
             style={{
-                fontFamily: "system-ui, -apple-system, sans-serif",
+                fontFamily: "var(--font-poppins), 'Poppins', sans-serif",
                 background: "#ffffff",
             }}
         >

@@ -241,7 +241,7 @@ export default function LoginPage({ onNavigate, onSuccess, onContinueAsGuest }) 
         <div
             className="min-h-screen text-slate-800 flex flex-col items-center justify-center p-4 sm:p-6 relative overflow-x-hidden selection:bg-sky-200 select-none"
             style={{
-                fontFamily: "system-ui, -apple-system, sans-serif",
+                fontFamily: "var(--font-poppins), 'Poppins', sans-serif",
                 background: "#ffffff"
             }}
         >

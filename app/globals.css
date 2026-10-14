@@ -1,8 +1,16 @@
+@import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700;800&family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap');
 @import "tailwindcss";
+
+@theme {
+  --font-fredoka: 'Fredoka', cursive, sans-serif;
+  --font-poppins: 'Poppins', sans-serif;
+}
 
 :root {
   --background: #ffffff;
   --foreground: #0f172a;
+  --font-fredoka: 'Fredoka', cursive, sans-serif;
+  --font-poppins: 'Poppins', sans-serif;
 }
 
 *,
@@ -21,7 +29,7 @@ html {
 body {
   background-color: #ffffff;
   color: var(--foreground);
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  font-family: var(--font-poppins), 'Poppins', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   overflow-x: hidden;
   width: 100%;
   min-height: 100%;
@@ -30,6 +38,24 @@ body {
   /* Safe area support for notched phones, dynamic islands and home indicators */
   padding-left: env(safe-area-inset-left, 0px);
   padding-right: env(safe-area-inset-right, 0px);
+}
+
+/* Headings use Fredoka for cheerful, kid-friendly rounded aesthetics */
+h1, h2, h3, h4, h5, h6,
+.font-heading,
+.font-fredoka {
+  font-family: var(--font-fredoka), 'Fredoka', cursive, sans-serif;
+  letter-spacing: 0.01em;
+}
+
+/* Base content & UI text use Poppins */
+p, span, a, button, input, textarea, select, label, .font-poppins {
+  font-family: var(--font-poppins), 'Poppins', sans-serif;
+}
+
+/* Children inside headings inherit the heading font unless specified */
+h1 *, h2 *, h3 *, h4 *, h5 *, h6 * {
+  font-family: inherit;
 }
 
 /* Eliminate 300ms tap delay and touch callouts on mobile touch screens */

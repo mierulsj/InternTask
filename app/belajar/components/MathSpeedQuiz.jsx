@@ -97,6 +97,24 @@ export default function MathSpeedQuiz({
     t = (bm, en) => bm,
     language = "bm",
 }) {
+    const audioCtxRef = useRef(null);
+    const getAudioCtx = useCallback(() => {
+        try {
+            if (typeof window === "undefined") return null;
+            const AudioCtx = window.AudioContext || window.webkitAudioContext;
+            if (!AudioCtx) return null;
+            if (!audioCtxRef.current || audioCtxRef.current.state === "closed") {
+                audioCtxRef.current = new AudioCtx();
+            }
+            if (audioCtxRef.current.state === "suspended") {
+                audioCtxRef.current.resume().catch(() => {});
+            }
+            return audioCtxRef.current;
+        } catch {
+            return null;
+        }
+    }, []);
+
     const playLocalSound = useCallback((type) => {
         if (typeof playAudioFeedback === "function") {
             try {
@@ -105,9 +123,8 @@ export default function MathSpeedQuiz({
             } catch (e) {}
         }
         try {
-            const AudioCtx = window.AudioContext || window.webkitAudioContext;
-            if (!AudioCtx) return;
-            const ctx = new AudioCtx();
+            const ctx = getAudioCtx();
+            if (!ctx) return;
             const now = ctx.currentTime;
 
             if (type === "tap" || type === "pop") {
@@ -149,12 +166,12 @@ export default function MathSpeedQuiz({
                 osc.stop(now + 0.03);
             }
         } catch (e) {}
-    }, [playAudioFeedback]);
+    }, [playAudioFeedback, getAudioCtx]);
 
     // Game state: "setup" | "playing" | "result"
     const [gameState, setGameState] = useState("setup");
     const [selectedTables, setSelectedTables] = useState([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]);
-    const [gameMode, setGameMode] = useState("sprint20"); // "sprint20" (20 soalan seperti 4/20 di gambar) | "sprint10" | "timed60"
+    const [gameMode, setGameMode] = useState("sprint20"); // "sprint20" | "sprint10" | "timed60"
     const [totalQuestions, setTotalQuestions] = useState(20);
 
     // Senarai soalan berstruktur untuk navigasi maju dan mundur (Previous)
@@ -169,11 +186,29 @@ export default function MathSpeedQuiz({
     const [history, setHistory] = useState([]);
     const [timeLeft60, setTimeLeft60] = useState(60);
     const [sprintTime, setSprintTime] = useState(0);
-    const [questionStartTime, setQuestionStartTime] = useState(Date.now());
     const [showExitConfirm, setShowExitConfirm] = useState(false);
 
+    // Refs untuk kestabilan pemasa pada pelayar telefon pintar
+    const questionStartTimeRef = useRef(0);
     const isRunningRef = useRef(false);
     const advanceTimeoutRef = useRef(null);
+    const quizStartTimeRef = useRef(null);
+    const pausedElapsedRef = useRef(0);
+    const userAnswersRef = useRef(userAnswers);
+    const answerTimesRef = useRef(answerTimes);
+    const questionsListRef = useRef(questionsList);
+
+    useEffect(() => {
+        userAnswersRef.current = userAnswers;
+    }, [userAnswers]);
+
+    useEffect(() => {
+        answerTimesRef.current = answerTimes;
+    }, [answerTimes]);
+
+    useEffect(() => {
+        questionsListRef.current = questionsList;
+    }, [questionsList]);
 
     const toggleTable = (num) => {
         playLocalSound("tap");
@@ -192,83 +227,7 @@ export default function MathSpeedQuiz({
         setSelectedTables([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]);
     };
 
-    const startQuiz = () => {
-        if (!isLoggedIn && onBlockedAction) {
-            onBlockedAction();
-            return;
-        }
-
-        if (advanceTimeoutRef.current) {
-            clearTimeout(advanceTimeoutRef.current);
-            advanceTimeoutRef.current = null;
-        }
-
-        playLocalSound("tap");
-        setHistory([]);
-        setQuestionIndex(0);
-        setMaxReachedIndex(0);
-        setUserAnswers({});
-        setAnswerTimes({});
-        setIsAnswerLocked(false);
-        setTimeLeft60(60);
-        setSprintTime(0);
-        setShowExitConfirm(false);
-
-        const targetCount = gameMode === "sprint20" ? 20 : gameMode === "sprint10" ? 10 : 20;
-        setTotalQuestions(targetCount);
-
-        // Jana soalan awal mengikut bilangan mod
-        const initialQuestions = Array.from({ length: targetCount }, () =>
-            generateMathQuestion(selectedTables)
-        );
-        setQuestionsList(initialQuestions);
-        setQuestionStartTime(Date.now());
-
-        setGameState("playing");
-        isRunningRef.current = true;
-    };
-
-    // Countdown / Sprint timer
-    useEffect(() => {
-        let timer = null;
-        if (gameState === "playing" && isRunningRef.current && !showExitConfirm) {
-            if (gameMode === "timed60") {
-                timer = setInterval(() => {
-                    setTimeLeft60((prev) => {
-                        if (prev <= 1) {
-                            clearInterval(timer);
-                            isRunningRef.current = false;
-                            finishQuiz(userAnswers, answerTimes, questionsList);
-                            return 0;
-                        }
-                        if (prev <= 10 && prev > 1) {
-                            playLocalSound("tick");
-                        }
-                        return prev - 1;
-                    });
-                }, 1000);
-            } else {
-                timer = setInterval(() => {
-                    setSprintTime((prev) => +(prev + 0.1).toFixed(1));
-                }, 100);
-            }
-        }
-        return () => {
-            if (timer) clearInterval(timer);
-        };
-    }, [gameState, gameMode, playLocalSound, userAnswers, answerTimes, questionsList]);
-
-    // Bersihkan sebarang timeout tertunda apabila unmount
-    useEffect(() => {
-        return () => {
-            if (advanceTimeoutRef.current) {
-                clearTimeout(advanceTimeoutRef.current);
-                advanceTimeoutRef.current = null;
-            }
-        };
-    }, []);
-
-    const finishQuiz = useCallback((answersMap = userAnswers, timesMap = answerTimes, qList = questionsList) => {
+    const finishQuiz = useCallback((answersMap, timesMap, qList) => {
         if (advanceTimeoutRef.current) {
             clearTimeout(advanceTimeoutRef.current);
             advanceTimeoutRef.current = null;
@@ -276,13 +235,17 @@ export default function MathSpeedQuiz({
         isRunningRef.current = false;
         playLocalSound("victory");
 
+        const effectiveAnswers = answersMap || userAnswersRef.current || {};
+        const effectiveTimes = timesMap || answerTimesRef.current || {};
+        const effectiveQuestions = qList || questionsListRef.current || [];
+
         // Jana rekod sejarah lengkap daripada semua soalan yang dijawab
         const finalHistory = [];
-        qList.forEach((q, idx) => {
-            const selected = answersMap[idx];
+        effectiveQuestions.forEach((q, idx) => {
+            const selected = effectiveAnswers[idx];
             if (selected !== undefined) {
                 const isCorrect = selected === q.answer;
-                const timeTaken = timesMap[idx] || 2.0;
+                const timeTaken = effectiveTimes[idx] || 2.0;
                 let points = 0;
                 if (isCorrect) {
                     const speedBonus = timeTaken <= 2.5 ? 5 : timeTaken <= 4.0 ? 2 : 0;
@@ -302,16 +265,100 @@ export default function MathSpeedQuiz({
 
         setHistory(finalHistory);
         setGameState("result");
-    }, [userAnswers, answerTimes, questionsList, playLocalSound]);
+    }, [playLocalSound]);
+
+    const startQuiz = () => {
+        if (!isLoggedIn && onBlockedAction) {
+            onBlockedAction();
+            return;
+        }
+
+        if (advanceTimeoutRef.current) {
+            clearTimeout(advanceTimeoutRef.current);
+            advanceTimeoutRef.current = null;
+        }
+
+        playLocalSound("tap");
+        setHistory([]);
+        setQuestionIndex(0);
+        setMaxReachedIndex(0);
+        setUserAnswers({});
+        setAnswerTimes({});
+        userAnswersRef.current = {};
+        answerTimesRef.current = {};
+        setIsAnswerLocked(false);
+        setTimeLeft60(60);
+        setSprintTime(0);
+        setShowExitConfirm(false);
+
+        const targetCount = gameMode === "sprint20" ? 20 : gameMode === "sprint10" ? 10 : 20;
+        setTotalQuestions(targetCount);
+
+        // Jana soalan awal mengikut bilangan mod
+        const initialQuestions = Array.from({ length: targetCount }, () =>
+            generateMathQuestion(selectedTables)
+        );
+        setQuestionsList(initialQuestions);
+        questionsListRef.current = initialQuestions;
+
+        const now = Date.now();
+        questionStartTimeRef.current = now;
+        quizStartTimeRef.current = now;
+        pausedElapsedRef.current = 0;
+        isRunningRef.current = true;
+        setGameState("playing");
+    };
+
+    // Countdown / Sprint timer berasaskan timestamp sebenar (stabil untuk mobile & pelayar latar)
+    useEffect(() => {
+        let timer = null;
+        if (gameState === "playing" && isRunningRef.current && !showExitConfirm) {
+            if (!quizStartTimeRef.current) {
+                quizStartTimeRef.current = Date.now();
+            }
+
+            timer = setInterval(() => {
+                if (!isRunningRef.current) return;
+                const now = Date.now();
+                const elapsedSec = (now - quizStartTimeRef.current) / 1000;
+
+                if (gameMode === "timed60") {
+                    const remaining = Math.max(0, 60 - Math.floor(elapsedSec));
+                    setTimeLeft60(remaining);
+                    if (remaining <= 0) {
+                        clearInterval(timer);
+                        isRunningRef.current = false;
+                        finishQuiz();
+                    }
+                } else {
+                    setSprintTime(+elapsedSec.toFixed(1));
+                }
+            }, 100);
+        }
+        return () => {
+            if (timer) clearInterval(timer);
+        };
+    }, [gameState, gameMode, showExitConfirm, finishQuiz]);
+
+    // Bersihkan sebarang timeout tertunda apabila unmount
+    useEffect(() => {
+        return () => {
+            if (advanceTimeoutRef.current) {
+                clearTimeout(advanceTimeoutRef.current);
+                advanceTimeoutRef.current = null;
+            }
+        };
+    }, []);
 
     // Memilih jawapan: Kad bertukar hijau ceria persis gambar dan AUTOMATIK mara ke soalan seterusnya tanpa perlu submit!
-    const handleSelectAnswer = (option) => {
+    const handleSelectAnswer = useCallback((option) => {
         if (isAnswerLocked) return;
 
         playLocalSound("tap");
         setIsAnswerLocked(true);
 
-        const timeTakenForQ = +((Date.now() - questionStartTime) / 1000).toFixed(1);
+        const now = Date.now();
+        const timeTakenForQ = questionStartTimeRef.current > 0 ? +((now - questionStartTimeRef.current) / 1000).toFixed(1) : 2.0;
 
         const updatedAnswers = { ...userAnswers, [questionIndex]: option };
         const updatedTimes = { ...answerTimes, [questionIndex]: timeTakenForQ };
@@ -346,13 +393,13 @@ export default function MathSpeedQuiz({
                 setMaxReachedIndex((prev) => Math.max(prev, nextIdx));
                 setQuestionIndex(nextIdx);
                 setIsAnswerLocked(false);
-                setQuestionStartTime(Date.now());
+                questionStartTimeRef.current = Date.now();
             }
         }, 220);
-    };
+    }, [isAnswerLocked, playLocalSound, userAnswers, questionIndex, answerTimes, gameMode, finishQuiz, questionsList, selectedTables]);
 
     // Butang "Sebelumnya" (Previous) untuk membolehkan murid jawab balik atau betulkan jawapan
-    const handlePreviousQuestion = () => {
+    const handlePreviousQuestion = useCallback(() => {
         if (questionIndex <= 0) return;
         if (advanceTimeoutRef.current) {
             clearTimeout(advanceTimeoutRef.current);
@@ -361,11 +408,11 @@ export default function MathSpeedQuiz({
         setIsAnswerLocked(false);
         playLocalSound("tap");
         setQuestionIndex((prev) => prev - 1);
-        setQuestionStartTime(Date.now());
-    };
+        questionStartTimeRef.current = Date.now();
+    }, [questionIndex, playLocalSound]);
 
     // Butang "Seterusnya" (Next) - hanya dipaparkan pada soalan sebelumnya untuk mara semula ke hadapan
-    const handleNextQuestion = () => {
+    const handleNextQuestion = useCallback(() => {
         if (isAnswerLocked) return;
         if (advanceTimeoutRef.current) {
             clearTimeout(advanceTimeoutRef.current);
@@ -375,9 +422,9 @@ export default function MathSpeedQuiz({
         const nextIdx = questionIndex + 1;
         if (nextIdx <= maxReachedIndex && nextIdx < questionsList.length) {
             setQuestionIndex(nextIdx);
-            setQuestionStartTime(Date.now());
+            questionStartTimeRef.current = Date.now();
         }
-    };
+    }, [isAnswerLocked, playLocalSound, questionIndex, maxReachedIndex, questionsList]);
 
     // Rekod ke pangkalan data analisis matematik untuk Paparan Ibu Bapa
     useEffect(() => {
@@ -662,6 +709,7 @@ export default function MathSpeedQuiz({
                             type="button"
                             onClick={() => {
                                 playLocalSound("tap");
+                                pausedElapsedRef.current = Date.now() - (quizStartTimeRef.current || Date.now());
                                 setShowExitConfirm(true);
                             }}
                             className="w-9 h-9 rounded-xl bg-white/20 hover:bg-white/30 text-white font-black flex items-center justify-center backdrop-blur-md transition-all active:scale-95 cursor-pointer shadow-xs"
@@ -810,7 +858,11 @@ export default function MathSpeedQuiz({
                             <div className="flex gap-2 pt-1">
                                 <button
                                     type="button"
-                                    onClick={() => setShowExitConfirm(false)}
+                                    onClick={() => {
+                                        playLocalSound("tap");
+                                        quizStartTimeRef.current = Date.now() - pausedElapsedRef.current;
+                                        setShowExitConfirm(false);
+                                    }}
                                     className="flex-1 py-2.5 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold rounded-xl text-xs cursor-pointer"
                                 >
                                     {t("Teruskan", "Continue")}
@@ -819,6 +871,7 @@ export default function MathSpeedQuiz({
                                     type="button"
                                     onClick={() => {
                                         isRunningRef.current = false;
+                                        setShowExitConfirm(false);
                                         setGameState("setup");
                                     }}
                                     className="flex-1 py-2.5 bg-[#0099e5] hover:bg-[#0088cc] text-white font-bold rounded-xl text-xs cursor-pointer"

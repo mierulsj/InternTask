@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import Link from "next/link";
 import {
     GraphicBackArrow,
@@ -199,22 +199,29 @@ export default function LessonPage() {
     const equippedPetItem = SHOP_CATALOG.find((i) => i.id === equippedItems?.pet);
 
     // Fungsi Ganjaran Koin Bintang
-    const awardCoins = (amount = 15, reason = "") => {
+    const awardCoins = useCallback((amount = 15) => {
         setStudentCoins((prev) => {
             const next = prev + amount;
             try {
-                const ic = studentIC || localStorage.getItem("exploria_student_ic") || "default";
-                const key = `exploria_student_${ic}_shop`;
+                const ic = studentIC || (typeof window !== "undefined" ? localStorage.getItem("exploria_student_ic") || localStorage.getItem("exploria_active_ic") : "") || "default";
+                const cleanIC = String(ic).replace(/\D/g, "");
+                const icKey = cleanIC || "default";
+                const key = `exploria_student_${icKey}_shop`;
                 const raw = localStorage.getItem(key);
-                const current = raw ? JSON.parse(raw) : { coins: prev, ownedItems };
+                const current = raw ? JSON.parse(raw) : { coins: prev, ownedItems: [] };
                 localStorage.setItem(key, JSON.stringify({ ...current, coins: next }));
-                if (studentIC) {
-                    saveStudentProfile(studentIC, { koinBintang: next });
+                if (cleanIC) {
+                    saveStudentProfile(cleanIC, { koinBintang: next });
                 }
             } catch {}
             return next;
         });
-    };
+    }, [studentIC, setStudentCoins]);
+
+    const awardCoinsRef = useRef(awardCoins);
+    useEffect(() => {
+        awardCoinsRef.current = awardCoins;
+    }, [awardCoins]);
 
     // Initial mount effect to safely sync with localStorage on client (prevents SSR hydration error)
     useEffect(() => {
@@ -356,7 +363,7 @@ export default function LessonPage() {
                             stats.streak = streakRes.streak;
                             stats.lastActiveDate = streakRes.lastActiveDate;
                             localStorage.setItem(`exploria_student_${icKey}_stats`, JSON.stringify(stats));
-                            awardCoins(10, "Streak Harian");
+                            if (awardCoinsRef.current) awardCoinsRef.current(10, "Streak Harian");
                             if (cleanIC) {
                                 saveStudentProfile(cleanIC, {
                                     streakHari: streakRes.streak,
@@ -459,7 +466,7 @@ export default function LessonPage() {
             isMounted = false;
             clearTimeout(timer);
         };
-    }, [isLoggedIn, studentIC, awardCoins]);
+    }, [isLoggedIn, studentIC]);
 
     const saveCurrentStudentStats = (updates = {}) => {
         if (typeof window === "undefined") return;
@@ -821,7 +828,7 @@ export default function LessonPage() {
 
 
 
-    const playAudioFeedback = (type) => {
+    const playAudioFeedback = useCallback((type) => {
 
         try {
 
@@ -1163,7 +1170,7 @@ export default function LessonPage() {
 
         }
 
-    };
+    }, []);
 
 
 

@@ -37,7 +37,7 @@ import LuckyDrawModal from "./components/LuckyDrawModal";
 import RegisterPage from "./Register";
 import LoginPage from "./Login";
 import AuthGatewayView from "./components/AuthGatewayView";
-import { saveStudentProfile, calculateCalendarStreak } from "../../lib/firestoreService";
+import { saveStudentProfile, getStudentProfile, calculateCalendarStreak } from "../../lib/firestoreService";
 import { getCurriculumTopics, INITIAL_CURRICULUM_TOPICS } from "../../lib/curriculumService";
 import { SHOP_CATALOG } from "../../lib/shopService";
 import { getLevelFromXP, getLevelDetails, LEVELS_CONFIG, MAX_EXPLORIA_XP } from "../../lib/levelService";
@@ -218,61 +218,65 @@ export default function LessonPage() {
 
     // Initial mount effect to safely sync with localStorage on client (prevents SSR hydration error)
     useEffect(() => {
-        setIsMounted(true);
-        try {
-            const savedLang = localStorage.getItem("exploria_lang");
-            if (savedLang === "en" || savedLang === "bm") setLanguage(savedLang);
+        const timer = setTimeout(() => {
+            setIsMounted(true);
+            try {
+                const savedLang = localStorage.getItem("exploria_lang");
+                if (savedLang === "en" || savedLang === "bm") setLanguage(savedLang);
 
-            const savedScore = localStorage.getItem("exploria_quiz_high_score");
-            if (savedScore) setQuizHighScore(parseInt(savedScore, 10) || 0);
+                const savedScore = localStorage.getItem("exploria_quiz_high_score");
+                if (savedScore) setQuizHighScore(parseInt(savedScore, 10) || 0);
 
-            const loggedIn = localStorage.getItem("exploria_is_logged_in") === "true";
-            const isGuest = sessionStorage.getItem("exploria_guest_mode") === "true";
-            const name = localStorage.getItem("exploria_student_name") || "";
-            const ic = localStorage.getItem("exploria_student_ic") || "";
-            const school = localStorage.getItem("exploria_student_school") || "";
+                const loggedIn = localStorage.getItem("exploria_is_logged_in") === "true";
+                const isGuest = sessionStorage.getItem("exploria_guest_mode") === "true";
+                const name = localStorage.getItem("exploria_student_name") || "";
+                const ic = localStorage.getItem("exploria_student_ic") || "";
+                const school = localStorage.getItem("exploria_student_school") || "";
 
-            const targetView = localStorage.getItem("exploria_target_view");
-            if (targetView) {
-                localStorage.removeItem("exploria_target_view");
-            }
+                const targetView = localStorage.getItem("exploria_target_view");
+                if (targetView) {
+                    localStorage.removeItem("exploria_target_view");
+                }
 
-            if (loggedIn) {
-                setIsLoggedIn(true);
-                setStudentName(name);
-                setStudentIC(ic);
-                setStudentSchool(school);
-                setCurrentView(targetView || "menu");
+                if (loggedIn) {
+                    setIsLoggedIn(true);
+                    setStudentName(name);
+                    setStudentIC(ic);
+                    setStudentSchool(school);
+                    setCurrentView(targetView || "menu");
 
-                // Semak jika diarahkan untuk buka Lucky Draw atau setiap kali sesi log masuk web (had 1 kali sehari)
-                try {
-                    const today = new Date();
-                    const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
-                    const lastSpin = localStorage.getItem(`exploria_lucky_draw_date_${ic || "default"}`);
-                    const hasSpunToday = lastSpin === todayStr;
+                    // Semak jika diarahkan untuk buka Lucky Draw atau setiap kali sesi log masuk web (had 1 kali sehari)
+                    try {
+                        const today = new Date();
+                        const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
+                        const lastSpin = localStorage.getItem(`exploria_lucky_draw_date_${ic || "default"}`);
+                        const hasSpunToday = lastSpin === todayStr;
 
-                    const shouldTrigger = sessionStorage.getItem("exploria_trigger_luckydraw") === "true";
-                    const sessionDrawn = sessionStorage.getItem("exploria_session_luckydraw_done");
+                        const shouldTrigger = sessionStorage.getItem("exploria_trigger_luckydraw") === "true";
+                        const sessionDrawn = sessionStorage.getItem("exploria_session_luckydraw_done");
 
-                    if ((shouldTrigger || !sessionDrawn) && !hasSpunToday) {
-                        sessionStorage.removeItem("exploria_trigger_luckydraw");
-                        sessionStorage.setItem("exploria_session_luckydraw_done", "true");
-                        setShowLuckyDraw(true);
-                    }
-                } catch {}
-            } else if (isGuest) {
-                setIsLoggedIn(false);
-                setStudentName("");
-                setStudentSchool("");
-                setCurrentView(targetView || "menu");
-            } else {
+                        if ((shouldTrigger || !sessionDrawn) && !hasSpunToday) {
+                            sessionStorage.removeItem("exploria_trigger_luckydraw");
+                            sessionStorage.setItem("exploria_session_luckydraw_done", "true");
+                            setShowLuckyDraw(true);
+                        }
+                    } catch {}
+                } else if (isGuest) {
+                    setIsLoggedIn(false);
+                    setStudentName("");
+                    setStudentSchool("");
+                    setCurrentView(targetView || "menu");
+                } else {
+                    setIsLoggedIn(false);
+                    setCurrentView("login");
+                }
+            } catch {
                 setIsLoggedIn(false);
                 setCurrentView("login");
             }
-        } catch {
-            setIsLoggedIn(false);
-            setCurrentView("login");
-        }
+        }, 0);
+
+        return () => clearTimeout(timer);
     }, []);
 
     // Muat kurikulum & soalan kuiz dinamik (segerak dengan panel admin & Firestore)
@@ -308,88 +312,154 @@ export default function LessonPage() {
         };
     }, []);
 
-    // Muat data profil pelajar dari storan mengikut IC
+    // Muat data profil pelajar dari storan & Firestore secara automatik (Kunci utama untuk Netlify / Pelbagai Peranti)
     useEffect(() => {
-        if (typeof window !== "undefined" && isLoggedIn) {
+        if (typeof window === "undefined" || !isLoggedIn) return;
+
+        let isMounted = true;
+        const timer = setTimeout(() => {
+            if (!isMounted) return;
             try {
-                const ic = studentIC || localStorage.getItem("exploria_student_ic") || "default";
-                let raw = localStorage.getItem(`exploria_student_${ic}_stats`);
+                const rawIC = studentIC || localStorage.getItem("exploria_student_ic") || localStorage.getItem("exploria_active_ic") || "";
+                const cleanIC = rawIC.replace(/\D/g, "");
+                const icKey = cleanIC || "default";
+
+                // 1. Muat sandaran tempatan serta-merta (Cache LocalStorage)
+                let raw = localStorage.getItem(`exploria_student_${icKey}_stats`);
                 if (!raw) {
                     raw = localStorage.getItem("exploria_student_last_stats");
                 }
                 if (raw) {
-                    const stats = JSON.parse(raw);
-                    const qHigh = typeof stats.quizHighScore === "number" ? stats.quizHighScore : 0;
-                    const sScore = typeof stats.solarScore === "number" ? stats.solarScore : 0;
-                    const pScore = typeof stats.plantScore === "number" ? stats.plantScore : 0;
-                    const spScore = typeof stats.spellingScore === "number" ? stats.spellingScore : 0;
-                    const mScore = typeof stats.mathScore === "number" ? stats.mathScore : 0;
-                    const rTopics = Array.isArray(stats.readTopics) ? stats.readTopics : [];
+                    try {
+                        const stats = JSON.parse(raw);
+                        const qHigh = typeof stats.quizHighScore === "number" ? stats.quizHighScore : 0;
+                        const sScore = typeof stats.solarScore === "number" ? stats.solarScore : 0;
+                        const pScore = typeof stats.plantScore === "number" ? stats.plantScore : 0;
+                        const spScore = typeof stats.spellingScore === "number" ? stats.spellingScore : 0;
+                        const mScore = typeof stats.mathScore === "number" ? stats.mathScore : 0;
+                        const rTopics = Array.isArray(stats.readTopics) ? stats.readTopics : [];
 
-                    setQuizHighScore(qHigh);
-                    setSolarScore(sScore);
-                    if (typeof stats.solarSubmitted === "boolean") setSolarSubmitted(stats.solarSubmitted);
-                    setPlantScore(pScore);
-                    if (typeof stats.plantSubmitted === "boolean") setPlantSubmitted(stats.plantSubmitted);
-                    setSpellingScore(spScore);
-                    if (typeof stats.spellingSubmitted === "boolean") setSpellingSubmitted(stats.spellingSubmitted);
-                    setMathScore(mScore);
-                    if (typeof stats.mathSubmitted === "boolean") setMathSubmitted(stats.mathSubmitted);
-                    // Kira streak kalendar sebenar murid
-                    const streakRes = calculateCalendarStreak(stats.lastActiveDate, stats.streak || 1);
-                    setStudentStreak(streakRes.streak);
-                    if (streakRes.isNewDay) {
-                        stats.streak = streakRes.streak;
-                        stats.lastActiveDate = streakRes.lastActiveDate;
-                        try {
-                            localStorage.setItem(`exploria_student_${ic}_stats`, JSON.stringify(stats));
-                            localStorage.setItem("exploria_student_last_stats", JSON.stringify(stats));
-                        } catch {}
-                        awardCoins(10, "Streak Harian");
-                        if (ic && ic !== "default") {
-                            saveStudentProfile(ic, {
-                                streakHari: streakRes.streak,
-                                tarikhAktifTerakhir: streakRes.lastActiveDate
-                            });
+                        setQuizHighScore(qHigh);
+                        setSolarScore(sScore);
+                        if (typeof stats.solarSubmitted === "boolean") setSolarSubmitted(stats.solarSubmitted);
+                        setPlantScore(pScore);
+                        if (typeof stats.plantSubmitted === "boolean") setPlantSubmitted(stats.plantSubmitted);
+                        setSpellingScore(spScore);
+                        if (typeof stats.spellingSubmitted === "boolean") setSpellingSubmitted(stats.spellingSubmitted);
+                        setMathScore(mScore);
+                        if (typeof stats.mathSubmitted === "boolean") setMathSubmitted(stats.mathSubmitted);
+
+                        // Kira streak kalendar sebenar murid
+                        const streakRes = calculateCalendarStreak(stats.lastActiveDate, stats.streak || 1);
+                        setStudentStreak(streakRes.streak);
+                        if (streakRes.isNewDay) {
+                            stats.streak = streakRes.streak;
+                            stats.lastActiveDate = streakRes.lastActiveDate;
+                            localStorage.setItem(`exploria_student_${icKey}_stats`, JSON.stringify(stats));
+                            awardCoins(10, "Streak Harian");
+                            if (cleanIC) {
+                                saveStudentProfile(cleanIC, {
+                                    streakHari: streakRes.streak,
+                                    tarikhAktifTerakhir: streakRes.lastActiveDate
+                                });
+                            }
                         }
-                    }
 
-                    if (stats.averageSpeed) setAverageQuizSpeed(stats.averageSpeed);
+                        if (stats.averageSpeed) setAverageQuizSpeed(stats.averageSpeed);
 
-                    // Kira mata XP & tahap murid berdasarkan skor tertinggi sebenar (elak duplikasi jika diulang)
-                    const legitXP = calculateTotalXP({
-                        quizHighScore: qHigh,
-                        solarScore: sScore,
-                        plantScore: pScore,
-                        spellingScore: spScore,
-                        mathScore: mScore,
-                        readTopics: rTopics,
+                        const legitXP = calculateTotalXP({
+                            quizHighScore: qHigh,
+                            solarScore: sScore,
+                            plantScore: pScore,
+                            spellingScore: spScore,
+                            mathScore: mScore,
+                            readTopics: rTopics,
+                        });
+                        setStudentXP(legitXP);
+                        setStudentLevel(getLevelFromXP(legitXP));
+                    } catch {}
+                }
+
+                // 2. Muat status Koin Bintang & Barangan Tempatan
+                const rawShop = localStorage.getItem(`exploria_student_${icKey}_shop`);
+                if (rawShop) {
+                    try {
+                        const parsed = JSON.parse(rawShop);
+                        if (typeof parsed.coins === "number") setStudentCoins(parsed.coins);
+                        if (Array.isArray(parsed.ownedItems)) setOwnedItems(parsed.ownedItems);
+                    } catch {}
+                }
+                const rawEquipped = localStorage.getItem(`exploria_student_${icKey}_equipped`);
+                if (rawEquipped) {
+                    try {
+                        const parsed = JSON.parse(rawEquipped);
+                        if (parsed && typeof parsed === "object") setEquippedItems(parsed);
+                    } catch {}
+                }
+
+                // 3. SEGERAK TERUS DARI FIRESTORE (Kunci utama untuk Netlify / Cross-device)
+                if (cleanIC) {
+                    getStudentProfile(cleanIC).then((res) => {
+                        if (!isMounted) return;
+                        if (res.success && res.data) {
+                            const d = res.data;
+
+                            // Koin Bintang
+                            if (typeof d.koinBintang === "number") {
+                                setStudentCoins(d.koinBintang);
+                            }
+
+                            // Barangan Dimiliki (Termasuk border mitik dll)
+                            if (Array.isArray(d.barangDimiliki) && d.barangDimiliki.length > 0) {
+                                const mergedOwned = Array.from(new Set([...d.barangDimiliki, "border_cadet", "avatar_astro_1"]));
+                                setOwnedItems(mergedOwned);
+                            }
+
+                            // Barangan Dipasang (Termasuk border mitik aktif)
+                            setEquippedItems((prev) => {
+                                const nextEq = {
+                                    border: d.borderDipilih || prev.border || "border_cadet",
+                                    avatar: d.avatarDipilih || prev.avatar || "avatar_astro_1",
+                                    pet: d.petDipilih !== undefined ? d.petDipilih : prev.pet,
+                                };
+                                try {
+                                    localStorage.setItem(`exploria_student_${cleanIC}_equipped`, JSON.stringify(nextEq));
+                                } catch {}
+                                return nextEq;
+                            });
+
+                            // XP, Tahap & Streak
+                            if (typeof d.mataXP === "number") {
+                                setStudentXP(d.mataXP);
+                                setStudentLevel(getLevelFromXP(d.mataXP));
+                            }
+                            if (typeof d.streakHari === "number") {
+                                setStudentStreak(d.streakHari);
+                            }
+
+                            // Simpan cache ke localStorage untuk offline/refresh
+                            try {
+                                const cacheShop = {
+                                    coins: typeof d.koinBintang === "number" ? d.koinBintang : 50,
+                                    ownedItems: Array.isArray(d.barangDimiliki) ? d.barangDimiliki : ["border_cadet", "avatar_astro_1"],
+                                };
+                                localStorage.setItem(`exploria_student_${cleanIC}_shop`, JSON.stringify(cacheShop));
+                            } catch {}
+                        }
+                    }).catch((err) => {
+                        console.warn("⚠️ [Firestore] Gagal menyegerak data pelajar dari awan:", err);
                     });
-                    setStudentXP(legitXP);
-                    setStudentLevel(getLevelFromXP(legitXP));
-
-                    // Muat status Koin Bintang & Barangan Dimiliki
-                    const rawShop = localStorage.getItem(`exploria_student_${ic}_shop`);
-                    if (rawShop) {
-                        try {
-                            const parsed = JSON.parse(rawShop);
-                            if (typeof parsed.coins === "number") setStudentCoins(parsed.coins);
-                            if (Array.isArray(parsed.ownedItems)) setOwnedItems(parsed.ownedItems);
-                        } catch {}
-                    }
-                    const rawEquipped = localStorage.getItem(`exploria_student_${ic}_equipped`);
-                    if (rawEquipped) {
-                        try {
-                            const parsed = JSON.parse(rawEquipped);
-                            if (parsed && typeof parsed === "object") setEquippedItems(parsed);
-                        } catch {}
-                    }
                 }
             } catch (err) {
                 console.error("Ralat memuatkan profil murid:", err);
             }
-        }
-    }, [isLoggedIn, studentIC]);
+        }, 0);
+
+        return () => {
+            isMounted = false;
+            clearTimeout(timer);
+        };
+    }, [isLoggedIn, studentIC, awardCoins]);
 
     const saveCurrentStudentStats = (updates = {}) => {
         if (typeof window === "undefined") return;
@@ -2485,7 +2555,7 @@ export default function LessonPage() {
                         {/* PAPARAN: KEDAI PENJELAJAH */}
                         {currentView === "shop" && (
                             <ShopView
-                                studentIC={studentIC}
+                                studentIC={studentIC || (typeof window !== "undefined" ? localStorage.getItem("exploria_student_ic") || localStorage.getItem("exploria_active_ic") : "")}
                                 studentCoins={studentCoins}
                                 setStudentCoins={setStudentCoins}
                                 ownedItems={ownedItems}
@@ -2697,7 +2767,7 @@ export default function LessonPage() {
             <LuckyDrawModal
                 isOpen={showLuckyDraw}
                 onClose={() => setShowLuckyDraw(false)}
-                studentIC={studentIC}
+                studentIC={studentIC || (typeof window !== "undefined" ? localStorage.getItem("exploria_student_ic") || localStorage.getItem("exploria_active_ic") : "")}
                 studentCoins={studentCoins}
                 setStudentCoins={setStudentCoins}
                 ownedItems={ownedItems}

@@ -180,8 +180,9 @@ export default function LuckyDrawModal({
 
     // Pemberian ganjaran & kemas kini rekod akaun
     const awardPrize = useCallback((slice) => {
-        const ic = studentIC || (typeof window !== "undefined" ? localStorage.getItem("exploria_student_ic") : "") || "default";
-        const isRegistered = Boolean(studentIC);
+        const cleanIC = String(studentIC || (typeof window !== "undefined" ? localStorage.getItem("exploria_student_ic") || localStorage.getItem("exploria_active_ic") : "") || "").replace(/\D/g, "");
+        const ic = cleanIC || "default";
+        const isRegistered = Boolean(cleanIC);
         const todayStr = getTodayDateStr();
 
         // 1. Kunci had 1x sehari
@@ -191,7 +192,7 @@ export default function LuckyDrawModal({
         } catch {}
 
         if (isRegistered) {
-            saveStudentProfile(studentIC, { tarikhPutaranTerakhir: todayStr }).catch(() => {});
+            saveStudentProfile(cleanIC, { tarikhPutaranTerakhir: todayStr }).catch(() => {});
         }
 
         // 2. Berikan hadiah mengikut jenis
@@ -209,7 +210,7 @@ export default function LuckyDrawModal({
             } catch {}
 
             if (isRegistered) {
-                saveStudentProfile(studentIC, { koinBintang: nextCoins }).catch(() => {});
+                saveStudentProfile(cleanIC, { koinBintang: nextCoins }).catch(() => {});
             }
 
             setPrizeDetails({
@@ -242,7 +243,7 @@ export default function LuckyDrawModal({
                 } catch {}
 
                 if (isRegistered) {
-                    saveStudentProfile(studentIC, { koinBintang: nextCoins }).catch(() => {});
+                    saveStudentProfile(cleanIC, { koinBintang: nextCoins }).catch(() => {});
                 }
 
                 setPrizeDetails({
@@ -265,7 +266,7 @@ export default function LuckyDrawModal({
                 } catch {}
 
                 if (isRegistered) {
-                    saveStudentProfile(studentIC, { barangDimiliki: nextOwned }).catch(() => {});
+                    saveStudentProfile(cleanIC, { barangDimiliki: nextOwned }).catch(() => {});
                 }
 
                 setPrizeDetails({

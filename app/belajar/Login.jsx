@@ -16,16 +16,19 @@ export default function LoginPage({ onNavigate, onSuccess, onContinueAsGuest }) 
     });
 
     useEffect(() => {
-        try {
-            const initialIC = localStorage.getItem("exploria_remembered_ic") || "";
-            if (initialIC) {
-                setFormData(prev => ({
-                    ...prev,
-                    ic: initialIC,
-                    rememberMe: true
-                }));
-            }
-        } catch {}
+        const timer = setTimeout(() => {
+            try {
+                const initialIC = localStorage.getItem("exploria_remembered_ic") || "";
+                if (initialIC) {
+                    setFormData(prev => ({
+                        ...prev,
+                        ic: initialIC,
+                        rememberMe: true
+                    }));
+                }
+            } catch {}
+        }, 0);
+        return () => clearTimeout(timer);
     }, []);
 
     const [touched, setTouched] = useState({
@@ -190,6 +193,20 @@ export default function LoginPage({ onNavigate, onSuccess, onContinueAsGuest }) 
                     localStorage.setItem("exploria_student_school", schoolName);
                     localStorage.setItem("exploria_student_school_type", schoolType);
                 }
+
+                // Segerak Koin Bintang & Barangan Dimiliki/Dipasang dari Firestore ke LocalStorage
+                const userCoins = typeof studentData.koinBintang === "number" ? studentData.koinBintang : 50;
+                const userOwned = Array.isArray(studentData.barangDimiliki) && studentData.barangDimiliki.length > 0
+                    ? Array.from(new Set([...studentData.barangDimiliki, "border_cadet", "avatar_astro_1"]))
+                    : ["border_cadet", "avatar_astro_1"];
+                const userEquipped = {
+                    border: studentData.borderDipilih || "border_cadet",
+                    avatar: studentData.avatarDipilih || "avatar_astro_1",
+                    pet: studentData.petDipilih || null,
+                };
+                localStorage.setItem(`exploria_student_${cleanIC}_shop`, JSON.stringify({ coins: userCoins, ownedItems: userOwned }));
+                localStorage.setItem(`exploria_student_${cleanIC}_equipped`, JSON.stringify(userEquipped));
+
                 sessionStorage.removeItem("exploria_guest_mode");
             } catch {}
 

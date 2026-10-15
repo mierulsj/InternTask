@@ -3,15 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { GraphicBackArrow } from "./Graphics";
 import ProfileAvatarFrame from "./ProfileAvatarFrame";
-import {
-    VectorAvatarAstro,
-    VectorAvatarScientist,
-    VectorAvatarCyber,
-    VectorAvatarDino,
-    VectorAvatarRobot,
-    VectorAvatarCommander,
-    VectorAvatarGuest,
-} from "./GameIcons";
+import { VectorFlame } from "./GameIcons";
 import { getLeaderboardData } from "../../../lib/firestoreService";
 
 // Helper untuk memilih ikon avatar berdasarkan avatarId
@@ -27,12 +19,13 @@ function renderStudentAvatar(avatarId = "avatar_astro_1", borderId = null, size 
 
 export default function LeaderboardView({
     onNavigate,
-    t = (bm, en) => bm,
+    t = (bm) => bm,
     playAudioFeedback,
     isLoggedIn = false,
     studentName = "Penjelajah",
     studentIC = "",
     studentXP = 100,
+    studentStreak = 1,
 }) {
     const [students, setStudents] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -53,13 +46,29 @@ export default function LeaderboardView({
     };
 
     useEffect(() => {
-        fetchLeaderboard();
+        let isMounted = true;
+        getLeaderboardData()
+            .then((res) => {
+                if (isMounted && res.success && Array.isArray(res.students)) {
+                    setStudents(res.students);
+                }
+            })
+            .catch((e) => {
+                console.error("Ralat membaca leaderboard:", e);
+            })
+            .finally(() => {
+                if (isMounted) setLoading(false);
+            });
+
+        return () => {
+            isMounted = false;
+        };
     }, []);
 
     const handleAction = (sound, cb) => {
         try {
             if (playAudioFeedback) playAudioFeedback(sound);
-        } catch (e) {}
+        } catch {}
         if (cb) cb();
     };
 
@@ -76,6 +85,23 @@ export default function LeaderboardView({
             (studentName && s.name.toLowerCase() === studentName.toLowerCase())
     );
     const userRank = userRankIndex !== -1 ? userRankIndex + 1 : null;
+
+    const isTop1User = top1 && (
+        (studentIC && top1.ic === studentIC) ||
+        (studentName && top1.name.toLowerCase() === studentName.toLowerCase())
+    );
+    const isTop2User = top2 && (
+        (studentIC && top2.ic === studentIC) ||
+        (studentName && top2.name.toLowerCase() === studentName.toLowerCase())
+    );
+    const isTop3User = top3 && (
+        (studentIC && top3.ic === studentIC) ||
+        (studentName && top3.name.toLowerCase() === studentName.toLowerCase())
+    );
+
+    const top1Streak = isTop1User ? (studentStreak || top1.streak || 1) : (top1?.streak || 1);
+    const top2Streak = isTop2User ? (studentStreak || top2.streak || 1) : (top2?.streak || 1);
+    const top3Streak = isTop3User ? (studentStreak || top3.streak || 1) : (top3?.streak || 1);
 
     return (
         <div className="w-full max-w-sm sm:max-w-md mx-auto anim-fade-in select-none text-left pb-16">
@@ -102,29 +128,45 @@ export default function LeaderboardView({
                     </div>
                 </div>
 
-                {/* Butang Refresh Live Data dari Firebase */}
-                <button
-                    type="button"
-                    onClick={() => handleAction("tap", fetchLeaderboard)}
-                    disabled={loading}
-                    className="w-9 h-9 rounded-full bg-sky-50 hover:bg-sky-100 text-[#0099e5] border border-sky-200/80 flex items-center justify-center shadow-xs cursor-pointer active:scale-95 transition-all"
-                    title={t("Muat semula data", "Refresh data")}
-                >
-                    <svg
-                        className={`w-4 h-4 ${loading ? "animate-spin" : ""}`}
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2.5"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
+                <div className="flex items-center gap-2">
+                    {/* Lencana Streak Pengguna Semasa */}
+                    {isLoggedIn && (
+                        <div
+                            className="flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-amber-50 border border-amber-200/90 text-amber-800 shadow-xs"
+                            title={t("Streak Pembelajaran Anda", "Your Learning Streak")}
+                        >
+                            <VectorFlame className="w-3.5 h-3.5 text-amber-500 shrink-0" />
+                            <div className="flex flex-col text-left leading-tight">
+                                <span className="text-[8px] font-bold text-amber-600 uppercase tracking-wider">Streak</span>
+                                <span className="text-[11px] font-black font-mono leading-none">{studentStreak || 1} {t("Hari", "D")}</span>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Butang Refresh Live Data dari Firebase */}
+                    <button
+                        type="button"
+                        onClick={() => handleAction("tap", fetchLeaderboard)}
+                        disabled={loading}
+                        className="w-9 h-9 rounded-full bg-sky-50 hover:bg-sky-100 text-[#0099e5] border border-sky-200/80 flex items-center justify-center shadow-xs cursor-pointer active:scale-95 transition-all shrink-0"
+                        title={t("Muat semula data", "Refresh data")}
                     >
-                        <path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
-                        <path d="M3 3v5h5" />
-                        <path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16" />
-                        <path d="M16 21h5v-5" />
-                    </svg>
-                </button>
+                        <svg
+                            className={`w-4 h-4 ${loading ? "animate-spin" : ""}`}
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2.5"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                        >
+                            <path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
+                            <path d="M3 3v5h5" />
+                            <path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16" />
+                            <path d="M16 21h5v-5" />
+                        </svg>
+                    </button>
+                </div>
             </div>
 
             {/* 2. TAB PENAPIS (FILTER PILLS: KESELURUHAN & MINGGUAN) */}
@@ -193,6 +235,12 @@ export default function LeaderboardView({
                             <span className="font-bold text-[11px] text-sky-200 block">
                                 {top2 ? `${top2.xp.toLocaleString()} pts` : "-"}
                             </span>
+                            {top2 && (
+                                <span className="inline-flex items-center justify-center gap-1 px-1.5 py-0.5 rounded-full bg-white/20 border border-white/25 text-white font-mono font-bold text-[9px] mt-0.5 drop-shadow-xs">
+                                    <VectorFlame className="w-2.5 h-2.5 text-amber-300" />
+                                    <span>{top2Streak} Hari</span>
+                                </span>
+                            )}
                         </div>
 
                         {/* Kolum Blok Podium 3D (Perak) */}
@@ -244,6 +292,12 @@ export default function LeaderboardView({
                             <span className="font-black text-xs sm:text-sm text-amber-300 block drop-shadow-xs">
                                 {top1 ? `${top1.xp.toLocaleString()} pts` : "-"}
                             </span>
+                            {top1 && (
+                                <span className="inline-flex items-center justify-center gap-1 px-2 py-0.5 rounded-full bg-white/25 border border-white/30 text-amber-200 font-mono font-bold text-[10px] mt-0.5 drop-shadow-xs">
+                                    <VectorFlame className="w-3 h-3 text-amber-300" />
+                                    <span>{top1Streak} Hari Streak</span>
+                                </span>
+                            )}
                         </div>
 
                         {/* Kolum Blok Podium 3D (Emas Paling Tinggi) */}
@@ -288,6 +342,12 @@ export default function LeaderboardView({
                             <span className="font-bold text-[11px] text-amber-200 block">
                                 {top3 ? `${top3.xp.toLocaleString()} pts` : "-"}
                             </span>
+                            {top3 && (
+                                <span className="inline-flex items-center justify-center gap-1 px-1.5 py-0.5 rounded-full bg-white/20 border border-white/25 text-white font-mono font-bold text-[9px] mt-0.5 drop-shadow-xs">
+                                    <VectorFlame className="w-2.5 h-2.5 text-amber-300" />
+                                    <span>{top3Streak} Hari</span>
+                                </span>
+                            )}
                         </div>
 
                         {/* Kolum Blok Podium 3D (Gangsa) */}
@@ -356,14 +416,20 @@ export default function LeaderboardView({
                                                 </span>
                                             )}
                                         </div>
-                                        <p className="text-[11px] text-slate-400 font-semibold truncate mt-0.5">
-                                            <span className="font-black text-[#0099e5] font-mono">
+                                        <div className="flex items-center gap-2 flex-wrap mt-0.5">
+                                            <span className="font-black text-[#0099e5] font-mono text-[11px]">
                                                 {student.xp.toLocaleString()} {t("mata", "pts")}
                                             </span>
+                                            <span className="inline-flex items-center gap-1 text-amber-900 font-bold font-mono bg-amber-50 border border-amber-200/80 px-1.5 py-0.5 rounded-md text-[10px]">
+                                                <VectorFlame className="w-3 h-3 text-amber-500 shrink-0" />
+                                                <span>{isCurrentUser ? (studentStreak || student.streak || 1) : (student.streak || 1)} Hari</span>
+                                            </span>
                                             {student.school && student.school !== "-" && (
-                                                <span className="text-slate-400"> • {student.school}</span>
+                                                <span className="text-[11px] text-slate-400 font-semibold truncate max-w-[130px]">
+                                                    • {student.school}
+                                                </span>
                                             )}
-                                        </p>
+                                        </div>
                                     </div>
                                 </div>
 
@@ -398,19 +464,25 @@ export default function LeaderboardView({
             </div>
 
             {/* 5. KAD KEDUDUKAN PENGGUNA TERAPUNG (STICKY USER POSITION) */}
-            {isLoggedIn && userRank && userRank > 3 && (
+            {isLoggedIn && (userRank === null || userRank > 3) && (
                 <div className="fixed bottom-18 left-3 right-3 max-w-sm sm:max-w-md mx-auto bg-slate-900/95 backdrop-blur-md text-white p-3 rounded-2xl border border-sky-400/40 shadow-xl flex items-center justify-between gap-3 z-30">
                     <div className="flex items-center gap-2.5 min-w-0">
                         <div className="w-8 h-8 rounded-full bg-amber-400 text-slate-950 font-black text-xs flex items-center justify-center shrink-0 shadow-xs">
-                            #{userRank}
+                            {userRank ? `#${userRank}` : "—"}
                         </div>
                         <div className="min-w-0">
                             <span className="font-black text-xs text-white block truncate leading-tight">
                                 {t("Kedudukan Anda", "Your Rank")} • {studentName}
                             </span>
-                            <span className="text-[10px] text-sky-200 font-mono font-bold">
-                                {studentXP.toLocaleString()} XP
-                            </span>
+                            <div className="flex items-center gap-2 mt-0.5">
+                                <span className="text-[10px] text-sky-200 font-mono font-bold">
+                                    {studentXP.toLocaleString()} XP
+                                </span>
+                                <span className="inline-flex items-center gap-0.5 text-amber-300 text-[10px] font-mono font-bold">
+                                    <VectorFlame className="w-3 h-3 text-amber-400" />
+                                    <span>{studentStreak || 1} Hari Streak</span>
+                                </span>
+                            </div>
                         </div>
                     </div>
                     <span className="text-[10px] font-black uppercase px-2 py-1 rounded-lg bg-sky-500 text-white shrink-0 shadow-xs">

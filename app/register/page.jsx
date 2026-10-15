@@ -19,6 +19,9 @@ export default function Page() {
     return (
         <RegisterPage
             onSuccess={() => {
+                try {
+                    sessionStorage.setItem("exploria_trigger_luckydraw", "true");
+                } catch {}
                 router.push("/belajar");
             }}
             onNavigate={(view) => {

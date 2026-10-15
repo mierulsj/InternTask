@@ -33,6 +33,7 @@ import DashboardView from "./components/DashboardView";
 import ShopView from "./components/ShopView";
 import StudentSettingsModal from "./components/StudentSettingsModal";
 import ProfileAvatarFrame from "./components/ProfileAvatarFrame";
+import LuckyDrawModal from "./components/LuckyDrawModal";
 import RegisterPage from "./Register";
 import LoginPage from "./Login";
 import AuthGatewayView from "./components/AuthGatewayView";
@@ -67,6 +68,7 @@ export default function LessonPage() {
     const [showGuestAuthModal, setShowGuestAuthModal] = useState(false);
     const [guestModalContext, setGuestModalContext] = useState("kuiz"); // "kuiz" | "aktiviti"
     const [showStudentSettingsModal, setShowStudentSettingsModal] = useState(false);
+    const [showLuckyDraw, setShowLuckyDraw] = useState(false);
 
     const triggerGuestNotice = (feature = "kuiz") => {
         playAudioFeedback("error");
@@ -241,6 +243,23 @@ export default function LessonPage() {
                 setStudentIC(ic);
                 setStudentSchool(school);
                 setCurrentView(targetView || "menu");
+
+                // Semak jika diarahkan untuk buka Lucky Draw atau setiap kali sesi log masuk web (had 1 kali sehari)
+                try {
+                    const today = new Date();
+                    const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
+                    const lastSpin = localStorage.getItem(`exploria_lucky_draw_date_${ic || "default"}`);
+                    const hasSpunToday = lastSpin === todayStr;
+
+                    const shouldTrigger = sessionStorage.getItem("exploria_trigger_luckydraw") === "true";
+                    const sessionDrawn = sessionStorage.getItem("exploria_session_luckydraw_done");
+
+                    if ((shouldTrigger || !sessionDrawn) && !hasSpunToday) {
+                        sessionStorage.removeItem("exploria_trigger_luckydraw");
+                        sessionStorage.setItem("exploria_session_luckydraw_done", "true");
+                        setShowLuckyDraw(true);
+                    }
+                } catch {}
             } else if (isGuest) {
                 setIsLoggedIn(false);
                 setStudentName("");
@@ -605,6 +624,15 @@ export default function LessonPage() {
         }
 
         setCurrentView("menu");
+        try {
+            const today = new Date();
+            const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
+            const lastSpin = data?.tarikhPutaranTerakhir || (cleanIC ? localStorage.getItem(`exploria_lucky_draw_date_${cleanIC}`) : null);
+            if (lastSpin !== todayStr) {
+                setShowLuckyDraw(true);
+            }
+            sessionStorage.setItem("exploria_session_luckydraw_done", "true");
+        } catch {}
     };
 
     const handleSelectTopic = (idx) => {
@@ -2190,6 +2218,22 @@ export default function LessonPage() {
 
                     {/* KANAN: KOIN & PROFIL */}
                     <div className="flex items-center gap-2">
+                        {/* Butang Roda Bertuah (Lucky Draw) */}
+                        {isLoggedIn && (
+                            <button
+                                type="button"
+                                onClick={() => {
+                                    playAudioFeedback("sparkle");
+                                    setShowLuckyDraw(true);
+                                }}
+                                className="relative h-8 sm:h-9 px-2.5 sm:px-3 rounded-full bg-sky-50 hover:bg-sky-100 border border-sky-200/80 text-[#0099e5] font-black text-xs flex items-center gap-1.5 shadow-xs cursor-pointer active:scale-95 transition-all"
+                                title="Roda Bertuah Harian (1x Sehari)"
+                            >
+                                <span className="text-sm">🎡</span>
+                                <span className="hidden sm:inline text-[11px] font-black uppercase tracking-tight text-sky-700">Roda Bertuah</span>
+                            </button>
+                        )}
+
                         {/* Butang Koin */}
                         <button
                             type="button"
@@ -2434,6 +2478,7 @@ export default function LessonPage() {
                                 studentName={studentName}
                                 studentIC={studentIC}
                                 studentXP={studentXP}
+                                studentStreak={studentStreak}
                             />
                         )}
 
@@ -2645,6 +2690,20 @@ export default function LessonPage() {
                 studentIC={studentIC}
                 studentSchool={studentSchool}
                 onNavigate={handleNavigate}
+                playAudioFeedback={playAudioFeedback}
+            />
+
+            {/* MODAL RODA BERTUAH (LUCKY DRAW SPIN THE WHEEL) */}
+            <LuckyDrawModal
+                isOpen={showLuckyDraw}
+                onClose={() => setShowLuckyDraw(false)}
+                studentIC={studentIC}
+                studentCoins={studentCoins}
+                setStudentCoins={setStudentCoins}
+                ownedItems={ownedItems}
+                setOwnedItems={setOwnedItems}
+                equippedItems={equippedItems}
+                setEquippedItems={setEquippedItems}
                 playAudioFeedback={playAudioFeedback}
             />
             </main>

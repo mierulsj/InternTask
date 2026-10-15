@@ -160,38 +160,23 @@ export default function ShopView({
             </div>
 
             {/* 2. PENTAS AVATAR LIVE (PREVIEW AVATAR SEMASA MURID) */}
-            <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-sky-50 via-white to-indigo-50/60 p-4 border border-sky-100 shadow-xs flex items-center justify-between gap-4">
-                <div className="flex items-center gap-3.5">
-                    <div className="relative shrink-0 p-1">
-                        <ProfileAvatarFrame
-                            avatar={equippedAvatarItem?.id || "avatar_astro_1"}
-                            borderId={equippedItems?.border || "border_cadet"}
-                            pet={equippedPetItem}
-                            size="md"
-                            interactive={false}
-                        />
-                    </div>
-                    <div>
-                        <span className="text-[10px] uppercase font-black tracking-wider text-sky-600 block">
-                            Avatar Aktif
-                        </span>
-                        <h3 className="text-sm sm:text-base font-black text-slate-800 leading-tight">
-                            {equippedAvatarItem?.name || "Kadet Angkasa"}
-                        </h3>
-                        <p className="text-[11px] font-bold text-slate-400 mt-0.5">
-                            {equippedBorderItem?.name || "Besi Perintis"}
-                        </p>
-                    </div>
+            <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-sky-50 via-white to-indigo-50/60 p-4 border border-sky-100 shadow-xs flex items-center gap-3.5">
+                <div className="relative shrink-0 p-1">
+                    <ProfileAvatarFrame
+                        avatar={equippedAvatarItem?.id || "avatar_astro_1"}
+                        borderId={equippedItems?.border || "border_cadet"}
+                        pet={equippedPetItem}
+                        size="md"
+                        interactive={false}
+                    />
                 </div>
-
-                <div className="text-right shrink-0">
-                    <span className="text-[10px] font-bold text-slate-400 block">
-                        Baki Koin
-                    </span>
-                    <span className="text-base sm:text-lg font-black font-mono text-amber-600 flex items-center gap-1 justify-end">
-                        <GraphicCoin className="w-4 h-4" />
-                        {studentCoins}
-                    </span>
+                <div>
+                    <h3 className="text-sm sm:text-base font-black text-slate-800 leading-tight">
+                        {equippedAvatarItem?.name || "Kadet Angkasa"}
+                    </h3>
+                    <p className="text-[11px] font-bold text-slate-400 mt-0.5">
+                        {equippedBorderItem?.name || "Besi Perintis"}
+                    </p>
                 </div>
             </div>
 
